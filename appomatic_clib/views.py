@@ -29,7 +29,6 @@ def relogin(str):
         raise Exception("Bad user id signature")
     return django.contrib.auth.models.User.objects.get(username=username)
 
-@django.contrib.auth.decorators.login_required
 def index(request):
     return django.shortcuts.render(
         request,
@@ -40,7 +39,6 @@ def index(request):
         }
     )
 
-@django.contrib.auth.decorators.login_required
 def thing(request, id):
     t = appomatic_clib.models.Thing.objects.get(id=id)
     return django.shortcuts.render(
@@ -52,7 +50,6 @@ def thing(request, id):
         }
     )
 
-@django.contrib.auth.decorators.login_required
 def thing_type(request, id):
     tt = appomatic_clib.models.ThingType.objects.get(id=id)
     return django.shortcuts.render(

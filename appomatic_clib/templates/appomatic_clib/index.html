@@ -1,79 +1,127 @@
 {% extends "appomatic_clib/base.html" %}
 {% load qr_tags %}
 {% block content %}
-  <div class="container">
-    <div class="row">
-      <div class="col-md-8">
-        <br/>
-        {% if not request.user.owns.count %}
-          <div class="alert alert-info" role="alert">
-            <p>Add some things to your library to get started. Scan the QR-code at the top of the page with the CommonLib phone app and then scan the ISBN barcodes on the backs of your books!</p>
-            <p>To install the app, go to <a href='https://play.google.com/store/apps/details?id=se.puggan.gscantool'>https://play.google.com/store/apps/details?id=se.puggan.gscantool</a> in from your Android phone.</a>
-          </div>
-        {% endif %}
+  {% if request.user.is_authenticated %}
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8">
+          <br/>
+          {% if not request.user.owns.count %}
+            <div class="alert alert-info" role="alert">
+              <p>Add some things to your library to get started. Scan the QR-code at the top of the page with the CommonLib phone app and then scan the ISBN barcodes on the backs of your books!</p>
+              <p>To install the app, go to <a href='https://play.google.com/store/apps/details?id=se.puggan.gscantool'>https://play.google.com/store/apps/details?id=se.puggan.gscantool</a> in from your Android phone.</a>
+            </div>
+          {% endif %}
 
-        {% if request.user.needs_labels.count %}
-          <div class="alert alert-info" role="alert">
-            You have new things that need labels. <a href="{% url 'appomatic_clib.views.labels' %}" class="btn btn-default">Print labels</a>
-          </div>
-        {% endif %}
+          {% if request.user.needs_labels.count %}
+            <div class="alert alert-info" role="alert">
+              You have new things that need labels. <a href="{% url 'appomatic_clib.views.labels' %}" class="btn btn-default">Print labels</a>
+            </div>
+          {% endif %}
 
-        {% if not request.user.holds.count %}
-          <div class="alert alert-success" role="alert">
-            You haven borrowed anything. Maybe you'd like to search for things to borrow:
+          {% if not request.user.holds.count %}
+            <div class="alert alert-success" role="alert">
+              You haven borrowed anything. Maybe you'd like to search for things to borrow:
 
-            <form action="{% url 'appomatic_clib.views.search' %}" class="form form-inline" role="form">
-              <div class="input-group">
-                <input type="text" name="query" placeholder="Search" class="form-control">
-                <span class="input-group-btn">
-                  <button class="btn btn-default" type="submit"><i class='glyphicon glyphicon-search'></i>&nbsp;</button>
-                </span>
-              </div>
-            </form>
+              <form action="{% url 'appomatic_clib.views.search' %}" class="form form-inline" role="form">
+                <div class="input-group">
+                  <input type="text" name="query" placeholder="Search" class="form-control">
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" type="submit"><i class='glyphicon glyphicon-search'></i>&nbsp;</button>
+                  </span>
+                </div>
+              </form>
 
-          </div>
-        {% endif %}
+            </div>
+          {% endif %}
 
-        {% if request.user.requesting.count %}
-          <h1>Waiting for</h1>
-          <ul>
-            {% for r in request.user.requesting.all %}
-              <li>
-                <a href='{{r.thing.get_absolute_url}}'>
-                  {{r.thing.type.name}} by {{r.thing.type.designer}}
-                </a>
-                since {{r.time}}
-                {% if r.sent %}(Sent){% endif %}
-              </li>
-            {% endfor %}
-          </ul>
-        {% endif %}
+          {% if request.user.requests.count %}
+            <h1>Please send</h1>
+            <ul>
+              {% for t in request.user.requests.all %}
+                <li>
+                  <a href='{{t.get_absolute_url}}'>
+                    {{t.type.name}} by {{t.type.designer}}
+                  </a>
+                  to {{t.request.requestor}}
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
 
-        {% if request.user.owns.count %}
-          <h1>My things</h1>
-          <ul>
-            {% for t in request.user.owns.all %}
-              <li><a href='{{t.get_absolute_url}}'>{{t.type.name}} by {{t.type.designer}}</a></li>
-            {% endfor %}
-          </ul>
-        {% endif %}
+          {% if request.user.requesting.count %}
+            <h1>Waiting for</h1>
+            <ul>
+              {% for r in request.user.requesting.all %}
+                <li>
+                  <a href='{{r.thing.get_absolute_url}}'>
+                    {{r.thing.type.name}} by {{r.thing.type.designer}}
+                  </a>
+                  since {{r.time}}
+                  {% if r.sent %}(Sent){% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
 
-        {% if request.user.holds.count %}
-          <h1>Currently holding</h1>
-          <ul>
-            {% for t in request.user.holds.all %}
-              <li><a href='{{t.get_absolute_url}}'>{{t.type.name}} by {{t.type.designer}}</a></li>
-            {% endfor %}
-          </ul>
-        {% endif %}
+          {% if request.user.owns.count %}
+            <h1>My things</h1>
+            <ul>
+              {% for t in request.user.owns.all %}
+                <li><a href='{{t.get_absolute_url}}'>{{t.type.name}} by {{t.type.designer}}</a></li>
+              {% endfor %}
+            </ul>
+          {% endif %}
 
-      </div>
-      <div class="col-md-4">
-        <div class='qr-link start-scan-link'>
-          {% qr_from_text start_url %}
+          {% if request.user.holds.count %}
+            <h1>Currently holding</h1>
+            <ul>
+              {% for t in request.user.holds.all %}
+                <li><a href='{{t.get_absolute_url}}'>{{t.type.name}} by {{t.type.designer}}</a></li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+        <div class="col-md-4">
+          {% if request.user.is_authenticated %}
+            <div class='qr-link start-scan-link'>
+              {% qr_from_text start_url %}
+            </div>
+          {% endif %}
         </div>
       </div>
     </div>
-  </div>
 
+  {% else %}
+
+    <div class="jumbotron">
+      <div class="container">
+        <h1>Welcome to CommonLib</h1>
+        <p>CommonLib is a virtual online library that lets you lend your books securely and borrow easily from others.</p>
+        <p>To get going, either sign up or log in</p>
+
+        <form class="form form-inline" role="form">
+          <div class="form-group">
+            <input type="text" placeholder="Email" class="form-control">
+          </div>
+          <div class="form-group">
+            <input type="password" placeholder="Password" class="form-control">
+          </div>
+          <button type="submit" class="btn btn-success">Sign in</button>
+        </form>
+
+        <p>...or search among the available titles:</p>
+
+        <form action="{% url 'appomatic_clib.views.search' %}" class="form form-inline" role="form">
+          <div class="input-group">
+            <input type="text" name="query" placeholder="Search" class="form-control">
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="submit"><i class='glyphicon glyphicon-search'></i>&nbsp;</button>
+            </span>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  {% endif %}
 {% endblock %}

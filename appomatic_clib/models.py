@@ -82,3 +82,7 @@ class LendingRequest(django.db.models.Model):
 def needs_labels(self):
     return self.owns.filter(label_printed = False)
 django.contrib.auth.models.User.needs_labels = needs_labels
+
+def requests(self):
+    return self.has.filter(requests__sent = False)
+django.contrib.auth.models.User.requests = requests
