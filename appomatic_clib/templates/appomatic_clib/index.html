@@ -4,6 +4,37 @@
   <div class="container">
     <div class="row">
       <div class="col-md-8">
+        <br/>
+        {% if not request.user.owns.count %}
+          <div class="alert alert-info" role="alert">
+            <p>Add some things to your library to get started. Scan the QR-code at the top of the page with the CommonLib phone app and then scan the ISBN barcodes on the backs of your books!</p>
+            <p>To install the app, go to <a href='https://play.google.com/store/apps/details?id=se.puggan.gscantool'>https://play.google.com/store/apps/details?id=se.puggan.gscantool</a> in from your Android phone.</a>
+          </div>
+        {% endif %}
+
+        {% if request.user.needs_labels.count %}
+          <div class="alert alert-info" role="alert">
+            You have new things that need labels. <a href="{% url 'appomatic_clib.views.labels' %}" class="btn btn-default">Print labels</a>
+          </div>
+        {% endif %}
+
+        {% if not request.user.holds.count %}
+          <div class="alert alert-success" role="alert">
+            You haven borrowed anything. Maybe you'd like to search for things to borrow:
+
+            <form action="{% url 'appomatic_clib.views.search' %}" class="form form-inline" role="form">
+              <div class="input-group">
+                <input type="text" name="query" placeholder="Search" class="form-control">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="submit"><i class='glyphicon glyphicon-search'></i>&nbsp;</button>
+                </span>
+              </div>
+            </form>
+
+          </div>
+        {% endif %}
+
+
         {% if request.user.owns.count %}
           <h1>My things</h1>
           <ul>
@@ -11,12 +42,6 @@
               <li><a href='{{t.get_absolute_url}}'>{{t}}</a></li>
             {% endfor %}
           </ul>
-        {% else %}
-          <br/>
-          <div class="alert alert-info" role="alert">
-            <p>Add some things to your library to get started. Scan the QR-code at the top of the page with the CommonLib phone app and then scan the ISBN barcodes on the backs of your books!</p>
-            <p>To install the app, go to <a href='https://play.google.com/store/apps/details?id=se.puggan.gscantool'>https://play.google.com/store/apps/details?id=se.puggan.gscantool</a> in from your Android phone.</a>
-          </div>
         {% endif %}
 
         {% if request.user.holds.count %}
@@ -26,20 +51,6 @@
               <li><a href='{{t.get_absolute_url}}'>{{t}}</a></li>
             {% endfor %}
           </ul>
-        {% else %}
-          <div class="alert alert-success" role="alert">
-            Search for things to borrow:
-
-            <form action="{% url 'appomatic_clib.views.search' %}" class="form form-inline" role="form">
-              <div class="input-group">
-                <input type="text" name="query" placeholder="Search" class="form-control">
-                <span class="input-group-btn">
-                  <button class="btn btn-default" type="button"><i class='glyphicon glyphicon-search'></i>&nbsp;</button>
-                </span>
-              </div>
-            </form>
-
-          </div>
         {% endif %}
 
       </div>

@@ -2,12 +2,20 @@ import django.db.models
 import django.contrib.auth.models
 import django.core.urlresolvers
 import django.contrib.sites.models
+import appomatic_clib.isbnlookup
 
 class ThingType(django.db.models.Model):
     barcode_type = django.db.models.CharField(max_length=128, db_index=True)
     barcode_data = django.db.models.CharField(max_length=512, db_index=True)
     name = django.db.models.CharField(default='', max_length=256, db_index=True)
+    producer = django.db.models.CharField(default='', max_length=256, db_index=True)
+    designer = django.db.models.CharField(default='', max_length=256, db_index=True)
     description = django.db.models.TextField(default='')
+
+    def save(self, *arg, **kw):
+        if self.barcode_type == 'EAN_13' and self.name == '' and self.designer == '':
+            self.designer, self.name = appomatic_clib.isbnlookup.ISBNLookup.lookup(self.barcode_data)
+        django.db.models.Model.save(self, *arg, **kw)
 
     @classmethod
     def get(cls, barcode_type, barcode_data):
@@ -30,6 +38,8 @@ class Thing(django.db.models.Model):
 
     owner = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="owns")
     holder = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="has")
+
+    label_printed = django.db.models.BooleanField(default=False)
 
     @property
     def request(self):
@@ -68,3 +78,7 @@ class LendingRequest(django.db.models.Model):
 
     def __unicode__(self):
         return u"%(requestor)s requesting %(thing)s at %(time)s" % {"thing": self.thing, "requestor": self.requestor, "time": self.time}
+
+def needs_labels(self):
+    return self.owns.filter(label_printed = False)
+django.contrib.auth.models.User.needs_labels = needs_labels

@@ -11,3 +11,26 @@ body {
 .table.small-table {
   width: auto;
 }
+
+.thing-label {
+  border: 4pt solid black;
+  margin: 10pt;
+  vertical-align: top;
+  float: left;
+  img {
+    display: inline-block;
+  }
+  .text {
+    display: inline-block;
+    vertical-align: top;
+    padding-top: 16pt;
+    padding-right: 16pt;
+    padding-bottom: 16pt;
+    .name {
+      font-size: 14pt;
+    }
+    .owner {
+      margin-top: 5pt;
+    }
+  }
+}

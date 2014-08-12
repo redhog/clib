@@ -137,3 +137,18 @@ def search(request):
             "request": request
         }
     )
+
+def labels(request):
+    if request.GET.get('done', None):
+        for thing in request.user.needs_labels().all():
+            thing.label_printed = True
+            thing.save()
+        return django.shortcuts.redirect('appomatic_clib.views.index')
+        
+    return django.shortcuts.render(
+        request,
+        'appomatic_clib/labels.html',
+        {
+            "request": request
+        }
+    )
