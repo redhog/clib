@@ -39,7 +39,7 @@
           <h1>My things</h1>
           <ul>
             {% for t in request.user.owns.all %}
-              <li><a href='{{t.get_absolute_url}}'>{{t}}</a></li>
+              <li><a href='{{t.get_absolute_url}}'>{{t.type.name}} by {{t.type.designer}}</a></li>
             {% endfor %}
           </ul>
         {% endif %}
@@ -48,7 +48,7 @@
           <h1>Currently holding</h1>
           <ul>
             {% for t in request.user.holds.all %}
-              <li><a href='{{t.get_absolute_url}}'>{{t}}</a></li>
+              <li><a href='{{t.get_absolute_url}}'>{{t.type.name}} by {{t.type.designer}}</a></li>
             {% endfor %}
           </ul>
         {% endif %}

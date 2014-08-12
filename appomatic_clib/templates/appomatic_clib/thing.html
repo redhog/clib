@@ -9,7 +9,7 @@
            {% qr_from_text t.get_absolute_url %}
          </div>
 
-         <h1><a href="{{t.type.get_absolute_url}}">{{t.type}}</a></h1>
+         <h1><a href="{{t.type.get_absolute_url}}">{{t.type.name}} by {{t.type.designer}}</a></h1>
 
          {% if request.user.id = t.owner.id %}
            <p><i class='glyphicon glyphicon-heart'></i> You own this thing.</p>
@@ -40,12 +40,16 @@
 
          <table class="table table-bordered small-table">
            <tr><th>Id:</th><td>{{t.id}}</td></tr>
+           <tr><th>Name:</th><td>{{t.type.name}}</td></tr>
+           <tr><th>Producer:</th><td>{{t.type.producer}}</td></tr>
+           <tr><th>Designer:</th><td>{{t.type.designer}}</td></tr>
            <tr><th>Owner:</th><td>{{t.owner}}</td></tr>
            <tr><th>Holder</th><td>{{t.holder}}</td></tr>
            <tr><th>Requests:</th><td>{{t.requests.count}}</td></tr>
            {% if request.user.id = t.holder.id and t.request %}
              <tr><th>First requestor:</th><td>{{t.request.requestor.username}}</td></tr>
            {% endif %}
+           <tr><th>{{t.type.barcode_type}}</th><td>{{t.type.barcode_data}}</td></tr>
          </table>
       </div>
     </div>
