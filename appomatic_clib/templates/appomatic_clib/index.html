@@ -34,6 +34,20 @@
           </div>
         {% endif %}
 
+        {% if request.user.requesting.count %}
+          <h1>Waiting for</h1>
+          <ul>
+            {% for r in request.user.requesting.all %}
+              <li>
+                <a href='{{r.thing.get_absolute_url}}'>
+                  {{r.thing.type.name}} by {{r.thing.type.designer}}
+                </a>
+                since {{r.time}}
+                {% if r.sent %}(Sent){% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
 
         {% if request.user.owns.count %}
           <h1>My things</h1>
