@@ -7,3 +7,7 @@ body {
   border: 4pt solid black;
   margin: 15pt;
 }
+
+.table.small-table {
+  width: auto;
+}

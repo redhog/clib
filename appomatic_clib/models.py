@@ -26,7 +26,7 @@ class ThingType(django.db.models.Model):
 
 
 class Thing(django.db.models.Model):
-    type = django.db.models.ForeignKey(ThingType)
+    type = django.db.models.ForeignKey(ThingType, related_name='of_this_type')
 
     owner = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="owns")
     holder = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="has")

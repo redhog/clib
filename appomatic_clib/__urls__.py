@@ -8,6 +8,7 @@ urlpatterns = django.conf.urls.patterns('',
     django.conf.urls.url(r'^clib/thing/(?P<id>.*)/receive/?$', 'appomatic_clib.views.thing_receive'),
     django.conf.urls.url(r'^clib/thing/(?P<id>.*)/?$', 'appomatic_clib.views.thing'),
     django.conf.urls.url(r'^clib/thing-type/(?P<id>.*)/?$', 'appomatic_clib.views.thing_type'),
+    django.conf.urls.url(r'^clib/search/?$', 'appomatic_clib.views.search'),
     django.conf.urls.url(r'^clib/(?P<user>.*)/scan/start/?$', 'appomatic_clib.views.scan_start'),
     django.conf.urls.url(r'^clib/(?P<user>.*)/scan/item/?$', 'appomatic_clib.views.scan_item'),
 )

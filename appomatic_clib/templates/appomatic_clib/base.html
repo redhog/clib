@@ -20,7 +20,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">{% block navbar-title %}CommonLibrary{% endblock %}</a>
+          <a class="navbar-brand" href="{% url 'appomatic_clib.views.index' %}">{% block navbar-title %}CommonLibrary{% endblock %}</a>
         </div>
         {% block navbar %}{% endblock %}
         <div class="navbar-collapse collapse">
@@ -36,6 +36,16 @@
                 <button type="submit" class="btn btn-success">Sign in</button>
               </form>
             {% endif %}
+
+            <form action="{% url 'appomatic_clib.views.search' %}" class="navbar-form navbar-right" role="form">
+              <div class="input-group">
+                <input type="text" name="query" placeholder="Search" class="form-control">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button"><i class='glyphicon glyphicon-search'></i>&nbsp;</button>
+                </span>
+              </div>
+            </form>
+
           {% endblock %}
         </div>
       </div>

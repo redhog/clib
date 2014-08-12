@@ -122,3 +122,17 @@ def scan_item(request, user):
         t.save()
 
     return {}
+
+@django.views.decorators.csrf.csrf_exempt
+def search(request):
+    q = request.GET['query']
+    results = appomatic_clib.models.ThingType.objects.filter(django.db.models.Q(name__icontains=q) | django.db.models.Q(description__icontains=q))
+
+    return django.shortcuts.render(
+        request,
+        'appomatic_clib/search.html',
+        {
+            "results": results,
+            "request": request
+        }
+    )

@@ -4,21 +4,18 @@
   <div class="container">
     <div class="row">
       <div class="col-md-12">
-        <div class='qr-link thing-link'>
-          {% qr_from_text tt.get_absolute_url %}
+        <div class='qr-link start-scan-link'>
+          {% qr_from_text start_url %}
         </div>
 
-        <h1>{{tt.name}}</h1>
-        <p>{{tt.description}}</p>
-
-        <h2>Things</h2>
+        <h1>Currently holding</h1>
         <ul>
-          {% for t in tt.of_this_type.all %}
+          {% for t in results %}
             <li><a href='{{t.get_absolute_url}}'>{{t}}</a></li>
           {% endfor %}
         </ul>
-
       </div>
     </div>
   </div>
+
 {% endblock %}
