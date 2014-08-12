@@ -13,7 +13,10 @@
           </ul>
         {% else %}
           <br/>
-          <div class="alert alert-info" role="alert">Add some things to your library to get started. Scan the QR-code at the top of the page with the CommonLib phone app and then scan the ISBN barcodes on the backs of your books!</div>
+          <div class="alert alert-info" role="alert">
+            <p>Add some things to your library to get started. Scan the QR-code at the top of the page with the CommonLib phone app and then scan the ISBN barcodes on the backs of your books!</p>
+            <p>To install the app, go to <a href='https://play.google.com/store/apps/details?id=se.puggan.gscantool'>https://play.google.com/store/apps/details?id=se.puggan.gscantool</a> in from your Android phone.</a>
+          </div>
         {% endif %}
 
         {% if request.user.holds.count %}
