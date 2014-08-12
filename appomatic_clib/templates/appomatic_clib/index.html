@@ -1,0 +1,28 @@
+{% extends "appomatic_clib/base.html" %}
+{% load qr_tags %}
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class='qr-link start-scan-link'>
+          {% qr_from_text start_url %}
+        </div>
+
+        <h1>Currently holding</h1>
+        <ul>
+          {% for t in request.user.holds.all %}
+            <li><a href='{{t.get_absolute_url}}'>{{t}}</a></li>
+          {% endfor %}
+        </ul>
+
+        <h1>My things</h1>
+        <ul>
+          {% for t in request.user.owns.all %}
+            <li><a href='{{t.get_absolute_url}}'>{{t}}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

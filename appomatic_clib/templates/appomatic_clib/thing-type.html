@@ -1,0 +1,10 @@
+{% extends "appomatic_clib/base.html" %}
+{% load qr_tags %}
+{% block content %}
+  <div class='thing-link'>
+    {% qr_from_text tt.get_absolute_url %}
+  </div>
+
+  <h1>{{tt.name}}</h1>
+  <p>{{tt.description}}</p>
+{% endblock %}

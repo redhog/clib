@@ -1,0 +1,9 @@
+body {
+  padding-top: 50px;
+}
+
+.qr-link {
+  float: right;
+  border: 4pt solid black;
+  margin: 15pt;
+}

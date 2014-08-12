@@ -1,0 +1,47 @@
+{% load qr_tags %}
+<html>
+  <head>
+    <title>{% block title %}CommonLibrary{% endblock %}</title>
+    <link rel="stylesheet/less" type="text/css" href="{{STATIC_URL}}/appomatic_clib/style.css" />
+    <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}/bootstrap-3.2.0-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}/bootstrap-3.2.0-dist/css/bootstrap-theme.min.css">
+    <script src='{{STATIC_URL}}/jquery-1.11.1.min.js'></script>
+    <script src='{{STATIC_URL}}/bootstrap-3.2.0-dist/js/bootstrap.js'></script>
+    <script src='{{STATIC_URL}}/less-1.6.2.min.js'></script>
+  </head>
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">{% block navbar-title %}CommonLibrary{% endblock %}</a>
+        </div>
+        {% block navbar %}{% endblock %}
+        <div class="navbar-collapse collapse">
+          {% block navbar-collapse %}
+            {% if not request.user.is_authenticated %}
+              <form class="navbar-form navbar-right" role="form">
+                <div class="form-group">
+                  <input type="text" placeholder="Email" class="form-control">
+                </div>
+                <div class="form-group">
+                  <input type="password" placeholder="Password" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-success">Sign in</button>
+              </form>
+            {% endif %}
+          {% endblock %}
+        </div>
+      </div>
+    </div>
+
+    {% block content %}
+    {% endblock %}
+  </body>
+</html>
