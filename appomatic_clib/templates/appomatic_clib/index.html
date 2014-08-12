@@ -3,24 +3,47 @@
 {% block content %}
   <div class="container">
     <div class="row">
-      <div class="col-md-12">
+      <div class="col-md-8">
+        {% if request.user.owns.count %}
+          <h1>My things</h1>
+          <ul>
+            {% for t in request.user.owns.all %}
+              <li><a href='{{t.get_absolute_url}}'>{{t}}</a></li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <br/>
+          <div class="alert alert-info" role="alert">Add some things to your library to get started. Scan the QR-code at the top of the page with the CommonLib phone app and then scan the ISBN barcodes on the backs of your books!</div>
+        {% endif %}
+
+        {% if request.user.holds.count %}
+          <h1>Currently holding</h1>
+          <ul>
+            {% for t in request.user.holds.all %}
+              <li><a href='{{t.get_absolute_url}}'>{{t}}</a></li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="alert alert-success" role="alert">
+            Search for things to borrow:
+
+            <form action="{% url 'appomatic_clib.views.search' %}" class="form form-inline" role="form">
+              <div class="input-group">
+                <input type="text" name="query" placeholder="Search" class="form-control">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button"><i class='glyphicon glyphicon-search'></i>&nbsp;</button>
+                </span>
+              </div>
+            </form>
+
+          </div>
+        {% endif %}
+
+      </div>
+      <div class="col-md-4">
         <div class='qr-link start-scan-link'>
           {% qr_from_text start_url %}
         </div>
-
-        <h1>Currently holding</h1>
-        <ul>
-          {% for t in request.user.holds.all %}
-            <li><a href='{{t.get_absolute_url}}'>{{t}}</a></li>
-          {% endfor %}
-        </ul>
-
-        <h1>My things</h1>
-        <ul>
-          {% for t in request.user.owns.all %}
-            <li><a href='{{t.get_absolute_url}}'>{{t}}</a></li>
-          {% endfor %}
-        </ul>
       </div>
     </div>
   </div>

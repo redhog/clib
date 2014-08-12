@@ -8,7 +8,7 @@
           {% qr_from_text start_url %}
         </div>
 
-        <h1>Currently holding</h1>
+        <h1>Things matching '{{query}}'</h1>
         <ul>
           {% for t in results %}
             <li><a href='{{t.get_absolute_url}}'>{{t}}</a></li>

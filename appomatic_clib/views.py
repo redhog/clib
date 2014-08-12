@@ -132,6 +132,7 @@ def search(request):
         request,
         'appomatic_clib/search.html',
         {
+            "query": q,
             "results": results,
             "request": request
         }
