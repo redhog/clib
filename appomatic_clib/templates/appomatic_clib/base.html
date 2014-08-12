@@ -25,6 +25,14 @@
         {% block navbar %}{% endblock %}
         <div class="navbar-collapse collapse">
           {% block navbar-collapse %}
+            {% if request.user.is_authenticated %}
+              <ul class="nav navbar-nav navbar-right">
+                <li>
+                  <a href='{% url 'userena_signout' %}?next={% url 'appomatic_clib.views.index' %}'>Sign out</a>
+                </li>
+              </ul>
+            {% endif %}
+
             <form action="{% url 'appomatic_clib.views.search' %}" class="navbar-form navbar-right" role="form">
               <div class="input-group">
                 <input type="text" name="query" placeholder="Search" class="form-control">
@@ -39,6 +47,14 @@
     </div>
 
     {% block content %}
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            {% block full-content %}
+            {% endblock %}
+          </div>
+        </div>
+      </div>
     {% endblock %}
   </body>
 </html>

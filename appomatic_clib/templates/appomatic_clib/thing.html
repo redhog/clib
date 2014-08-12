@@ -1,69 +1,62 @@
 {% extends "appomatic_clib/base.html" %}
 {% load qr_tags %}
-{% block content %}
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-
-         <div class='qr-link thing-link'>
-           {% qr_from_text t.get_absolute_url %}
-         </div>
-
-         <h1><a href="{{t.type.get_absolute_url}}">{{t.type.name}} by {{t.type.designer}}</a></h1>
-
-         {% if request.user.id = t.owner.id %}
-           <p><i class='glyphicon glyphicon-heart'></i> You own this thing.</p>
-         {% endif %}
-
-         {% if request.user.id = t.holder.id %}
-           <p><i class='glyphicon glyphicon-hand-right'></i> You hold this thing.</p>
-           {% if t.request > 0 %}
-             {% if t.request.sent %}
-                <p class="text-info"><i class='glyphicon glyphicon-globe'></i> This thing has been sent to {{t.request.requestor}}.</p>
-             {% else %}
-                <p class="text-warning"><i class='glyphicon glyphicon-comment'></i> {{t.request.requestor}} is requesting this thing.</p>
-                <a href="{% url 'appomatic_clib.views.thing_send' id=t.id %}">Send</a>
-             {% endif %}
-           {% endif %}
-         {% else %}
-           {% if request.user.is_authenticated %}
-             {% if request.user.id = t.request.requestor.id %}
-               <p class="text-info"><i class='glyphicon glyphicon-time'></i> You are waiting for this thing.</p>
-               {% if t.request.sent %}
-                 <a href="{% url 'appomatic_clib.views.thing_receive' id=t.id %}"><i class='glyphicon glyphicon-ok'></i> Mark as received</a>
-               {% endif %}
-             {% else %}
-               <a href="{% url 'appomatic_clib.views.thing_request' id=t.id %}"><i class='glyphicon glyphicon-comment'></i> Request this thing</a>
-             {% endif %}
-           {% endif %}
-         {% endif %}
-
-         <p>{{t.type.description}}</p>
-
-         <table class="table table-bordered small-table">
-           <tr><th>Id:</th><td>{{t.id}}</td></tr>
-           <tr><th>Name:</th><td><a href="{{t.type.get_absolute_url}}">{{t.type.name}}</a></td></tr>
-           <tr><th>Producer:</th><td>{{t.type.producer}}</td></tr>
-           <tr><th>Designer:</th><td>{{t.type.designer}}</td></tr>
-
-           {% if request.user.id = t.holder.id %}
-             <tr><th>Owner:</th><td>{{t.owner}}</td></tr>
-           {% endif %}
-
-           {% if request.user.id = t.owner.id %}
-             <tr><th>Holder</th><td>{{t.holder}}</td></tr>
-           {% endif %}
-
-           {% if request.user.id = t.holder.id %}
-             <tr><th>Requests:</th><td>{{t.requests.count}}</td></tr>
-             {% if request.user.id = t.holder.id and t.request %}
-               <tr><th>First requestor:</th><td>{{t.request.requestor.username}}</td></tr>
-             {% endif %}
-           {% endif %}
-
-           <tr><th>{{t.type.barcode_type}}</th><td>{{t.type.barcode_data}}</td></tr>
-         </table>
-      </div>
-    </div>
+{% block full-content %}
+  <div class='qr-link thing-link'>
+    {% qr_from_text t.get_absolute_url %}
   </div>
+
+  <h1><a href="{{t.type.get_absolute_url}}">{{t.type.name}} by {{t.type.designer}}</a></h1>
+
+  {% if request.user.id = t.owner.id %}
+    <p><i class='glyphicon glyphicon-heart'></i> You own this thing.</p>
+  {% endif %}
+
+  {% if request.user.id = t.holder.id %}
+    <p><i class='glyphicon glyphicon-hand-right'></i> You hold this thing.</p>
+    {% if t.request > 0 %}
+      {% if t.request.sent %}
+         <p class="text-info"><i class='glyphicon glyphicon-globe'></i> This thing has been sent to {{t.request.requestor}}.</p>
+      {% else %}
+         <p class="text-warning"><i class='glyphicon glyphicon-comment'></i> {{t.request.requestor}} is requesting this thing.</p>
+         <a href="{% url 'appomatic_clib.views.thing_send' id=t.id %}">Send</a>
+      {% endif %}
+    {% endif %}
+  {% else %}
+    {% if request.user.is_authenticated %}
+      {% if request.user.id = t.request.requestor.id %}
+        <p class="text-info"><i class='glyphicon glyphicon-time'></i> You are waiting for this thing.</p>
+        {% if t.request.sent %}
+          <a href="{% url 'appomatic_clib.views.thing_receive' id=t.id %}"><i class='glyphicon glyphicon-ok'></i> Mark as received</a>
+        {% endif %}
+      {% else %}
+        <a href="{% url 'appomatic_clib.views.thing_request' id=t.id %}"><i class='glyphicon glyphicon-comment'></i> Request this thing</a>
+      {% endif %}
+    {% endif %}
+  {% endif %}
+
+  <p>{{t.type.description}}</p>
+
+  <table class="table table-bordered small-table">
+    <tr><th>Id:</th><td>{{t.id}}</td></tr>
+    <tr><th>Name:</th><td><a href="{{t.type.get_absolute_url}}">{{t.type.name}}</a></td></tr>
+    <tr><th>Producer:</th><td>{{t.type.producer}}</td></tr>
+    <tr><th>Designer:</th><td>{{t.type.designer}}</td></tr>
+
+    {% if request.user.id = t.holder.id %}
+      <tr><th>Owner:</th><td>{{t.owner}}</td></tr>
+    {% endif %}
+
+    {% if request.user.id = t.owner.id %}
+      <tr><th>Holder</th><td>{{t.holder}}</td></tr>
+    {% endif %}
+
+    {% if request.user.id = t.holder.id %}
+      <tr><th>Requests:</th><td>{{t.requests.count}}</td></tr>
+      {% if request.user.id = t.holder.id and t.request %}
+        <tr><th>First requestor:</th><td>{{t.request.requestor.username}}</td></tr>
+      {% endif %}
+    {% endif %}
+
+    <tr><th>{{t.type.barcode_type}}</th><td>{{t.type.barcode_data}}</td></tr>
+  </table>
 {% endblock %}
