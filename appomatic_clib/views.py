@@ -72,12 +72,14 @@ def thing_request(request, id):
 @django.contrib.auth.decorators.login_required
 def thing_send(request, id):
     t = appomatic_clib.models.Thing.objects.get(id=id)
+    assert t.holder.id == request.user.id
     t.request.send()
     return django.shortcuts.redirect(t)
 
 @django.contrib.auth.decorators.login_required
 def thing_receive(request, id):
     t = appomatic_clib.models.Thing.objects.get(id=id)
+    assert t.request.requestor.id == request.user.id
     t.request.receive()
     return django.shortcuts.redirect(t)
 

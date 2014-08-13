@@ -1,5 +1,5 @@
 body {
-  padding-top: 50px;
+  padding-top: 70px;
 }
 
 .qr-link {
@@ -33,4 +33,8 @@ body {
       margin-top: 5pt;
     }
   }
+}
+
+.inline {
+  display: inline-block;
 }

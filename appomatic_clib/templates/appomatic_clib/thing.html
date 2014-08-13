@@ -5,6 +5,34 @@
     {% qr_from_text t.get_absolute_url %}
   </div>
 
+  {% if request.user.is_authenticated %}
+    {% if request.user.id = t.holder.id %}
+      {% if t.request > 0 %}
+        {% if not t.request.sent %}
+          <div class="alert alert-warning inline" role="alert">
+            <i class='glyphicon glyphicon-comment'></i> {{t.request.requestor}} is requesting this thing.
+            <a class="btn btn-success" href="{% url 'appomatic_clib.views.thing_send' id=t.id %}">Mark as sent</a>
+          </div>
+        {% endif %}
+      {% endif %}
+
+    {% else %}
+
+      {% if request.user.id = t.request.requestor.id %}
+        <div class="alert alert-info inline" role="alert">
+          <i class='glyphicon glyphicon-time'></i> You are waiting for this thing.
+          {% if t.request.sent %}
+            It has been sent.
+            <a class="btn btn-success" href="{% url 'appomatic_clib.views.thing_receive' id=t.id %}"><i class='glyphicon glyphicon-ok'></i> Mark as received</a>
+          {% else %}
+            It has not yet been sent.
+          {% endif %}
+        </div>
+      {% endif %}
+    {% endif %}
+  {% endif %}
+
+
   <h1><a href="{{t.type.get_absolute_url}}">{{t.type.name}} by {{t.type.designer}}</a></h1>
 
   {% if request.user.id = t.owner.id %}
@@ -15,21 +43,13 @@
     <p><i class='glyphicon glyphicon-hand-right'></i> You hold this thing.</p>
     {% if t.request > 0 %}
       {% if t.request.sent %}
-         <p class="text-info"><i class='glyphicon glyphicon-globe'></i> This thing has been sent to {{t.request.requestor}}.</p>
-      {% else %}
-         <p class="text-warning"><i class='glyphicon glyphicon-comment'></i> {{t.request.requestor}} is requesting this thing.</p>
-         <a href="{% url 'appomatic_clib.views.thing_send' id=t.id %}">Send</a>
+         <p><i class='glyphicon glyphicon-globe'></i> This thing has been sent to {{t.request.requestor}}.</p>
       {% endif %}
     {% endif %}
   {% else %}
     {% if request.user.is_authenticated %}
-      {% if request.user.id = t.request.requestor.id %}
-        <p class="text-info"><i class='glyphicon glyphicon-time'></i> You are waiting for this thing.</p>
-        {% if t.request.sent %}
-          <a href="{% url 'appomatic_clib.views.thing_receive' id=t.id %}"><i class='glyphicon glyphicon-ok'></i> Mark as received</a>
-        {% endif %}
-      {% else %}
-        <a href="{% url 'appomatic_clib.views.thing_request' id=t.id %}"><i class='glyphicon glyphicon-comment'></i> Request this thing</a>
+      {% if request.user.id != t.request.requestor.id %}
+        <a class="btn btn-success" href="{% url 'appomatic_clib.views.thing_request' id=t.id %}"><i class='glyphicon glyphicon-comment'></i> Request this thing</a>
       {% endif %}
     {% endif %}
   {% endif %}
