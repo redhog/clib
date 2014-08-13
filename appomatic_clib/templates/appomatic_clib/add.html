@@ -1,0 +1,38 @@
+{% extends "appomatic_clib/base.html" %}
+{% load qr_tags %}
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8">
+        <h1>Add things</h1>
+
+        <p>Use the form below to add things to your library. Enter the
+        number below the barcode (ISBN, part number, etc). You can add
+        multiple things at once by separating their numbers by spaces.</p>
+
+        <form method='POST' action="{% url 'appomatic_clib.views.add' %}" class="form" role="form">
+          {% csrf_token %}
+          <div class="form-group">
+            <textarea name='codes' type="text" placeholder="Enter barcode numbers here..." class="form-control"></textarea>
+          </div>
+          <button type="submit" class="btn btn-success">Add</button>
+        </form>
+      </div>
+      <div class="col-md-4">
+        <p>Tip: If you have an android phone you can add things by
+        scanning their barcodes with
+        our app.</p>
+
+        <p>To install the app, go
+        to <a href='https://play.google.com/store/apps/details?id=se.puggan.gscantool'>https://play.google.com/store/apps/details?id=se.puggan.gscantool</a>
+        in from your Android phone.</p>
+
+        <p>Scan this QR-code with the app and then scan your things:</p>
+
+        <div class='qr-link start-scan-link'>
+          {% qr_from_text start_url %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -26,6 +26,12 @@
         <div class="navbar-collapse collapse">
           {% block navbar-collapse %}
             {% if request.user.is_authenticated %}
+              <ul class="nav navbar-nav navbar-left">
+                <li>
+                  <a href='{% url 'appomatic_clib.views.add' %}'>Add things</a>
+                </li>
+              </ul>
+
               <ul class="nav navbar-nav navbar-right">
                 <li>
                   <a href='{% url 'userena_signout' %}?next={% url 'appomatic_clib.views.index' %}'>Sign out</a>

@@ -9,6 +9,9 @@ import django.views.decorators.csrf
 import django.contrib.auth.decorators
 import appomatic_clib.models
 
+def start_url(request):
+    return django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse(scan_start, kwargs={"user":sign_login(request)})
+
 def login_user(request, user):
     "Log in a user without requiring credentials"
     from django.contrib.auth import load_backend, login
@@ -34,7 +37,7 @@ def index(request):
         request,
         'appomatic_clib/index.html',
         {
-            "start_url": django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse(scan_start, kwargs={"user":sign_login(request)}),
+            "start_url": start_url(request),
             "request": request
         }
     )
@@ -137,6 +140,18 @@ def search(request):
         }
     )
 
+@django.contrib.auth.decorators.login_required
+def add(request):
+    return django.shortcuts.render(
+        request,
+        'appomatic_clib/add.html',
+        {
+            "start_url": start_url(request),
+            "request": request
+        }
+    )
+
+@django.contrib.auth.decorators.login_required
 def labels(request):
     if request.GET.get('done', None):
         for thing in request.user.needs_labels().all():

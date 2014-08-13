@@ -7,8 +7,7 @@
         <div class="col-md-8">
           {% if not request.user.owns.count %}
             <div class="alert alert-info" role="alert">
-              <p>Add some things to your library to get started. Scan the QR-code at the top of the page with the CommonLib phone app and then scan the ISBN barcodes on the backs of your books!</p>
-              <p>To install the app, go to <a href='https://play.google.com/store/apps/details?id=se.puggan.gscantool'>https://play.google.com/store/apps/details?id=se.puggan.gscantool</a> in from your Android phone.</a>
+              <p>Your library is empty. <a href="{% url 'appomatic_clib.views.add' %}">Add some things to your library</a> to get started.</p>
             </div>
           {% endif %}
 
