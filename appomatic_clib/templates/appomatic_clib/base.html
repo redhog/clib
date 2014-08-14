@@ -64,6 +64,12 @@
       </div>
     </div>
 
+    {% if messages %}
+      {% for message in messages %}
+        <div class='alert {% if message.tags %}alert-{{message.tags}}{% else %}alert-info{% endif %}'>{{message}}</div>
+      {% endfor %}
+    {% endif %}
+
     {% block content %}
       <div class="container">
         <div class="row">

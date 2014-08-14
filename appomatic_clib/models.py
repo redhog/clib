@@ -79,9 +79,13 @@ class LendingRequest(django.db.models.Model):
     tracking_barcode_type = django.db.models.CharField(max_length=128, db_index=True)
     tracking_barcode_data = django.db.models.CharField(max_length=512, db_index=True)
 
-    def send(self):
+    def save(self, *arg, **kw):
         if self.id is None:
+            assert self.requestor.profile.available_balance > self.thing.type.price
             self.deposit_payed = self.thing.type.price
+        django.db.models.Model.save(self, *arg, **kw)
+
+    def send(self):
         self.sent = True
         self.save()
 

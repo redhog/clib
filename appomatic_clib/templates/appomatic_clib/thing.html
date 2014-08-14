@@ -49,7 +49,11 @@
   {% else %}
     {% if request.user.is_authenticated %}
       {% if request.user.id != t.request.requestor.id %}
-        <a class="btn btn-success" href="{% url 'appomatic_clib.views.thing_request' id=t.id %}"><i class='glyphicon glyphicon-comment'></i> Request this thing</a>
+        {% if request.user.profile.available_balance >= t.type.price %}
+          <a class="btn btn-success" href="{% url 'appomatic_clib.views.thing_request' id=t.id %}"><i class='glyphicon glyphicon-comment'></i> Request this thing</a>
+        {% else %}
+          <p class='text-danger'>You don't have funds enough for the deposit for this thing. Please send back some other things or transfer more funds.</p>
+        {% endif %}
       {% endif %}
     {% endif %}
   {% endif %}
