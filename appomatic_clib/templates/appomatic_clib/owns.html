@@ -1,0 +1,22 @@
+{% extends "appomatic_clib/base.html" %}
+{% load qr_tags %}
+{% block full-content %}
+  {% if request.user.owns.count %}
+    <div class="panel panel-default">
+      <table class="table">
+        <tr><th>Your things</th><th>by</th><th>held by</th></tr>
+        {% for t in request.user.has.all %}
+          <tr>
+            <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
+            <td><a href='{{t.get_absolute_url}}'>{{t.type.designer}}</a></td>
+            <td><a href='{{t.get_absolute_url}}'>{{t.holder.username}}</a></td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  {% else %}
+     <div class="alert alert-info" role="alert">
+       <p>Your library is empty. <a href="{% url 'appomatic_clib.views.add' %}">Add some things to your library</a> to get started.</p>
+     </div>
+  {% endif %}
+{% endblock %}
