@@ -33,58 +33,85 @@
             </div>
           {% endif %}
 
-          <h1>My balance</h1>
-          <table class="table">
-            <tr><th>Total balance:<th><td>€ {{request.user.profile.balance}}</td></tr>
-            <tr><th>- Deposits for requests:<th><td>€ {{request.user.profile.pending_deposits}}</td></tr>
-            <tr><th>- Deposits for loans:<th><td>€ {{request.user.profile.deposits}}</td></tr>
-            <tr><th>= Available:<th><td>€ {{request.user.profile.available_balance}}</td></tr>
-          </table>
+          <div class="panel panel-default">
+            <table class="table">
+              <tr><th>Total balance:<th><td>€ {{request.user.profile.balance}}</td></tr>
+              <tr><th>- Deposits for requests:<th><td>€ {{request.user.profile.pending_deposits}}</td></tr>
+              <tr><th>- Deposits for loans:<th><td>€ {{request.user.profile.deposits}}</td></tr>
+              <tr><th>= Available:<th><td>€ {{request.user.profile.available_balance}}</td></tr>
+           </table>
+          </div>
+
           {% if request.user.requests.count %}
-            <h1>Please send</h1>
-            <ul>
-              {% for t in request.user.requests.all %}
-                <li>
-                  <a href='{{t.get_absolute_url}}'>
-                    {{t.type.name}} by {{t.type.designer}}
-                  </a>
-                  to {{t.request.requestor}}
-                </li>
-              {% endfor %}
-            </ul>
+            <div class="panel panel-default">
+              <table class="table">
+                <tr><th>Please send</th><th>to user</th></tr>
+                {% for t in request.user.requests.all %}
+                  <tr>
+                    <td>
+                      <a href='{{t.get_absolute_url}}'>
+                        {{t.type.name}} by {{t.type.designer}}
+                      </a>
+                    </td>
+                    <td>{{t.request.requestor}}</td>
+                  </td></tr>
+                {% endfor %}
+              </table>
+            </div>
           {% endif %}
 
           {% if request.user.requesting.count %}
-            <h1>Waiting for</h1>
-            <ul>
-              {% for r in request.user.requesting.all %}
-                <li>
-                  <a href='{{r.thing.get_absolute_url}}'>
-                    {{r.thing.type.name}} by {{r.thing.type.designer}}
-                  </a>
-                  since {{r.time}}
-                  {% if r.sent %}(Sent){% endif %}
-                </li>
-              {% endfor %}
-            </ul>
+            <div class="panel panel-default">
+              <table class="table">
+                <tr><th>Waiting for</th><th>since</th><th>sent</th></tr>
+                {% for r in request.user.requesting.all %}
+                  <tr>
+                    <td>
+                      <a href='{{r.thing.get_absolute_url}}'>
+                        {{r.thing.type.name}} by {{r.thing.type.designer}}
+                      </a>
+                    </td>
+                    <td>
+                      {{r.time}}
+                    </td>
+                    <td>
+                      {% if r.sent %}<i class='glyphicon glyphicon-ok'></i> yes{% endif %}
+                    </td>
+                  </li>
+                {% endfor %}
+              </table>
+            </div>
           {% endif %}
 
           {% if request.user.owns.count %}
-            <h1>My things</h1>
-            <ul>
-              {% for t in request.user.owns.all %}
-                <li><a href='{{t.get_absolute_url}}'>{{t.type.name}} by {{t.type.designer}}</a></li>
-              {% endfor %}
-            </ul>
+            <div class="panel panel-default">
+              <table class="table">
+                <tr><th>My things</th><th>by</th><th>held by</th></tr>
+                {% for t in request.user.owns.all %}
+                  <tr>
+                    <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</a></td>
+                    <td><a href='{{t.get_absolute_url}}'>{{t.type.designer}}</a></td>
+                    <td><a href='{{t.get_absolute_url}}'>{{t.holder.username}}</a></td>
+                  </tr>
+                {% endfor %}
+              </table>
+            </div>
           {% endif %}
 
-          {% if request.user.holds.count %}
-            <h1>Currently holding</h1>
-            <ul>
-              {% for t in request.user.holds.all %}
-                <li><a href='{{t.get_absolute_url}}'>{{t.type.name}} by {{t.type.designer}}</a></li>
-              {% endfor %}
-            </ul>
+          {% if request.user.has.count %}
+            <div class="panel panel-default">
+              <table class="table">
+                <tr><th>Currently holding</th><th>by</th><th>owned by</th></tr>
+                {% for t in request.user.has.all %}
+                  <tr>
+                    <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
+                    <td><a href='{{t.get_absolute_url}}'>{{t.type.designer}}</a></td>
+                    <td><a href='{{t.get_absolute_url}}'>{{t.owner.username}}</a></td>
+                  </tr>
+                {% endfor %}
+              </table>
+            </div>
+
           {% endif %}
         </div>
         <div class="col-md-4">
