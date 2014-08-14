@@ -166,3 +166,24 @@ def labels(request):
             "request": request
         }
     )
+
+
+@django.contrib.auth.decorators.login_required
+def owns(request):
+    return django.shortcuts.render(
+        request,
+        'appomatic_clib/owns.html',
+        {
+            "request": request
+        }
+    )
+
+@django.contrib.auth.decorators.login_required
+def has(request):
+    return django.shortcuts.render(
+        request,
+        'appomatic_clib/has.html',
+        {
+            "request": request
+        }
+    )

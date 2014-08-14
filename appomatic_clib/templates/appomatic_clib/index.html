@@ -17,9 +17,9 @@
             </div>
           {% endif %}
 
-          {% if not request.user.holds.count %}
+          {% if not request.user.has.count %}
             <div class="alert alert-success" role="alert">
-              You haven borrowed anything. Maybe you'd like to search for things to borrow:
+              You haven't borrowed anything. Maybe you'd like to search for things to borrow:
 
               <form action="{% url 'appomatic_clib.views.search' %}" class="form form-inline" role="form">
                 <div class="input-group">
@@ -81,37 +81,6 @@
                 {% endfor %}
               </table>
             </div>
-          {% endif %}
-
-          {% if request.user.owns.count %}
-            <div class="panel panel-default">
-              <table class="table">
-                <tr><th>My things</th><th>by</th><th>held by</th></tr>
-                {% for t in request.user.owns.all %}
-                  <tr>
-                    <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</a></td>
-                    <td><a href='{{t.get_absolute_url}}'>{{t.type.designer}}</a></td>
-                    <td><a href='{{t.get_absolute_url}}'>{{t.holder.username}}</a></td>
-                  </tr>
-                {% endfor %}
-              </table>
-            </div>
-          {% endif %}
-
-          {% if request.user.has.count %}
-            <div class="panel panel-default">
-              <table class="table">
-                <tr><th>Currently holding</th><th>by</th><th>owned by</th></tr>
-                {% for t in request.user.has.all %}
-                  <tr>
-                    <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
-                    <td><a href='{{t.get_absolute_url}}'>{{t.type.designer}}</a></td>
-                    <td><a href='{{t.get_absolute_url}}'>{{t.owner.username}}</a></td>
-                  </tr>
-                {% endfor %}
-              </table>
-            </div>
-
           {% endif %}
         </div>
         <div class="col-md-4">

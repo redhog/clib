@@ -1,10 +1,21 @@
 {% extends "appomatic_clib/base.html" %}
 {% load qr_tags %}
 {% block full-content %}
-  <h1>Things matching '{{query}}'</h1>
-  <ul>
-    {% for t in results %}
-      <li><a href='{{t.get_absolute_url}}'>{{t}}</a></li>
-    {% endfor %}
-  </ul>
+  {% if results.count %}
+    <div class="panel panel-default">
+      <table class="table">
+        <tr><th>Things matching '{{query}}'</th><th>by</th></tr>
+        {% for t in results %}
+          <tr>
+            <td><a href='{{t.get_absolute_url}}'>{{t.name}}</td>
+            <td><a href='{{t.get_absolute_url}}'>{{t.designer}}</a></td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  {% else %}
+     <div class="alert alert-info" role="alert">
+       <p>No things matches your query '{{query}}'.</p>
+     </div>
+  {% endif %}
 {% endblock %}
