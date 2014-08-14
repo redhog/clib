@@ -7,7 +7,7 @@
 
   {% if request.user.is_authenticated %}
     {% if request.user.id = t.holder.id %}
-      {% if t.request > 0 %}
+      {% if t.request %}
         {% if not t.request.sent %}
           <div class="alert alert-warning inline" role="alert">
             <i class='glyphicon glyphicon-comment'></i> {{t.request.requestor}} is requesting this thing.
@@ -41,7 +41,7 @@
 
   {% if request.user.id = t.holder.id %}
     <p><i class='glyphicon glyphicon-hand-right'></i> You hold this thing.</p>
-    {% if t.request > 0 %}
+    {% if t.request %}
       {% if t.request.sent %}
          <p><i class='glyphicon glyphicon-globe'></i> This thing has been sent to {{t.request.requestor}}.</p>
       {% endif %}
@@ -61,6 +61,8 @@
     <tr><th>Name:</th><td><a href="{{t.type.get_absolute_url}}">{{t.type.name}}</a></td></tr>
     <tr><th>Producer:</th><td>{{t.type.producer}}</td></tr>
     <tr><th>Designer:</th><td>{{t.type.designer}}</td></tr>
+    <tr><th>Actual deposit:</th><td>{{t.type.price}}</td></tr>
+    <tr><th>Requested deposit:</th><td>{{t.price}}</td></tr>
 
     {% if request.user.id = t.holder.id %}
       <tr><th>Owner:</th><td>{{t.owner}}</td></tr>

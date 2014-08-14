@@ -13,4 +13,5 @@ urlpatterns = django.conf.urls.patterns('',
     django.conf.urls.url(r'^clib/labels/?$', 'appomatic_clib.views.labels'),
     django.conf.urls.url(r'^clib/(?P<user>.*)/scan/start/?$', 'appomatic_clib.views.scan_start'),
     django.conf.urls.url(r'^clib/(?P<user>.*)/scan/item/?$', 'appomatic_clib.views.scan_item'),
+    django.conf.urls.url(r'^accounts/', django.conf.urls.include('userena.urls'))
 )

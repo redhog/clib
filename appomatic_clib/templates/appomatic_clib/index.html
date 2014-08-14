@@ -33,6 +33,9 @@
             </div>
           {% endif %}
 
+          <h1>My balance</h1>
+          € {{ request.user.profile.balance }}
+
           {% if request.user.requests.count %}
             <h1>Please send</h1>
             <ul>

@@ -3,6 +3,10 @@ import django.contrib.auth.models
 import django.core.urlresolvers
 import django.contrib.sites.models
 import appomatic_clib.isbnlookup
+from django.utils.translation import ugettext as _
+import userena.models
+import django.contrib.auth.models
+import django.db.models
 
 class ThingType(django.db.models.Model):
     barcode_type = django.db.models.CharField(max_length=128, db_index=True)
@@ -26,6 +30,9 @@ class ThingType(django.db.models.Model):
         tt.save()
         return tt
 
+    def price(self):
+        return self.of_this_type.aggregate(django.db.models.Avg('price'))['price__avg']
+
     def __unicode__(self):
         return u"%(name)s: %(barcode_type)s/%(barcode_data)s" % {"name": self.name, "barcode_type": self.barcode_type, "barcode_data": self.barcode_data}
 
@@ -40,6 +47,9 @@ class Thing(django.db.models.Model):
     holder = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="has")
 
     label_printed = django.db.models.BooleanField(default=False)
+
+    deposit_payed = django.db.models.FloatField(default=100.0)
+    price = django.db.models.FloatField(default=100.0)
 
     @property
     def request(self):
@@ -86,3 +96,12 @@ django.contrib.auth.models.User.needs_labels = needs_labels
 def requests(self):
     return self.has.filter(requests__sent = False)
 django.contrib.auth.models.User.requests = requests
+
+class Profile(userena.models.UserenaBaseProfile):
+    user = django.db.models.OneToOneField(
+        django.contrib.auth.models.User,
+        unique=True,
+        verbose_name=_('user'),
+        related_name='profile')
+
+    balance = django.db.models.FloatField(default=0.0)

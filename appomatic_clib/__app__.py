@@ -1,1 +1,6 @@
-INSTALLED_APPS += ['qrcode']
+INSTALLED_APPS += [
+    "qrcode",
+    "userena",
+    "guardian",
+    "easy_thumbnails"
+]
