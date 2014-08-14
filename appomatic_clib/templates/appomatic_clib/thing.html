@@ -61,13 +61,20 @@
     <tr><th>Name:</th><td><a href="{{t.type.get_absolute_url}}">{{t.type.name}}</a></td></tr>
     <tr><th>Producer:</th><td>{{t.type.producer}}</td></tr>
     <tr><th>Designer:</th><td>{{t.type.designer}}</td></tr>
-    <tr><th>Actual deposit:</th><td>{{t.type.price}}</td></tr>
-    <tr><th>Requested deposit:</th><td>{{t.price}}</td></tr>
+
+    {% if request.user.id = t.owner.id %}
+      <tr><th>Requested deposit:</th><td>{{t.price}}</td></tr>
+    {% else %}
+      {% if request.user.id = t.holder.id %}
+        <tr><th>Deposit payed:</th><td>{{t.deposit_payed}}</td></tr>
+      {% else %}
+        <tr><th>Deposit required:</th><td>{{t.type.price}}</td></tr>
+      {% endif %}
+    {% endif %}
 
     {% if request.user.id = t.holder.id %}
       <tr><th>Owner:</th><td>{{t.owner}}</td></tr>
     {% endif %}
-
     {% if request.user.id = t.owner.id %}
       <tr><th>Holder</th><td>{{t.holder}}</td></tr>
     {% endif %}

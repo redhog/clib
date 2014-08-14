@@ -34,8 +34,12 @@
           {% endif %}
 
           <h1>My balance</h1>
-          € {{ request.user.profile.balance }}
-
+          <table class="table">
+            <tr><th>Total balance:<th><td>€ {{request.user.profile.balance}}</td></tr>
+            <tr><th>- Deposits for requests:<th><td>€ {{request.user.profile.pending_deposits}}</td></tr>
+            <tr><th>- Deposits for loans:<th><td>€ {{request.user.profile.deposits}}</td></tr>
+            <tr><th>= Available:<th><td>€ {{request.user.profile.available_balance}}</td></tr>
+          </table>
           {% if request.user.requests.count %}
             <h1>Please send</h1>
             <ul>

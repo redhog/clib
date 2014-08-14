@@ -30,6 +30,7 @@ class ThingType(django.db.models.Model):
         tt.save()
         return tt
 
+    @property
     def price(self):
         return self.of_this_type.aggregate(django.db.models.Avg('price'))['price__avg']
 
@@ -48,7 +49,7 @@ class Thing(django.db.models.Model):
 
     label_printed = django.db.models.BooleanField(default=False)
 
-    deposit_payed = django.db.models.FloatField(default=100.0)
+    deposit_payed = django.db.models.FloatField(default=0.0)
     price = django.db.models.FloatField(default=100.0)
 
     @property
@@ -73,16 +74,20 @@ class LendingRequest(django.db.models.Model):
     requestor = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="requesting")
     time = django.db.models.DateTimeField(auto_now_add=True)
 
+    deposit_payed = django.db.models.FloatField(default=100.0)
     sent = django.db.models.BooleanField(default=False)
     tracking_barcode_type = django.db.models.CharField(max_length=128, db_index=True)
     tracking_barcode_data = django.db.models.CharField(max_length=512, db_index=True)
 
     def send(self):
+        if self.id is None:
+            self.deposit_payed = self.thing.type.price
         self.sent = True
         self.save()
 
     def receive(self):
         self.thing.holder = self.requestor
+        self.thing.deposit_payed = self.deposit_payed
         self.thing.save()
         self.delete()
 
@@ -105,3 +110,15 @@ class Profile(userena.models.UserenaBaseProfile):
         related_name='profile')
 
     balance = django.db.models.FloatField(default=0.0)
+
+    @property
+    def pending_deposits(self):
+        return self.user.requesting.aggregate(django.db.models.Sum('deposit_payed'))['deposit_payed__sum']
+
+    @property
+    def deposits(self):
+        return self.user.has.aggregate(django.db.models.Sum('deposit_payed'))['deposit_payed__sum']
+
+    @property
+    def available_balance(self):
+        return self.balance - self.pending_deposits - self.deposits
