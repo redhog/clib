@@ -8,6 +8,7 @@ from django.utils.translation import ugettext as _
 import userena.models
 import django.contrib.auth.models
 import django.db.models
+import fcdjangoutils.middleware
 
 class ThingType(django.db.models.Model):
     barcode_type = django.db.models.CharField(max_length=128, db_index=True)
@@ -50,8 +51,17 @@ class Thing(django.db.models.Model):
 
     label_printed = django.db.models.BooleanField(default=False)
 
+    lent_until = django.db.models.DateField(null=True, blank=True)
     deposit_payed = django.db.models.FloatField(default=0.0)
     price = django.db.models.FloatField(default=100.0)
+
+    def distance(self):
+        user = fcdjangoutils.middleware.get_request().user.profile.location
+        holder = self.holder.profile.location
+        if not user or not holder:
+            return ''
+        return user.position.distance(
+            holder.position)
 
     @property
     def request(self):

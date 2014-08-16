@@ -4,3 +4,7 @@ INSTALLED_APPS += [
     "guardian",
     "easy_thumbnails"
 ]
+
+MIDDLEWARE_CLASSES = [
+    "fcdjangoutils.middleware.GlobalRequestMiddleware"
+]

@@ -90,6 +90,9 @@
       {% endif %}
     {% endif %}
 
+    <tr><th>Available (earliest):</td><td>{{t.lent_until}}</td></tr>
+    <tr><th>Distance:</th><td>{{t.distance}}</td></tr>
+
     <tr><th>{{t.type.barcode_type}}</th><td>{{t.type.barcode_data}}</td></tr>
   </table>
 {% endblock %}

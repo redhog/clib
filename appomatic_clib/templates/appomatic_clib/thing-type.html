@@ -17,10 +17,18 @@
     <tr><th>{{tt.barcode_type}}</th><td>{{tt.barcode_data}}</td></tr>
   </table>
 
-  <h2>Things</h2>
-  <ul>
-    {% for t in tt.of_this_type.all %}
-      <li><a href='{{t.get_absolute_url}}'>{{t}}</a></li>
-    {% endfor %}
-  </ul>
+
+  <div class="panel panel-default">
+    <table class="table">
+      <tr><th>Thing</th><th>requests</th><th>available (earliest)</th><th>distance</th></tr>
+      {% for t in tt.of_this_type.all %}
+        <tr>
+          <td><a href='{{t.get_absolute_url}}'>{{t.id}}</td>
+          <td><a href='{{t.get_absolute_url}}'>{{t.requests.count}}</a></td>
+          <td><a href='{{t.get_absolute_url}}'>{{t.lent_until}}</a></td>
+          <td><a href='{{t.get_absolute_url}}'>{{t.distance}}</a></td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
 {% endblock %}
