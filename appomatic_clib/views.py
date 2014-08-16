@@ -119,7 +119,10 @@ def scan_item(request, user):
         else:
             print "How on earth did this user get the QR-code??"
     else:
-        tt = appomatic_clib.models.ThingType.get(request.GET['type'], request.GET['data'])
+        data = dict(request.GET.iteritems())
+        data['barcode_type'] = data.pop('type')
+        data['barcode_data'] = data.pop('data')
+        tt = appomatic_clib.models.ThingType.get(**data)
         t = appomatic_clib.models.Thing(type=tt, owner=request.user, holder=request.user)
         t.save()
 

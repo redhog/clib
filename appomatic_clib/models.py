@@ -23,11 +23,11 @@ class ThingType(django.db.models.Model):
         django.db.models.Model.save(self, *arg, **kw)
 
     @classmethod
-    def get(cls, barcode_type, barcode_data):
+    def get(cls, barcode_type, barcode_data, **kw):
         existing = cls.objects.filter(barcode_type=barcode_type, barcode_data=barcode_data)
         if existing:
             return existing[0]
-        tt = cls(barcode_type=barcode_type, barcode_data=barcode_data)
+        tt = cls(barcode_type=barcode_type, barcode_data=barcode_data, **kw)
         tt.save()
         return tt
 
@@ -128,7 +128,7 @@ class Profile(userena.models.UserenaBaseProfile):
         verbose_name=_('user'),
         related_name='profile')
 
-    location = django.db.models.ForeignKey(Location, related_name="lives_here")
+    location = django.db.models.ForeignKey(Location, related_name="lives_here", null=True, blank=True)
     balance = django.db.models.FloatField(default=0.0)
 
     @property
