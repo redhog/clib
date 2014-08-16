@@ -9,7 +9,7 @@
           <tr>
             <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
             <td><a href='{{t.get_absolute_url}}'>{{t.type.designer}}</a></td>
-            <td><a href='{{t.get_absolute_url}}'>{{t.holder.username}}</a></td>
+            <td><a href='{{t.holder.profile.get_absolute_url}}'>{{t.holder.username}}</a></td>
           </tr>
         {% endfor %}
       </table>

@@ -143,5 +143,6 @@ class Profile(userena.models.UserenaBaseProfile):
     def available_balance(self):
         return self.balance - self.pending_deposits - self.deposits
 
-
+    def get_absolute_url(self):
+        return django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse("userena_profile_detail", kwargs={'username': self.user.username})
 
