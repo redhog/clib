@@ -1,4 +1,5 @@
 import django.db.models
+import django.contrib.gis.db.models
 import django.contrib.auth.models
 import django.core.urlresolvers
 import django.contrib.sites.models
@@ -106,6 +107,20 @@ def requests(self):
     return self.has.filter(requests__sent = False)
 django.contrib.auth.models.User.requests = requests
 
+class Area(django.contrib.gis.db.models.Model):
+    objects = django.contrib.gis.db.models.GeoManager()
+
+    name = django.db.models.CharField(default='', max_length=256, db_index=True)
+    shape = django.contrib.gis.db.models.PolygonField(geography=True)
+    parent = django.db.models.ForeignKey("Area", related_name="children")
+
+class Location(django.contrib.gis.db.models.Model):
+    objects = django.contrib.gis.db.models.GeoManager()
+
+    position = django.contrib.gis.db.models.PointField(geography=True)
+    area = django.db.models.ForeignKey(Area, related_name="locations")
+    address = django.db.models.TextField(default='')
+
 class Profile(userena.models.UserenaBaseProfile):
     user = django.db.models.OneToOneField(
         django.contrib.auth.models.User,
@@ -113,6 +128,7 @@ class Profile(userena.models.UserenaBaseProfile):
         verbose_name=_('user'),
         related_name='profile')
 
+    location = django.db.models.ForeignKey(Location, related_name="lives_here")
     balance = django.db.models.FloatField(default=0.0)
 
     @property
@@ -126,3 +142,6 @@ class Profile(userena.models.UserenaBaseProfile):
     @property
     def available_balance(self):
         return self.balance - self.pending_deposits - self.deposits
+
+
+
