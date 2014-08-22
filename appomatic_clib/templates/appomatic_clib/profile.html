@@ -1,18 +1,88 @@
-{% extends "appomatic_clib/base.html" %}
+{% extends 'userena/profile_base.html' %}
+{% load url from future %}
 {% load qr_tags %}
+{% load bootstrap %}
+{% load i18n %}
+
+{% block title %}{% trans "Account setup" %}{% endblock %}
 
 {% block media %}
   {{block.super}}
   {{form.location.media}}
 {% endblock %}
 
-{% block full-content %}
-  <form action='{% url 'appomatic_clib.views_profile.profile' %}' method='post' role="form">
+{% block content %}
+  <form enctype="multipart/form-data" action='{% url 'appomatic_clib.views_profile.edit' username=request.user.username %}' method='post' role="form">
     {% csrf_token %}
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          {{form.non_field_errors}}
+          {{form.profile.non_field_errors}}
+          {{form.location.non_field_errors}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            {{form.first_name.errors }}
+            {{form.first_name.label_tag}}
+            {{form.first_name|formControl}}
+          </div>
+          <div class="form-group">
+            {{form.last_name.errors }}
+            {{form.last_name.label_tag}}
+            {{form.last_name|formControl}}
+          </div>
 
-{{form.as_p}}
-{{form.location.as_p}}
+          <div class="form-group">
+            {{form.profile.mugshot.errors }}
+            {{form.profile.mugshot.label_tag}}
+            <div class="fluid-container">
+              <div class="row">
+                <div class="col-md-2">
+                  <img class="mugshot" src="{{request.user.profile.get_mugshot_url}}" alt="{% trans "Your mugshot" %}" />
+                </div>
+                <div class="col-md-10">
+                  <style>
+                    #id_position_div_map {
+                      float: none !important;
+                    }
+                    #id_position_map {
+                      width: 100% !important;
+                    }
+                  </style>
+                  {{form.profile.mugshot|formControl}}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            {{form.profile.privacy.errors }}
+            {{form.profile.privacy.label_tag}}
+            {{form.profile.privacy|formControl}}
+          </div>
 
-    <input type='submit' value='Save' class='btn btn-success' />
+          <div class="form-group">
+            {{form.location.address.errors }}
+            {{form.location.address.label_tag}}
+            {{form.location.address|formControl}}
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            {{form.location.position.errors }}
+            {{form.location.position.label_tag}}
+            {{form.location.position|formControl}}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <input type='submit' value='Save' class='btn btn-success' />
+        </div>
+      </div>
+    </div>
   </form>
 {% endblock %}
