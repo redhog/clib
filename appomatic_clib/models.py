@@ -40,7 +40,7 @@ class ThingType(django.db.models.Model):
         return u"%(name)s: %(barcode_type)s/%(barcode_data)s" % {"name": self.name, "barcode_type": self.barcode_type, "barcode_data": self.barcode_data}
 
     def get_absolute_url(self):
-        return django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse("appomatic_clib.views.thing_type", kwargs={'id': self.id})
+        return 'http://' + django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse("appomatic_clib.views.thing_type", kwargs={'id': self.id})
 
 
 class Thing(django.db.models.Model):
@@ -78,7 +78,7 @@ class Thing(django.db.models.Model):
         return u"%(type)s: %(id)s owned by %(owner)s" % {"type": self.type, "id": self.id, "owner": self.owner}
 
     def get_absolute_url(self):
-        return django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse("appomatic_clib.views.thing", kwargs={'id': self.id})
+        return 'http://' + django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse("appomatic_clib.views.thing", kwargs={'id': self.id})
 
 class LendingRequest(django.db.models.Model):
     thing = django.db.models.ForeignKey(Thing, related_name="requests")
@@ -156,5 +156,5 @@ class Profile(userena.models.UserenaBaseProfile):
         return self.balance - self.pending_deposits - self.deposits
 
     def get_absolute_url(self):
-        return django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse("userena_profile_detail", kwargs={'username': self.user.username})
+        return 'http://' + django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse("userena_profile_detail", kwargs={'username': self.user.username})
 
