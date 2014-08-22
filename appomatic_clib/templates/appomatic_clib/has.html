@@ -4,9 +4,10 @@
   {% if request.user.has.count %}
     <div class="panel panel-default">
       <table class="table">
-        <tr><th>Currently holding</th><th>by</th><th>owned by</th></tr>
+        <tr><th colspan="2">Currently holding</th><th>by</th><th>owned by</th></tr>
         {% for t in request.user.has.all %}
           <tr>
+            <td><a href='{{t.get_absolute_url}}'>{{t.type.barcode_type}}:{{t.type.barcode_data}}</td>
             <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
             <td><a href='{{t.get_absolute_url}}'>{{t.type.designer}}</a></td>
             <td><a href='{{t.owner.profile.get_absolute_url}}'>{{t.owner.username}}</a></td>

@@ -145,6 +145,16 @@ def search(request):
 
 @django.contrib.auth.decorators.login_required
 def add(request):
+    if request.method == 'POST':
+        type = request.POST['type']
+        for code in request.POST['codes'].split(" "):
+            data = {
+                'barcode_type': type,
+                'barcode_data': code
+                }
+            tt = appomatic_clib.models.ThingType.get(**data)
+            t = appomatic_clib.models.Thing(type=tt, owner=request.user, holder=request.user)
+            t.save()
     return django.shortcuts.render(
         request,
         'appomatic_clib/add.html',
