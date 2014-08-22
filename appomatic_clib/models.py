@@ -122,16 +122,18 @@ class Area(django.contrib.gis.db.models.Model):
 
     name = django.db.models.CharField(default='', max_length=256, db_index=True)
     shape = django.contrib.gis.db.models.PolygonField(geography=True)
-    parent = django.db.models.ForeignKey("Area", related_name="children")
+    parent = django.db.models.ForeignKey("Area", related_name="children", null=True, blank=True)
 
 class Location(django.contrib.gis.db.models.Model):
     objects = django.contrib.gis.db.models.GeoManager()
 
     position = django.contrib.gis.db.models.PointField(geography=True)
-    area = django.db.models.ForeignKey(Area, related_name="locations")
-    address = django.db.models.TextField(default='')
+    area = django.db.models.ForeignKey(Area, related_name="locations", null=True, blank=True)
+    address = django.db.models.TextField(default='', blank=True)
 
 class Profile(userena.models.UserenaBaseProfile):
+    objects = django.contrib.gis.db.models.GeoManager()
+
     user = django.db.models.OneToOneField(
         django.contrib.auth.models.User,
         unique=True,

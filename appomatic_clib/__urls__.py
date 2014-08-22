@@ -3,6 +3,7 @@ import django.views.generic
 
 urlpatterns = django.conf.urls.patterns('',
     django.conf.urls.url(r'^clib/?$', 'appomatic_clib.views.index'),
+    django.conf.urls.url(r'^clib/profile/?$', 'appomatic_clib.views_profile.profile'),
     django.conf.urls.url(r'^clib/thing/(?P<id>.*)/request/?$', 'appomatic_clib.views.thing_request'),
     django.conf.urls.url(r'^clib/thing/(?P<id>.*)/send/?$', 'appomatic_clib.views.thing_send'),
     django.conf.urls.url(r'^clib/thing/(?P<id>.*)/receive/?$', 'appomatic_clib.views.thing_receive'),

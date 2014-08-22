@@ -2,12 +2,14 @@
 <html>
   <head>
     <title>{% block title %}CommonLibrary{% endblock %}</title>
-    <link rel="stylesheet/less" type="text/css" href="{{STATIC_URL}}/appomatic_clib/style.css" />
-    <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}/bootstrap-3.2.0-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}/bootstrap-3.2.0-dist/css/bootstrap-theme.min.css">
-    <script src='{{STATIC_URL}}/jquery-1.11.1.min.js'></script>
-    <script src='{{STATIC_URL}}/bootstrap-3.2.0-dist/js/bootstrap.js'></script>
-    <script src='{{STATIC_URL}}/less-1.6.2.min.js'></script>
+    {% block media %}
+      <link rel="stylesheet/less" type="text/css" href="{{STATIC_URL}}/appomatic_clib/style.css" />
+      <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}/bootstrap-3.2.0-dist/css/bootstrap.min.css">
+      <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}/bootstrap-3.2.0-dist/css/bootstrap-theme.min.css">
+      <script src='{{STATIC_URL}}/jquery-1.11.1.min.js'></script>
+      <script src='{{STATIC_URL}}/bootstrap-3.2.0-dist/js/bootstrap.js'></script>
+      <script src='{{STATIC_URL}}/less-1.6.2.min.js'></script>
+    {% endblock %}
   </head>
   <body>
 
