@@ -35,10 +35,13 @@
 
           <div class="panel panel-default">
             <table class="table">
-              <tr><th>Total balance:<th><td>€ {{request.user.profile.balance}}</td></tr>
-              <tr><th>- Deposits for requests:<th><td>€ {{request.user.profile.pending_deposits}}</td></tr>
-              <tr><th>- Deposits for loans:<th><td>€ {{request.user.profile.deposits}}</td></tr>
-              <tr><th>= Available:<th><td>€ {{request.user.profile.available_balance}}</td></tr>
+              <tr><th>+ Added funds:<th><td class='text-success'>€ {{request.user.profile.credit}}</td></tr>
+              <tr><th>- Used funds:<th><td class='text-danger'>€ {{request.user.profile.debit}}</td></tr>
+              <tr><th>&nbsp; Deposits from others for requests:<th><td>(€ {{request.user.profile.tentative_credit}})</td></tr>
+              <tr><th>+ Deposits from others for loans:<th><td class='text-success'>€ {{request.user.profile.pending_credit}}</td></tr>
+              <tr><th>- Deposits for requests:<th><td class='text-danger'>€ {{request.user.profile.tentative_debit}}</td></tr>
+              <tr><th>- Deposits for loans:<th><td class='text-danger'>€ {{request.user.profile.pending_debit}}</td></tr>
+              <tr><th>= Available:<th><td class="{% if request.user.profile.available_balance >= 0.0 %}bg-success{% else %}bg-danger{% endif %}">€ {{request.user.profile.available_balance}}</td></tr>
            </table>
           </div>
 

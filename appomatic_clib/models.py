@@ -10,6 +10,26 @@ import django.contrib.auth.models
 import django.db.models
 import fcdjangoutils.middleware
 
+class Transaction(django.db.models.Model):
+    time = django.db.models.DateField(auto_now_add=True)
+    amount = django.db.models.FloatField(default=0.0)
+    pending = django.db.models.BooleanField(default=False)
+    tentative = django.db.models.BooleanField(default=True)
+    src = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="debit", null=True, blank=True)
+    dst = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="credit", null=True, blank=True)
+    external_type = django.db.models.CharField(max_length=128, db_index=True, null=True, blank=True)
+    external_data = django.db.models.TextField(null=True, blank=True)
+    log = django.db.models.TextField(null=True, blank=True)
+
+    def __unicode__(self):
+        data = {
+            "time": self.time,
+            "src": self.src or ("%s: %s" % (self.external_type, self.external_data)),
+            "dst": self.dst or ("%s: %s" % (self.external_type, self.external_data)),
+            "amount": self.amount
+            }
+        return "%(time)s: %(src)s -> %(dst)s: %(amount)s" % data
+
 class ThingType(django.db.models.Model):
     barcode_type = django.db.models.CharField(max_length=128, db_index=True)
     barcode_data = django.db.models.CharField(max_length=512, db_index=True)
@@ -52,7 +72,7 @@ class Thing(django.db.models.Model):
     label_printed = django.db.models.BooleanField(default=False)
 
     lent_until = django.db.models.DateField(null=True, blank=True)
-    deposit_payed = django.db.models.FloatField(default=0.0)
+    deposit_payed =  django.db.models.ForeignKey(Transaction, null=True, blank=True)
     price = django.db.models.FloatField(default=100.0)
 
     def distance(self):
@@ -85,15 +105,20 @@ class LendingRequest(django.db.models.Model):
     requestor = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="requesting")
     time = django.db.models.DateTimeField(auto_now_add=True)
 
-    deposit_payed = django.db.models.FloatField(default=100.0)
+    deposit_payed = django.db.models.ForeignKey(Transaction, null=True, blank=True)
     sent = django.db.models.BooleanField(default=False)
     tracking_barcode_type = django.db.models.CharField(max_length=128, db_index=True)
     tracking_barcode_data = django.db.models.CharField(max_length=512, db_index=True)
 
     def save(self, *arg, **kw):
         if self.id is None:
-            assert self.requestor.profile.available_balance > self.thing.type.price
-            self.deposit_payed = self.thing.type.price
+            assert self.requestor.profile.available_balance > self.thing.type.price            
+            self.deposit_payed = Transaction(
+                    amount = self.thing.type.price,
+                    src = self.requestor,
+                    dst = self.thing.owner,
+                    log = unicode(self) + "\n")
+            self.deposit_payed.save()
         django.db.models.Model.save(self, *arg, **kw)
 
     def send(self):
@@ -102,7 +127,12 @@ class LendingRequest(django.db.models.Model):
 
     def receive(self):
         self.thing.holder = self.requestor
+        if self.thing.deposit_payed:
+            self.thing.deposit_payed.delete()
         self.thing.deposit_payed = self.deposit_payed
+        self.thing.deposit_payed.tentative = False
+        self.thing.deposit_payed.pending = True
+        self.thing.deposit_payed.log += unicode(self.thing) + "\n"
         self.thing.save()
         self.delete()
 
@@ -141,19 +171,36 @@ class Profile(userena.models.UserenaBaseProfile):
         related_name='profile')
 
     location = django.db.models.ForeignKey(Location, related_name="lives_here", null=True, blank=True)
-    balance = django.db.models.FloatField(default=0.0)
 
     @property
-    def pending_deposits(self):
-        return self.user.requesting.aggregate(django.db.models.Sum('deposit_payed'))['deposit_payed__sum']
+    def tentative_credit(self):
+        return self.user.credit.filter(tentative=True).aggregate(django.db.models.Sum('amount'))['amount__sum'] or 0.0
 
     @property
-    def deposits(self):
-        return self.user.has.aggregate(django.db.models.Sum('deposit_payed'))['deposit_payed__sum']
+    def pending_credit(self):
+        return self.user.credit.filter(pending=True).aggregate(django.db.models.Sum('amount'))['amount__sum'] or 0.0
+
+    @property
+    def credit(self):
+        return self.user.credit.filter(tentative=False, pending=False).aggregate(django.db.models.Sum('amount'))['amount__sum'] or 0.0
+
+    @property
+    def tentative_debit(self):
+        return self.user.debit.filter(tentative=True).aggregate(django.db.models.Sum('amount'))['amount__sum'] or 0.0
+
+    @property
+    def pending_debit(self):
+        return self.user.debit.filter(pending=True).aggregate(django.db.models.Sum('amount'))['amount__sum'] or 0.0
+
+    @property
+    def debit(self):
+        return self.user.debit.filter(tentative=False, pending=False).aggregate(django.db.models.Sum('amount'))['amount__sum'] or 0.0
 
     @property
     def available_balance(self):
-        return self.balance - self.pending_deposits - self.deposits
+        credit = self.user.credit.filter(tentative=False).aggregate(django.db.models.Sum('amount'))['amount__sum'] or 0.0
+        debit = self.user.debit.aggregate(django.db.models.Sum('amount'))['amount__sum'] or 0.0
+        return credit - debit
 
     def get_absolute_url(self):
         return 'http://' + django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse("userena_profile_detail", kwargs={'username': self.user.username})
