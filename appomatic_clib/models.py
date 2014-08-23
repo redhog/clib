@@ -157,7 +157,7 @@ class Area(django.contrib.gis.db.models.Model):
 class Location(django.contrib.gis.db.models.Model):
     objects = django.contrib.gis.db.models.GeoManager()
 
-    position = django.contrib.gis.db.models.PointField(geography=True)
+    position = django.contrib.gis.db.models.PointField(geography=True, null=True, blank=True)
     area = django.db.models.ForeignKey(Area, related_name="locations", null=True, blank=True)
     address = django.db.models.TextField(default='', blank=True)
 

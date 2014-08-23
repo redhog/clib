@@ -5,6 +5,7 @@ import django.shortcuts
 import django.contrib.gis.forms.fields
 from django.utils.translation import ugettext_lazy as _
 import django.contrib.messages
+import django.contrib.auth.decorators
 
 class UserForm(django.forms.ModelForm):
     # password1 = django.forms.CharField(label="Password", widget=django.forms.PasswordInput, required=False)
@@ -40,6 +41,7 @@ class LocationForm(django.forms.ModelForm):
         model = appomatic_clib.models.Location
         fields = ('address','position')
 
+@django.contrib.auth.decorators.login_required
 def edit(request, username):
     assert username == request.user.username
     if request.method == 'GET':

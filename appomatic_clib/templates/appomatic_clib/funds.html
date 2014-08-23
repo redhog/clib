@@ -1,0 +1,46 @@
+{% extends 'userena/profile_base.html' %}
+{% load url from future %}
+{% load qr_tags %}
+{% load bootstrap %}
+{% load i18n %}
+
+{% block title %}{% trans "Funds" %}{% endblock %}
+
+{% block content %}
+  <form enctype="multipart/form-data" action='{% url 'appomatic_clib.views_funds.funds' %}' method='post' role="form">
+    {% csrf_token %}
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Available funds:
+          <span class="{% if request.user.profile.available_balance >= 0.0 %}bg-success{% else %}bg-danger{% endif %}">€ {{request.user.profile.available_balance}}</span>.
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          {{form.non_field_errors}}
+          {{form.profile.non_field_errors}}
+          {{form.location.non_field_errors}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            {{form.withdraw.errors }}
+            {{form.withdraw.label_tag}}
+            {{form.withdraw|formControl}}
+          </div>
+          <input name='do_withdraw' type='submit' value='Withdraw funds' class='btn btn-success' />
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            {{form.add.errors }}
+            {{form.add.label_tag}}
+            {{form.add|formControl}}
+          </div>
+          <input name='do_add' type='submit' value='Add funds' class='btn btn-success' />
+        </div>
+      </div>
+    </div>
+  </form>
+{% endblock %}
