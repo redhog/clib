@@ -16,6 +16,7 @@ urlpatterns = django.conf.urls.patterns('',
     django.conf.urls.url(r'^clib/owns/?$', 'appomatic_clib.views.owns'),
     django.conf.urls.url(r'^clib/has/?$', 'appomatic_clib.views.has'),
 
+    django.conf.urls.url(r'^clib/funds/add/paypal/return/?$', 'appomatic_clib.views_funds.paypal_add_return'),
     django.conf.urls.url(r'^clib/funds/?$', 'appomatic_clib.views_funds.funds'),
 
     django.conf.urls.url(r'^clib/(?P<user>.*)/scan/start/?$', 'appomatic_clib.views.scan_start'),

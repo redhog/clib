@@ -10,7 +10,7 @@ import django.contrib.auth.decorators
 import appomatic_clib.models
 
 def start_url(request):
-    return django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse(scan_start, kwargs={"user":sign_login(request)})
+    return 'http://' + django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse(scan_start, kwargs={"user":sign_login(request)})
 
 def login_user(request, user):
     "Log in a user without requiring credentials"
@@ -93,7 +93,7 @@ def scan_start(request, user):
     print "START SCAN:", request.user.username
     return {
         "name": "CommonLibrary",
-        "url": django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse(scan_item, kwargs={"user":user}),
+        "url": 'http://' + django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse(scan_item, kwargs={"user":user}),
         "type": "get",
         "text": "Please scan the ISBN labels of any books to add or the QR code of any books to check in/out."
         }
