@@ -21,11 +21,27 @@ class Transaction(django.db.models.Model):
     external_data = django.db.models.TextField(null=True, blank=True)
     log = django.db.models.TextField(null=True, blank=True)
 
+    @property
+    def source(self):
+       if self.src:
+           return self.src.email
+       res = self.external_type
+       if self.external_data: res += ": " + self.external_data
+       return res
+
+    @property
+    def destination(self):
+       if self.dst:
+           return self.dst.email
+       res = self.external_type
+       if self.external_data: res += ": " + self.external_data
+       return res
+
     def __unicode__(self):
         data = {
             "time": self.time,
-            "src": self.src or ("%s: %s" % (self.external_type, self.external_data)),
-            "dst": self.dst or ("%s: %s" % (self.external_type, self.external_data)),
+            "src": self.source,
+            "dst": self.destination,
             "amount": self.amount
             }
         return "%(time)s: %(src)s -> %(dst)s: %(amount)s" % data
@@ -205,3 +221,6 @@ class Profile(userena.models.UserenaBaseProfile):
     def get_absolute_url(self):
         return 'http://' + django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse("userena_profile_detail", kwargs={'username': self.user.username})
 
+    @property
+    def transaction_history(self):
+        return Transaction.objects.filter(django.db.models.Q(src=self.user)|django.db.models.Q(dst=self.user)).order_by('-time')

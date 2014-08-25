@@ -12,12 +12,6 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          Available funds:
-          <span class="{% if request.user.profile.available_balance >= 0.0 %}bg-success{% else %}bg-danger{% endif %}">€ {{request.user.profile.available_balance}}</span>.
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
           {{form.non_field_errors}}
           {{form.profile.non_field_errors}}
           {{form.location.non_field_errors}}
@@ -41,6 +35,42 @@
           <input name='do_add' type='submit' value='Add funds' class='btn btn-success' />
         </div>
       </div>
+      <div class="row">
+        <div class="col-md-12">
+          <h1>Balance overview</h1>
+          {% include "appomatic_clib/funds_overview.html" %}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <h1>Transaction history</h1>
+          {% if request.user.profile.transaction_history.count %}
+            <div class="panel panel-default">
+              <table class="table">
+                <tr><th>Time</th><th>Amount</th><th>From</th><th>To</th><th>Status</th></tr>
+                {% for t in request.user.profile.transaction_history.all %}
+                  <tr>
+                    <td>{{t.time}}</td>
+                    <td>{{t.amount}}</td>
+                    <td>{% if t.src != request.user %}{{t.source}}{% endif %}</td>
+                    <td>{% if t.dst != request.user %}{{t.destination}}{% endif %}</td>
+                    <td>
+                      {% if t.pending %}PENDING{% endif %}
+                      {% if t.tentative %}TENTATIVE{% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </table>
+            </div>
+          {% else %}
+             <div class="alert alert-info" role="alert">
+               <p>Your transaction history empty.</p>
+             </div>
+          {% endif %}
+        </div>
+      </div>
     </div>
   </form>
+
+
 {% endblock %}
