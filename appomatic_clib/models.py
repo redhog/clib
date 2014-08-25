@@ -9,6 +9,7 @@ import userena.models
 import django.contrib.auth.models
 import django.db.models
 import fcdjangoutils.middleware
+import uuid
 
 class Transaction(django.db.models.Model):
     time = django.db.models.DateField(auto_now_add=True)
@@ -80,6 +81,8 @@ class ThingType(django.db.models.Model):
 
 
 class Thing(django.db.models.Model):
+    id = django.db.models.CharField(max_length=128, primary_key=True)
+
     type = django.db.models.ForeignKey(ThingType, related_name='of_this_type')
 
     owner = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="owns")
@@ -106,6 +109,8 @@ class Thing(django.db.models.Model):
         return self.requests.order_by('time')[0]
 
     def save(self, *arg, **kw):
+        if not self.id:
+            self.id = str(uuid.uuid4())
         if self.holder is None:
             self.holder = self.owner
         django.db.models.Model.save(self, *arg, **kw)
