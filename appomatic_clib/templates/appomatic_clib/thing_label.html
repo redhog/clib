@@ -1,0 +1,24 @@
+{% load qr_tags %}
+<div class='thing-label'>
+  <div class="header">
+    {{t.type.name}}
+    <span class="owner">{{t.owner.first_name}} {{t.owner.last_name}}</span>
+  </div>
+  <div class="body">
+    {% qr_from_text t.get_absolute_url %}
+    <div class='text'>
+      <div class='owner'>Owner:
+        <div class='email'>{{t.owner.email}}</div>
+        <div class='owner-url'>{{t.owner.profile.get_absolute_url}}</div>
+        <div class='owner-name'>{{t.owner.first_name}} {{t.owner.last_name}}</div>
+        <div class='address'>{{t.owner.profile.location.address|linebreaks}}</div>
+      </div>
+      <div class='about'>
+        This thing is part of the CommonLib library.
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <a href="{{t.get_absolute_url}}">{{t.get_absolute_url}}</a>
+  </div>
+</div>

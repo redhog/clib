@@ -94,7 +94,7 @@ class Thing(django.db.models.Model):
     def distance(self):
         user = fcdjangoutils.middleware.get_request().user.profile.location
         holder = self.holder.profile.location
-        if not user or not holder:
+        if not user or not holder or not user.position:
             return ''
         return user.position.distance(
             holder.position)

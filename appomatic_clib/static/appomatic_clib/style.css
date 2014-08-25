@@ -1,3 +1,10 @@
+.rounded-corners(@radius) {
+  -moz-border-radius: @radius;
+  -webkit-border-radius: @radius;
+  -khtml-border-radius: @radius;
+  border-radius: @radius;
+}
+
 body {
   padding-top: 70px;
 }
@@ -14,27 +21,53 @@ body {
 
 .thing-label {
   border: 4pt solid black;
+  .rounded-corners(10pt);
   margin: 10pt;
-  vertical-align: top;
   float: left;
-  img {
-    display: inline-block;
+
+  a, a:hover, a:visited {
+    color: inherit;
   }
-  .text {
-    display: inline-block;
-    vertical-align: top;
-    padding-top: 16pt;
-    padding-right: 16pt;
-    padding-bottom: 16pt;
-    .name {
-      font-size: 14pt;
-    }
+
+  .header, .footer {
+    background: #000000;
+    color: #ffffff;
+    padding: 4pt;
+  }
+  .header {
+    font-size: 14pt;
     .owner {
-      margin-top: 5pt;
+      float: right;
+    }
+  }
+  .footer {
+    font-size: 10pt;
+  }
+  .body {
+    background: #ffffff;
+    color: #000000;
+    display: table;
+    vertical-align: top;
+    img {
+      display: table-cell;
+    }
+    .text {
+      display: table-cell;
+      vertical-align: top;
+      padding-top: 16pt;
+      padding-right: 16pt;
+      padding-bottom: 16pt;
+      .name {
+      }
+      .owner {
+        margin-top: 5pt;
+      }
+      .about {
+        margin-top: 5pt;
+      }
     }
   }
 }
-
 .inline {
   display: inline-block;
 }

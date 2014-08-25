@@ -7,14 +7,6 @@
   </form>
 
   {% for t in request.user.needs_labels.all %}
-    <div class='thing-label'>
-      {% qr_from_text t.get_absolute_url %}
-      <div class='text'>
-        <div class='name'>{{t.type.name}}</div>
-        <div class='url'>{{t.get_absolute_url}}</div>
-        <div class='owner'>Owner: {{t.owner}}</div>
-        <div class='owner-url'>{{t.owner.get_absolute_url}}</div>
-      </div>
-    </div>
+    {% include "appomatic_clib/thing_label.html" %}
   {% endfor %}
 {% endblock %}

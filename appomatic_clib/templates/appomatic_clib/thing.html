@@ -1,98 +1,105 @@
 {% extends "appomatic_clib/base.html" %}
 {% load qr_tags %}
-{% block full-content %}
-  <div class='qr-link thing-link'>
-    {% qr_from_text t.get_absolute_url %}
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+
+        {% if request.user.is_authenticated %}
+          {% if request.user.id = t.holder.id %}
+            {% if t.request %}
+              {% if not t.request.sent %}
+                <div class="alert alert-warning inline" role="alert">
+                  <i class='glyphicon glyphicon-comment'></i> {{t.request.requestor}} is requesting this thing.
+                  <a class="btn btn-success" href="{% url 'appomatic_clib.views.thing_send' id=t.id %}">Mark as sent</a>
+                </div>
+              {% endif %}
+            {% endif %}
+
+          {% else %}
+
+            {% if request.user.id = t.request.requestor.id %}
+              <div class="alert alert-info inline" role="alert">
+                <i class='glyphicon glyphicon-time'></i> You are waiting for this thing.
+                {% if t.request.sent %}
+                  It has been sent.
+                  <a class="btn btn-success" href="{% url 'appomatic_clib.views.thing_receive' id=t.id %}"><i class='glyphicon glyphicon-ok'></i> Mark as received</a>
+                {% else %}
+                  It has not yet been sent.
+                {% endif %}
+              </div>
+            {% endif %}
+          {% endif %}
+        {% endif %}
+
+
+        <h1><a href="{{t.type.get_absolute_url}}">{{t.type.name}} by {{t.type.designer}}</a></h1>
+
+        {% if request.user.id = t.owner.id %}
+          <p><i class='glyphicon glyphicon-heart'></i> You own this thing.</p>
+        {% endif %}
+
+        {% if request.user.id = t.holder.id %}
+          <p><i class='glyphicon glyphicon-hand-right'></i> You hold this thing.</p>
+          {% if t.request %}
+            {% if t.request.sent %}
+               <p><i class='glyphicon glyphicon-globe'></i> This thing has been sent to {{t.request.requestor}}.</p>
+            {% endif %}
+          {% endif %}
+        {% else %}
+          {% if request.user.is_authenticated %}
+            {% if request.user.id != t.request.requestor.id %}
+              {% if request.user.profile.available_balance >= t.type.price %}
+                <a class="btn btn-success" href="{% url 'appomatic_clib.views.thing_request' id=t.id %}"><i class='glyphicon glyphicon-comment'></i> Request this thing</a>
+              {% else %}
+                <p class='text-danger'>You don't have funds enough for the deposit for this thing. Please send back some other things or transfer more funds.</p>
+              {% endif %}
+            {% endif %}
+          {% endif %}
+        {% endif %}
+
+        <p>{{t.type.description}}</p>
+
+        <table class="table table-bordered small-table">
+          <tr><th>Id:</th><td>{{t.id}}</td></tr>
+          <tr><th>Name:</th><td><a href="{{t.type.get_absolute_url}}">{{t.type.name}}</a></td></tr>
+          <tr><th>Producer:</th><td>{{t.type.producer}}</td></tr>
+          <tr><th>Designer:</th><td>{{t.type.designer}}</td></tr>
+
+          {% if request.user.id = t.owner.id %}
+            <tr><th>Requested deposit:</th><td>{{t.price}}</td></tr>
+          {% else %}
+            {% if request.user.id = t.holder.id %}
+              <tr><th>Deposit payed:</th><td>{{t.deposit_payed}}</td></tr>
+            {% else %}
+              <tr><th>Deposit required:</th><td>{{t.type.price}}</td></tr>
+            {% endif %}
+          {% endif %}
+
+          {% if request.user.id = t.holder.id %}
+            <tr><th>Owner:</th><td>{{t.owner}}</td></tr>
+          {% endif %}
+          {% if request.user.id = t.owner.id %}
+            <tr><th>Holder</th><td>{{t.holder}}</td></tr>
+          {% endif %}
+
+          {% if request.user.id = t.holder.id %}
+            <tr><th>Requests:</th><td>{{t.requests.count}}</td></tr>
+            {% if request.user.id = t.holder.id and t.request %}
+              <tr><th>First requestor:</th><td>{{t.request.requestor.username}}</td></tr>
+            {% endif %}
+          {% endif %}
+
+          <tr><th>Available (earliest):</td><td>{{t.lent_until}}</td></tr>
+          <tr><th>Distance:</th><td>{{t.distance}}</td></tr>
+
+          <tr><th>{{t.type.barcode_type}}</th><td>{{t.type.barcode_data}}</td></tr>
+        </table>
+      </div>
+      <div class="col-md-6">
+        {% include "appomatic_clib/thing_label.html" %}
+      </div>
+    </div>
   </div>
 
-  {% if request.user.is_authenticated %}
-    {% if request.user.id = t.holder.id %}
-      {% if t.request %}
-        {% if not t.request.sent %}
-          <div class="alert alert-warning inline" role="alert">
-            <i class='glyphicon glyphicon-comment'></i> {{t.request.requestor}} is requesting this thing.
-            <a class="btn btn-success" href="{% url 'appomatic_clib.views.thing_send' id=t.id %}">Mark as sent</a>
-          </div>
-        {% endif %}
-      {% endif %}
-
-    {% else %}
-
-      {% if request.user.id = t.request.requestor.id %}
-        <div class="alert alert-info inline" role="alert">
-          <i class='glyphicon glyphicon-time'></i> You are waiting for this thing.
-          {% if t.request.sent %}
-            It has been sent.
-            <a class="btn btn-success" href="{% url 'appomatic_clib.views.thing_receive' id=t.id %}"><i class='glyphicon glyphicon-ok'></i> Mark as received</a>
-          {% else %}
-            It has not yet been sent.
-          {% endif %}
-        </div>
-      {% endif %}
-    {% endif %}
-  {% endif %}
-
-
-  <h1><a href="{{t.type.get_absolute_url}}">{{t.type.name}} by {{t.type.designer}}</a></h1>
-
-  {% if request.user.id = t.owner.id %}
-    <p><i class='glyphicon glyphicon-heart'></i> You own this thing.</p>
-  {% endif %}
-
-  {% if request.user.id = t.holder.id %}
-    <p><i class='glyphicon glyphicon-hand-right'></i> You hold this thing.</p>
-    {% if t.request %}
-      {% if t.request.sent %}
-         <p><i class='glyphicon glyphicon-globe'></i> This thing has been sent to {{t.request.requestor}}.</p>
-      {% endif %}
-    {% endif %}
-  {% else %}
-    {% if request.user.is_authenticated %}
-      {% if request.user.id != t.request.requestor.id %}
-        {% if request.user.profile.available_balance >= t.type.price %}
-          <a class="btn btn-success" href="{% url 'appomatic_clib.views.thing_request' id=t.id %}"><i class='glyphicon glyphicon-comment'></i> Request this thing</a>
-        {% else %}
-          <p class='text-danger'>You don't have funds enough for the deposit for this thing. Please send back some other things or transfer more funds.</p>
-        {% endif %}
-      {% endif %}
-    {% endif %}
-  {% endif %}
-
-  <p>{{t.type.description}}</p>
-
-  <table class="table table-bordered small-table">
-    <tr><th>Id:</th><td>{{t.id}}</td></tr>
-    <tr><th>Name:</th><td><a href="{{t.type.get_absolute_url}}">{{t.type.name}}</a></td></tr>
-    <tr><th>Producer:</th><td>{{t.type.producer}}</td></tr>
-    <tr><th>Designer:</th><td>{{t.type.designer}}</td></tr>
-
-    {% if request.user.id = t.owner.id %}
-      <tr><th>Requested deposit:</th><td>{{t.price}}</td></tr>
-    {% else %}
-      {% if request.user.id = t.holder.id %}
-        <tr><th>Deposit payed:</th><td>{{t.deposit_payed}}</td></tr>
-      {% else %}
-        <tr><th>Deposit required:</th><td>{{t.type.price}}</td></tr>
-      {% endif %}
-    {% endif %}
-
-    {% if request.user.id = t.holder.id %}
-      <tr><th>Owner:</th><td>{{t.owner}}</td></tr>
-    {% endif %}
-    {% if request.user.id = t.owner.id %}
-      <tr><th>Holder</th><td>{{t.holder}}</td></tr>
-    {% endif %}
-
-    {% if request.user.id = t.holder.id %}
-      <tr><th>Requests:</th><td>{{t.requests.count}}</td></tr>
-      {% if request.user.id = t.holder.id and t.request %}
-        <tr><th>First requestor:</th><td>{{t.request.requestor.username}}</td></tr>
-      {% endif %}
-    {% endif %}
-
-    <tr><th>Available (earliest):</td><td>{{t.lent_until}}</td></tr>
-    <tr><th>Distance:</th><td>{{t.distance}}</td></tr>
-
-    <tr><th>{{t.type.barcode_type}}</th><td>{{t.type.barcode_data}}</td></tr>
-  </table>
 {% endblock %}
