@@ -1,8 +1,10 @@
 {% extends "appomatic_clib/base.html" %}
 {% load qr_tags %}
+
+{% block body-class %}labels{% endblock %}
 {% block full-content %}
-  <br>
-  <form class="form form-inline" role="form">
+  <form class="form form-inline noprint" role="form">
+    <br>
     <button name='done' value='true' class="btn btn-default" type="submit">Mark as done</button>
   </form>
 

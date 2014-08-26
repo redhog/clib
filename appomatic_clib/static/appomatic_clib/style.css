@@ -9,6 +9,15 @@ body {
   padding-top: 70px;
 }
 
+body, span, div, table, tr, tbody, tfoot, td, hr { 
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+.inline {
+  display: inline-block;
+}
+
 .qr-link {
   float: right;
   border: 4pt solid black;
@@ -20,36 +29,57 @@ body {
 }
 
 .thing-label {
+  page-break-inside: avoid;
   border: 4pt solid black;
   .rounded-corners(10pt);
   margin: 10pt;
   float: left;
+  background: #000000 !important;
+  font-size: 12pt;
+  width: 400pt;
 
   a, a:hover, a:visited {
-    color: inherit;
+    color: inherit !important;
   }
 
   .header, .footer {
-    background: #000000;
-    color: #ffffff;
+    color: #ffffff !important;
     padding: 4pt;
   }
   .header {
     font-size: 14pt;
+    .title {
+      white-space: nowrap;
+      overflow: hidden;
+      display: block;
+      color: #ffffff !important;
+      background: #000000 !important;
+
+    }
     .owner {
       float: right;
+      color: #ffffff !important;
+      background: #000000 !important;
+      padding-left: 10pt;
     }
   }
   .footer {
     font-size: 10pt;
   }
   .body {
-    background: #ffffff;
+    background: #ffffff !important;
     color: #000000;
     display: table;
     vertical-align: top;
-    img {
+    width: 100%;
+    overflow: hidden;
+    .qr {
       display: table-cell;
+      width: 0;
+      img {
+        width: 180pt;
+        height: auto;
+      }
     }
     .text {
       display: table-cell;
@@ -68,6 +98,65 @@ body {
     }
   }
 }
-.inline {
-  display: inline-block;
+
+@page {
+  margin: 0cm 0cm 0cm 0cm;
+}
+
+@media print {
+  a[href]:after {
+    content: none !important;
+  }
+
+  .noprint {
+    display: none;
+  }
+
+  body.labels,
+  body.labels .container,
+  body.labels .container .row,
+  body.labels .container .row .col-md-12 {
+    margin: 0;
+    padding: 0;
+  }
+  body.labels .container {
+    width: 100%;
+  }
+
+  .thing-label {
+    width: 268pt;
+    border: 2pt solid black;
+    .rounded-corners(5pt);
+    margin: 5pt;
+    font-size: 7pt;
+
+    .header, .footer {
+      padding: 2pt;
+    }
+    .header {
+      font-size: 12pt;
+    }
+    .footer {
+      font-size: 8pt;
+    }
+    .body {
+      .qr {
+        img {
+          width: 100pt;
+        }
+      }
+      .text {
+        padding-top: 8pt;
+        padding-right: 8pt;
+        padding-bottom: 8pt;
+        .owner {
+          margin-top: 2.5pt;
+        }
+        .about {
+          margin-top: 2.5pt;
+        }
+      }
+    }
+  }
+
 }

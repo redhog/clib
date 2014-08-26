@@ -95,7 +95,10 @@ class Thing(django.db.models.Model):
     price = django.db.models.FloatField(default=100.0)
 
     def distance(self):
-        user = fcdjangoutils.middleware.get_request().user.profile.location
+        request = fcdjangoutils.middleware.get_request()
+        if not request.user.is_authenticated() or not request.user.profile or not self.holder or not self.holder.profile:
+            return ''
+        user = request.user.profile.location
         holder = self.holder.profile.location
         if not user or not holder or not user.position:
             return ''
