@@ -10,7 +10,7 @@
             {% if t.request %}
               {% if not t.request.sent %}
                 <div class="alert alert-warning inline" role="alert">
-                  <i class='glyphicon glyphicon-comment'></i> {{t.request.requestor}} is requesting this thing.
+                  <i class='glyphicon glyphicon-comment'></i> {{t.request.requestor}} is <a href="{% url 'appomatic_clib.views.lending_request' id=t.request.id %}">requesting this thing</a>.
                   <a class="btn btn-success" href="{% url 'appomatic_clib.views.thing_send' id=t.id %}">Mark as sent</a>
                 </div>
               {% endif %}

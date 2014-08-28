@@ -163,6 +163,9 @@ class LendingRequest(django.db.models.Model):
     def __unicode__(self):
         return u"%(requestor)s requesting %(thing)s at %(time)s" % {"thing": self.thing, "requestor": self.requestor, "time": self.time}
 
+    def get_absolute_url(self):
+        return 'http://' + django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse("appomatic_clib.views.lending_request", kwargs={'id': self.id})
+
 def needs_labels(self):
     return self.owns.filter(label_printed = False)
 django.contrib.auth.models.User.needs_labels = needs_labels

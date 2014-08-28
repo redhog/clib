@@ -99,6 +99,51 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
   }
 }
 
+.sending-label {
+  margin: 10pt;
+  float: left;
+  display: table;
+  font-size: 11pt;
+
+  .row1 {
+    display: table;
+    width: 100%
+  }
+
+  .meta, .receiver, .qr, .sender {
+    display: table-cell;
+    vertical-align: top;
+  }
+
+  .meta, .receiver {
+    padding: 10pt;
+  }
+
+  .receiver {
+    border-left: 4pt solid black;
+  }
+
+  .sender {
+    background: url('slash.svg');
+    width: 100%;
+  }
+
+  .header {
+    font-weight: bold;
+  }
+
+  .qr {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: -24px;
+    margin-left: -24px;
+  }
+
+  .content {
+    padding-top: 10pt;
+  }
+}
+
 @page {
   margin: 0cm 0cm 0cm 0cm;
 }
@@ -156,6 +201,28 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
           margin-top: 2.5pt;
         }
       }
+    }
+  }
+
+  .sending-label {
+    margin: 5pt;
+    font-size: 9pt;
+
+    .meta, .receiver {
+      padding: 5pt;
+    }
+
+    .receiver {
+      border-left: 2pt solid black;
+    }
+
+    .qr {
+      margin-top: -24px;
+      margin-left: -24px;
+    }
+
+    .content {
+      padding-top: 5pt;
     }
   }
 

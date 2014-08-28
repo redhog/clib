@@ -200,3 +200,17 @@ def has(request):
             "request": request
         }
     )
+
+@django.contrib.auth.decorators.login_required
+def lending_request(request, id):
+    lr = appomatic_clib.models.LendingRequest.objects.get(id=id)
+    assert request.user.id in (lr.requestor.id, lr.thing.owner.id, lr.thing.holder.id)
+
+    return django.shortcuts.render(
+        request,
+        'appomatic_clib/lending_request.html',
+        {
+            "lr": lr,
+            "request": request
+        }
+    )
