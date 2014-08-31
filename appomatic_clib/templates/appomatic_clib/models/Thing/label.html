@@ -1,0 +1,31 @@
+{% load qr_tags %}
+<div class='thing-label'>
+  <div class="header">
+    {% if request.user.id = obj.owner.id or request.user.id = obj.holder.id %}
+      <span class="owner">{{obj.owner.first_name}} {{obj.owner.last_name}}</span>
+    {% endif %}
+    <span class="title">{{obj.type.name}}</span>
+  </div>
+  <div class="body">
+    <div class='qr'>
+      {% qr_from_text obj.get_absolute_url %}
+    </div>
+    <div class='text'>
+      {% if request.user.id = obj.owner.id or request.user.id = obj.holder.id %}
+        <div class='owner'>
+          <div class='email'>{{obj.owner.email}}</div>
+          <div class='owner-url'>{{obj.owner.profile.get_absolute_url}}</div>
+          <br>
+          <div class='owner-name'>{{obj.owner.first_name}} {{obj.owner.last_name}}</div>
+          <div class='address'>{{obj.owner.profile.location.address|linebreaks}}</div>
+        </div>
+      {% endif %}
+      <div class='about'>
+        This thing is part of the CommonLib library.
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <a href="{{obj.get_absolute_url}}">{{obj.get_absolute_url}}</a>
+  </div>
+</div>

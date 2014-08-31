@@ -1,0 +1,59 @@
+{% extends "appomatic_clib/base.html" %}
+{% load qr_tags %}
+{% block full-content %}
+   <h1 class="noprint"><a href="{{obj.thing.get_absolute_url}}">{{obj.thing.type.name}} by {{obj.thing.type.designer}}</a></h1>
+ 
+   {% if request.user.id = obj.requestor.id %}
+     {% if obj.sent %}
+       It has been sent.
+       <a class="btn btn-success" href="{% url 'appomatic_clib.views.thing_receive' id=obj.thing.id %}"><i class='glyphicon glyphicon-ok'></i> Mark as received</a>
+     {% else %}
+       It has not yet been sent.
+     {% endif %}
+   {% else %}
+     <div class="noprint">
+       <i class='glyphicon glyphicon-comment'></i> <a href="{{obj.requestor.profile.get_absolute_url}}">{{obj.requestor}}</a> is requesting this thing.
+
+       {% if request.user.id = obj.thing.holder.id %}
+         <a class="btn btn-success" href="{% url 'appomatic_clib.views.thing_send' id=obj.thing.id %}">Mark as sent</a>
+       {% else %}
+       {% endif %}
+
+       <br class="clearfix">
+     </div>
+
+     <div class="sending-label">
+       <div class="meta">
+         <div class="row1">
+           <div class='qr'>
+             {% qr_from_text obj.get_absolute_url %}
+           </div>
+           <div class="sender">
+             <div class="header">From:</div>
+             <div class='owner-name'>{{obj.thing.holder.first_name}} {{obj.thing.holder.last_name}}</div>
+             <div class='address'>{{obj.thing.holder.profile.location.address|linebreaks}}</div>
+             <br>
+             <div class='email'>{{obj.thing.holder.email}}</div>
+             <div class='owner-url'>{{obj.thing.holder.profile.get_absolute_url}}</div>
+           </div>
+         </div>
+         <div class="content">
+           <div class="header">This package contains an item from the CommonLib library:</div>
+           <div class="title">{{obj.thing.type.name}} by {{obj.thing.type.designer}}</div>
+           <br>
+           <div class="url">Inventory page: {{obj.thing.get_absolute_url}}</div>
+           <div class="url">Shipment tracking: {{obj.get_absolute_url}}</div>
+         </div>
+       </div>
+       <div class="receiver">
+         <div class="header">To:</div>
+         <div class='owner-name'>{{obj.requestor.first_name}} {{obj.requestor.last_name}}</div>
+         <div class='address'>{{obj.requestor.profile.location.address|linebreaks}}</div>
+         <br>
+         <div class='email'>{{obj.requestor.email}}</div>
+         <div class='owner-url'>{{obj.requestor.profile.get_absolute_url}}</div>
+       </div>
+     </div>
+
+   {% endif %}
+{% endblock %}

@@ -2,26 +2,26 @@
 {% load qr_tags %}
 {% block full-content %}
   <div class='qr-link thing-link'>
-    {% qr_from_text tt.get_absolute_url %}
+    {% qr_from_text obj.get_absolute_url %}
   </div>
 
-  <h1>{{tt.name}} by {{tt.designer}}</h1>
-  <p>{{tt.description}}</p>
+  <h1>{{obj.name}} by {{obj.designer}}</h1>
+  <p>{{obj.description}}</p>
 
   <table class="table table-bordered small-table">
-    <tr><th>Id:</th><td>{{tt.id}}</td></tr>
-    <tr><th>Name:</th><td>{{tt.name}}</td></tr>
-    <tr><th>Producer:</th><td>{{tt.producer}}</td></tr>
-    <tr><th>Designer:</th><td>{{tt.designer}}</td></tr>
-    <tr><th>Deposit required:</th><td>{{tt.price}}</td></tr>
-    <tr><th>{{tt.barcode_type}}</th><td>{{tt.barcode_data}}</td></tr>
+    <tr><th>Id:</th><td>{{obj.id}}</td></tr>
+    <tr><th>Name:</th><td>{{obj.name}}</td></tr>
+    <tr><th>Producer:</th><td>{{obj.producer}}</td></tr>
+    <tr><th>Designer:</th><td>{{obj.designer}}</td></tr>
+    <tr><th>Deposit required:</th><td>{{obj.price}}</td></tr>
+    <tr><th>{{obj.barcode_type}}</th><td>{{obj.barcode_data}}</td></tr>
   </table>
 
 
   <div class="panel panel-default">
     <table class="table">
       <tr><th>Thing</th><th>requests</th><th>available (earliest)</th><th>distance</th></tr>
-      {% for t in tt.of_this_type.all %}
+      {% for t in obj.of_this_type.all %}
         <tr>
           <td><a href='{{t.get_absolute_url}}'>{{t.id}}</td>
           <td><a href='{{t.get_absolute_url}}'>{{t.requests.count}}</a></td>

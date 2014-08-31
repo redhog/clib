@@ -42,28 +42,6 @@ def index(request):
         }
     )
 
-def thing(request, id):
-    t = appomatic_clib.models.Thing.objects.get(id=id)
-    return django.shortcuts.render(
-        request,
-        'appomatic_clib/thing.html',
-        {
-            "t": t,
-            "request": request
-        }
-    )
-
-def thing_type(request, id):
-    tt = appomatic_clib.models.ThingType.objects.get(id=id)
-    return django.shortcuts.render(
-        request,
-        'appomatic_clib/thing-type.html',
-        {
-            "tt": tt,
-            "request": request
-        }
-    )
-
 @django.contrib.auth.decorators.login_required
 def thing_request(request, id):
     t = appomatic_clib.models.Thing.objects.get(id=id)
@@ -201,16 +179,11 @@ def has(request):
         }
     )
 
-@django.contrib.auth.decorators.login_required
-def lending_request(request, id):
-    lr = appomatic_clib.models.LendingRequest.objects.get(id=id)
-    assert request.user.id in (lr.requestor.id, lr.thing.owner.id, lr.thing.holder.id)
-
-    return django.shortcuts.render(
-        request,
-        'appomatic_clib/lending_request.html',
-        {
-            "lr": lr,
-            "request": request
-        }
-    )
+def get(request, id):
+    objs= appomatic_clib.models.Object.objects.filter(id=id)
+    if len(objs):
+        return objs[0].render(request, as_response = True)
+    if id == "" or id == "/":
+        return appomatic_clib.models.Object.list_render(request, as_response = True)
+    else:
+        raise Exception("Unknown id %s" % id)

@@ -10,8 +10,25 @@ import django.contrib.auth.models
 import django.db.models
 import fcdjangoutils.middleware
 import uuid
+import appomatic_renderable.models
 
-class Transaction(django.db.models.Model):
+class Object(django.db.models.Model, appomatic_renderable.models.Renderable):
+    id = django.db.models.CharField(max_length=128, primary_key=True)
+
+    def save(self, *arg, **kw):
+        if not self.id:
+            self.id = str(uuid.uuid4())
+        django.db.models.Model.save(self, *arg, **kw)
+
+    @fcdjangoutils.modelhelpers.subclassproxy
+    def __unicode__(self):
+        return self.id
+
+    def get_absolute_url(self):
+        return  'http://' + django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse('appomatic_clib.views.get', kwargs={'id': self.id})
+
+
+class Transaction(Object):
     time = django.db.models.DateField(auto_now_add=True)
     amount = django.db.models.FloatField(default=0.0)
     pending = django.db.models.BooleanField(default=False)
@@ -47,7 +64,7 @@ class Transaction(django.db.models.Model):
             }
         return "%(time)s: %(src)s -> %(dst)s: %(amount)s" % data
 
-class ThingType(django.db.models.Model):
+class ThingType(Object):
     barcode_type = django.db.models.CharField(max_length=128, db_index=True)
     barcode_data = django.db.models.CharField(max_length=512, db_index=True)
     name = django.db.models.CharField(default='', max_length=256, db_index=True)
@@ -58,7 +75,7 @@ class ThingType(django.db.models.Model):
     def save(self, *arg, **kw):
         if self.barcode_type == 'EAN_13' and self.name == '' and self.designer == '':
             self.designer, self.name = appomatic_clib.isbnlookup.ISBNLookup.lookup(self.barcode_data)
-        django.db.models.Model.save(self, *arg, **kw)
+        Object.save(self, *arg, **kw)
 
     @classmethod
     def get(cls, barcode_type, barcode_data, **kw):
@@ -76,13 +93,8 @@ class ThingType(django.db.models.Model):
     def __unicode__(self):
         return u"%(name)s: %(barcode_type)s/%(barcode_data)s" % {"name": self.name, "barcode_type": self.barcode_type, "barcode_data": self.barcode_data}
 
-    def get_absolute_url(self):
-        return 'http://' + django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse("appomatic_clib.views.thing_type", kwargs={'id': self.id})
 
-
-class Thing(django.db.models.Model):
-    id = django.db.models.CharField(max_length=128, primary_key=True)
-
+class Thing(Object):
     type = django.db.models.ForeignKey(ThingType, related_name='of_this_type')
 
     owner = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="owns")
@@ -112,19 +124,14 @@ class Thing(django.db.models.Model):
         return self.requests.order_by('time')[0]
 
     def save(self, *arg, **kw):
-        if not self.id:
-            self.id = str(uuid.uuid4())
         if self.holder is None:
             self.holder = self.owner
-        django.db.models.Model.save(self, *arg, **kw)
+        Object.save(self, *arg, **kw)
 
     def __unicode__(self):
         return u"%(type)s: %(id)s owned by %(owner)s" % {"type": self.type, "id": self.id, "owner": self.owner}
 
-    def get_absolute_url(self):
-        return 'http://' + django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse("appomatic_clib.views.thing", kwargs={'id': self.id})
-
-class LendingRequest(django.db.models.Model):
+class LendingRequest(Object):
     thing = django.db.models.ForeignKey(Thing, related_name="requests")
     requestor = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="requesting")
     time = django.db.models.DateTimeField(auto_now_add=True)
@@ -144,7 +151,7 @@ class LendingRequest(django.db.models.Model):
                     log = unicode(self) + "\n")
             deposit_payed.save()
             self.deposit_payed = deposit_payed
-        django.db.models.Model.save(self, *arg, **kw)
+        Object.save(self, *arg, **kw)
 
     def send(self):
         self.sent = True
@@ -166,9 +173,6 @@ class LendingRequest(django.db.models.Model):
 
     def __unicode__(self):
         return u"%(requestor)s requesting %(thing)s at %(time)s" % {"thing": self.thing, "requestor": self.requestor, "time": self.time}
-
-    def get_absolute_url(self):
-        return 'http://' + django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse("appomatic_clib.views.lending_request", kwargs={'id': self.id})
 
 def needs_labels(self):
     return self.owns.filter(label_printed = False)

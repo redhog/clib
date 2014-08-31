@@ -9,6 +9,6 @@
   </form>
 
   {% for t in request.user.needs_labels.all %}
-    {% include "appomatic_clib/thing_label.html" %}
+    {{t.render_as.label}}
   {% endfor %}
 {% endblock %}
