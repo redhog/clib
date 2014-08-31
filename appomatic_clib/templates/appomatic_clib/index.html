@@ -57,7 +57,7 @@
                 {% for t in request.user.requests.all %}
                   <tr>
                     <td>
-                      <a href='{{t.get_absolute_url}}'>
+                      <a href='{{t.request.get_absolute_url}}'>
                         {{t.type.name}} by {{t.type.designer}}
                       </a>
                     </td>
@@ -75,7 +75,7 @@
                 {% for r in request.user.requesting.all %}
                   <tr>
                     <td>
-                      <a href='{{r.thing.get_absolute_url}}'>
+                      <a href='{{r.get_absolute_url}}'>
                         {{r.thing.type.name}} by {{r.thing.type.designer}}
                       </a>
                     </td>

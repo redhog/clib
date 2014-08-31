@@ -69,7 +69,7 @@ def thing_request(request, id):
     t = appomatic_clib.models.Thing.objects.get(id=id)
     lr = appomatic_clib.models.LendingRequest(thing=t, requestor=request.user)
     lr.save()
-    return django.shortcuts.redirect(t)
+    return django.shortcuts.redirect(lr)
 
 
 @django.contrib.auth.decorators.login_required

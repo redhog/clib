@@ -100,32 +100,32 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
 }
 
 .sending-label {
-  margin: 10pt;
   float: left;
   display: table;
   font-size: 11pt;
+  margin: 1em;
 
   .row1 {
-    display: table;
-    width: 100%
+    width: 100%;
   }
 
-  .meta, .receiver, .qr, .sender {
+  .meta, .receiver, {
     display: table-cell;
     vertical-align: top;
   }
 
   .meta, .receiver {
-    padding: 10pt;
+    padding: 1em;
   }
 
   .receiver {
-    border-left: 4pt solid black;
+    border-left: 0.2em solid black;
   }
 
   .sender {
-    background: url('slash.svg');
-    width: 100%;
+    background: url('slash.svg') !important;
+    display: inline-block;
+    vertical-align: top;
   }
 
   .header {
@@ -135,12 +135,14 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
   .qr {
     display: inline-block;
     vertical-align: top;
-    margin-top: -24px;
-    margin-left: -24px;
+    img {
+      margin: -24px;
+    }
+    padding-right: 1em;
   }
 
   .content {
-    padding-top: 10pt;
+    padding-top: 1em;
   }
 }
 
@@ -205,25 +207,7 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
   }
 
   .sending-label {
-    margin: 5pt;
     font-size: 9pt;
-
-    .meta, .receiver {
-      padding: 5pt;
-    }
-
-    .receiver {
-      border-left: 2pt solid black;
-    }
-
-    .qr {
-      margin-top: -24px;
-      margin-left: -24px;
-    }
-
-    .content {
-      padding-top: 5pt;
-    }
   }
 
 }

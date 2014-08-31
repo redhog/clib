@@ -136,13 +136,14 @@ class LendingRequest(django.db.models.Model):
 
     def save(self, *arg, **kw):
         if self.id is None:
-            assert self.requestor.profile.available_balance > self.thing.type.price            
-            self.deposit_payed = Transaction(
+            assert self.requestor.profile.available_balance > self.thing.type.price
+            deposit_payed = Transaction(
                     amount = self.thing.type.price,
                     src = self.requestor,
                     dst = self.thing.owner,
                     log = unicode(self) + "\n")
-            self.deposit_payed.save()
+            deposit_payed.save()
+            self.deposit_payed = deposit_payed
         django.db.models.Model.save(self, *arg, **kw)
 
     def send(self):
@@ -150,14 +151,17 @@ class LendingRequest(django.db.models.Model):
         self.save()
 
     def receive(self):
-        self.thing.holder = self.requestor
-        if self.thing.deposit_payed:
-            self.thing.deposit_payed.delete()
-        self.thing.deposit_payed = self.deposit_payed
-        self.thing.deposit_payed.tentative = False
-        self.thing.deposit_payed.pending = True
-        self.thing.deposit_payed.log += unicode(self.thing) + "\n"
-        self.thing.save()
+        thing = self.thing
+        thing.holder = self.requestor
+        if thing.deposit_payed:
+            thing.deposit_payed.delete()
+        deposit_payed = self.deposit_payed
+        deposit_payed.tentative = False
+        deposit_payed.pending = True
+        deposit_payed.log += unicode(self.thing) + "\n"
+        deposit_payed.save()
+        thing.deposit_payed = deposit_payed
+        thing.save()
         self.delete()
 
     def __unicode__(self):
