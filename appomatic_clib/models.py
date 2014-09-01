@@ -150,7 +150,7 @@ class LendingRequest(Object):
 
     def save(self, *arg, **kw):
         if not self.id:
-            assert self.requestor.profile.available_balance > self.thing.type.price
+            assert self.requestor.profile.available_balance >= self.thing.type.price
             deposit_payed = Transaction(
                     amount = self.thing.type.price,
                     src = self.requestor,
