@@ -2,7 +2,7 @@
   {% csrf_token %}
   <input type="hidden" name="method" value="comment">
   <textarea class="form-control" name="content"></textarea>
-  <input name='do_add' type='submit' value='Post comment' class='btn btn-success' />
+  <input name='do_add' type='submit' value='Post message' class='btn btn-success' />
 </form>
 
 {% for message in obj.conversation.all %}
