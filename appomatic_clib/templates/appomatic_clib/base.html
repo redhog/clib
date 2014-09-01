@@ -15,55 +15,59 @@
   <body class="{% block body-class %}{% endblock %}">
 
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="{% url 'appomatic_clib.views.index' %}">{% block navbar-title %}CommonLibrary{% endblock %}</a>
-        </div>
-        {% block navbar %}{% endblock %}
-        <div class="navbar-collapse collapse">
-          {% block navbar-collapse %}
-            {% if request.user.is_authenticated %}
-              <ul class="nav navbar-nav navbar-left">
-                {% block navbar-left %}
-                  <li><a href='{% url 'appomatic_clib.views.add' %}'>Add things</a></li>
-                  <li><a href='{% url 'appomatic_clib.views.owns' %}'>My things</a></li>
-                  <li><a href='{% url 'appomatic_clib.views.has' %}'>Things I have</a></li>
-                {% endblock %}
-              </ul>
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="{% url 'appomatic_clib.views.index' %}">{% block navbar-title %}CommonLibrary{% endblock %}</a>
+      </div>
+      {% block navbar %}{% endblock %}
+      <div class="navbar-collapse collapse">
+        {% block navbar-collapse %}
+          {% if request.user.is_authenticated %}
+            <ul class="nav navbar-nav navbar-left">
+              {% block navbar-left %}
+                <li><a href='{% url 'appomatic_clib.views.add' %}'>Add things</a></li>
+                <li><a href='{% url 'appomatic_clib.views.owns' %}'>My things</a></li>
+                <li><a href='{% url 'appomatic_clib.views.has' %}'>Things I have</a></li>
+              {% endblock %}
+            </ul>
 
-              <ul class="nav navbar-nav navbar-right">
-                {% block navbar-right %}
-                  <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{request.user.username}} <span class="caret"></span></a>
-                    <ul class="dropdown-menu" role="menu">
-                      <li>
-                        <a href='{% url 'userena_profile_edit' username=request.user.username %}'>Profile</a>
-                      </li>
-                      <li>
-                        <a href='{% url 'userena_signout' %}?next={% url 'appomatic_clib.views.index' %}'>Sign out</a>
-                      </li>
-                    </ul>
-                  </li>
-                {% endblock %}
-              </ul>
-            {% endif %}
+            <ul class="nav navbar-nav navbar-right">
+              {% block navbar-right %}
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{request.user.username}} <span class="caret"></span></a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li>
+                      <a href='{% url 'userena_profile_edit' username=request.user.username %}'>Profile</a>
+                    </li>
+                    <li>
+                      <a href='{% url 'userena_signout' %}?next={% url 'appomatic_clib.views.index' %}'>Sign out</a>
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  <a class="{% if request.user.profile.available_balance >= 0.0 %}bg-success{% else %}bg-danger{% endif %}" href="{% url 'appomatic_clib.views_funds.funds' %}">
+                    € {{request.user.profile.available_balance}}
+                  </a>
+                </li>
+              {% endblock %}
+            </ul>
+          {% endif %}
 
-            <form action="{% url 'appomatic_clib.views.search' %}" class="navbar-form navbar-right" role="form">
-              <div class="input-group">
-                <input type="text" name="query" placeholder="Search" class="form-control">
-                <span class="input-group-btn">
-                  <button class="btn btn-default" type="submit"><i class='glyphicon glyphicon-search'></i>&nbsp;</button>
-                </span>
-              </div>
-            </form>
-          {% endblock %}
-        </div>
+          <form action="{% url 'appomatic_clib.views.search' %}" class="navbar-form navbar-right" role="form">
+            <div class="input-group">
+              <input type="text" name="query" placeholder="Search" class="form-control">
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="submit"><i class='glyphicon glyphicon-search'></i>&nbsp;</button>
+              </span>
+            </div>
+          </form>
+
+        {% endblock %}
       </div>
     </div>
 

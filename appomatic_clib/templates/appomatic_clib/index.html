@@ -42,13 +42,7 @@
                 </form>
               </div>
             {% endif %}
-
           {% endif %}
-
-          {% include "appomatic_clib/funds_overview.html" %}
-          <a class="pull-right" href="{% url 'appomatic_clib.views_funds.funds' %}">Withdraw or add funds</a>
-          <span class="clearfix"></span>
-          <br>
 
           {% if request.user.requests.count %}
             <div class="panel panel-default">
