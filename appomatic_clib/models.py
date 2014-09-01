@@ -27,6 +27,14 @@ class Object(django.db.models.Model, appomatic_renderable.models.Renderable):
     def get_absolute_url(self):
         return  'http://' + django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse('appomatic_clib.views.get', kwargs={'id': self.id})
 
+    def handle__comment(self, request, style):
+        Message(
+            about=self,
+            content=request.POST['content'],
+            author=request.user
+            ).save()
+        raise fcdjangoutils.responseutils.EarlyResponseException(
+            django.shortcuts.redirect(self.get_absolute_url()))
 
 class Transaction(Object):
     time = django.db.models.DateField(auto_now_add=True)
@@ -184,13 +192,23 @@ class LendingRequest(Object):
     def handle__send(self, request, style):
         assert self.thing.holder.id == request.user.id
         self.send()
-        return {}
+        raise fcdjangoutils.responseutils.EarlyResponseException(
+            django.shortcuts.redirect(self.get_absolute_url()))
 
     def handle__receive(self, request, style):
         assert self.requestor.id == request.user.id
         self.receive()
-        return {}
+        raise fcdjangoutils.responseutils.EarlyResponseException(
+            django.shortcuts.redirect(self.get_absolute_url()))
 
+class Message(Object):
+    about = django.db.models.ForeignKey(Object, related_name='conversation')
+    time = django.db.models.DateTimeField(auto_now_add=True)
+    content = django.db.models.TextField(blank=True)
+    author = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name='wrote')
+
+
+# FIXME: Move these to the profile
 def needs_labels(self):
     return self.owns.filter(label_printed = False)
 django.contrib.auth.models.User.needs_labels = needs_labels

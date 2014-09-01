@@ -1,0 +1,12 @@
+<form enctype="multipart/form-data" action='{{obj.get_absolute_url}}' method='post' role="form">
+  {% csrf_token %}
+  <input type="hidden" name="method" value="comment">
+  <textarea class="form-control" name="content"></textarea>
+  <input name='do_add' type='submit' value='Post comment' class='btn btn-success' />
+</form>
+
+{% for message in obj.conversation.all %}
+  <div class="message">
+    {{message.render_as.inline__html}}
+  </div>
+{% endfor %}
