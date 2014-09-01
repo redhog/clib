@@ -131,6 +131,13 @@ class Thing(Object):
     def __unicode__(self):
         return u"%(type)s: %(id)s owned by %(owner)s" % {"type": self.type, "id": self.id, "owner": self.owner}
 
+    def handle__request(self, request, style):
+        lr = appomatic_clib.models.LendingRequest(thing=self, requestor=request.user)
+        lr.save()
+        raise fcdjangoutils.responseutils.EarlyResponseException(
+            django.shortcuts.redirect(lr))
+
+
 class LendingRequest(Object):
     thing = django.db.models.ForeignKey(Thing, related_name="requests")
     requestor = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="requesting")
@@ -142,7 +149,7 @@ class LendingRequest(Object):
     tracking_barcode_data = django.db.models.CharField(max_length=512, db_index=True)
 
     def save(self, *arg, **kw):
-        if self.id is None:
+        if not self.id:
             assert self.requestor.profile.available_balance > self.thing.type.price
             deposit_payed = Transaction(
                     amount = self.thing.type.price,
@@ -173,6 +180,16 @@ class LendingRequest(Object):
 
     def __unicode__(self):
         return u"%(requestor)s requesting %(thing)s at %(time)s" % {"thing": self.thing, "requestor": self.requestor, "time": self.time}
+
+    def handle__send(self, request, style):
+        assert self.thing.holder.id == request.user.id
+        self.send()
+        return {}
+
+    def handle__receive(self, request, style):
+        assert self.requestor.id == request.user.id
+        self.receive()
+        return {}
 
 def needs_labels(self):
     return self.owns.filter(label_printed = False)

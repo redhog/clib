@@ -1,27 +1,37 @@
 {% extends "appomatic_clib/base.html" %}
 {% load qr_tags %}
 {% block full-content %}
-   <h1 class="noprint"><a href="{{obj.thing.get_absolute_url}}">{{obj.thing.type.name}} by {{obj.thing.type.designer}}</a></h1>
- 
-   {% if request.user.id = obj.requestor.id %}
+   <div class="noprint">
+     <h1>Lending request for <a href="{{obj.thing.get_absolute_url}}">{{obj.thing.type.name}} by {{obj.thing.type.designer}}</a></h1>
+
+     <p><i class='glyphicon glyphicon-comment'></i> <a href="{{obj.requestor.profile.get_absolute_url}}">{{obj.requestor}}</a> is requesting this thing from <a href="{{obj.thing.holder.profile.get_absolute_url}}">{{obj.thing.holder}}</a>.</p>
      {% if obj.sent %}
-       It has been sent.
-       <a class="btn btn-success" href="{% url 'appomatic_clib.views.thing_receive' id=obj.thing.id %}"><i class='glyphicon glyphicon-ok'></i> Mark as received</a>
+       <p><i class='fa fa-truck'></i> It has been sent.</p>
      {% else %}
-       It has not yet been sent.
+       <p><i class='fa fa-clock-o'></i> It has not yet been sent.</p>
      {% endif %}
-   {% else %}
-     <div class="noprint">
-       <i class='glyphicon glyphicon-comment'></i> <a href="{{obj.requestor.profile.get_absolute_url}}">{{obj.requestor}}</a> is requesting this thing.
+     <p>Deposit payed: €{{obj.deposit_payed.amount}}.</p>
 
-       {% if request.user.id = obj.thing.holder.id %}
-         <a class="btn btn-success" href="{% url 'appomatic_clib.views.thing_send' id=obj.thing.id %}">Mark as sent</a>
-       {% else %}
+     {% if request.user.id = obj.requestor.id and obj.sent %}
+       <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
+         {% csrf_token %}
+         <input type="hidden" name="method" value="receive">
+         <button type="submit" class="btn btn-success"><i class='glyphicon glyphicon-ok'></i> Mark as received</button>
+       </form>
+     {% else %}
+       {% if request.user.id = obj.thing.holder.id and not obj.sent %}
+         <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
+           {% csrf_token %}
+           <input type="hidden" name="method" value="send">
+           <button type="submit" class="btn btn-success"><i class='fa fa-truck'></i> Mark as sent</button>
+         </form>
        {% endif %}
+     {% endif %}
 
-       <br class="clearfix">
-     </div>
+     <br>
+   </div>
 
+   {% if request.user.id = obj.requestor.id %}
      <div class="sending-label">
        <div class="meta">
          <div class="row1">

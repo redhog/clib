@@ -10,6 +10,7 @@ INSTALLED_APPS += [
 MIDDLEWARE_CLASSES = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    "fcdjangoutils.middleware.EarlyResponse",
     "fcdjangoutils.middleware.GlobalRequestMiddleware"
 ]
 

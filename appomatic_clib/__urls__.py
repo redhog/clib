@@ -4,10 +4,6 @@ import django.views.generic
 urlpatterns = django.conf.urls.patterns('',
     django.conf.urls.url(r'^/?$', 'appomatic_clib.views.index'),
 
-    django.conf.urls.url(r'^thing/(?P<id>.*)/request/?$', 'appomatic_clib.views.thing_request'),
-    django.conf.urls.url(r'^thing/(?P<id>.*)/send/?$', 'appomatic_clib.views.thing_send'),
-    django.conf.urls.url(r'^thing/(?P<id>.*)/receive/?$', 'appomatic_clib.views.thing_receive'),
-
     django.conf.urls.url(r'^search/?$', 'appomatic_clib.views.search'),
 
     django.conf.urls.url(r'^add/?$', 'appomatic_clib.views.add'),
