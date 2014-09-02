@@ -212,6 +212,7 @@ class LendingRequest(Object):
         Object.save(self, *arg, **kw)
 
     def send(self):
+        assert not self.sent
         self.sent = True
         self.save()
 
@@ -227,6 +228,11 @@ class LendingRequest(Object):
         deposit_payed.save()
         thing.deposit_payed = deposit_payed
         thing.save()
+        self.delete()
+
+    def cancel(self):
+        assert not self.sent
+        self.deposit_payed.delete()
         self.delete()
 
     def comment(self, content, author, recipients=[]):
@@ -248,6 +254,13 @@ class LendingRequest(Object):
         self.receive()
         raise fcdjangoutils.responseutils.EarlyResponseException(
             django.shortcuts.redirect(self.get_absolute_url()))
+
+    def handle__cancel(self, request, style):
+        assert self.requestor.id == request.user.id
+        thing = self.thing
+        self.cancel()
+        raise fcdjangoutils.responseutils.EarlyResponseException(
+            django.shortcuts.redirect(thing.get_absolute_url()))
 
 class Message(Object):
     about = django.db.models.ForeignKey(Object, related_name='conversation')
