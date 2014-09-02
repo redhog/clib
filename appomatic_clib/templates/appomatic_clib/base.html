@@ -67,6 +67,14 @@
             </div>
           </form>
 
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="{% url 'appomatic_clib.views.messages' %}">
+                <i class="fa fa-comments {% if request.user.profile.new_messages.count %}text-danger blink{% endif %}" style="font-size: 25pt; line-height: 15pt;"></i>
+              </a>
+            </li>
+          </ul>
+
         {% endblock %}
       </div>
     </div>

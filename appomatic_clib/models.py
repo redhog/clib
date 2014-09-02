@@ -27,12 +27,23 @@ class Object(django.db.models.Model, appomatic_renderable.models.Renderable):
     def get_absolute_url(self):
         return  'http://' + django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse('appomatic_clib.views.get', kwargs={'id': self.id})
 
-    def handle__comment(self, request, style):
-        Message(
+    def comment(self, content, author, recipients=[]):
+        msg = Message(
             about=self,
-            content=request.POST['content'],
-            author=request.user
-            ).save()
+            content=content,
+            )
+        msg.save()
+        MessageUser(
+            user = author,
+            message = msg,
+            author = True).save()
+        for recipient in recipients:
+            MessageUser(
+                user = recipient,
+                message = msg).save()
+
+    def handle__comment(self, request, style):
+        self.comment(request.POST['content'], request.user)
         raise fcdjangoutils.responseutils.EarlyResponseException(
             django.shortcuts.redirect(self.get_absolute_url()))
 
@@ -114,6 +125,8 @@ class Thing(Object):
     deposit_payed =  django.db.models.ForeignKey(Transaction, null=True, blank=True)
     price = django.db.models.FloatField(default=100.0)
 
+    available = django.db.models.BooleanField(default=True)
+
     def distance(self):
         request = fcdjangoutils.middleware.get_request()
         if not request.user.is_authenticated() or not request.user.profile or not self.holder or not self.holder.profile:
@@ -131,6 +144,30 @@ class Thing(Object):
             return None
         return self.requests.order_by('time')[0]
 
+    def lose(self):
+        msg = Message(
+            about = self,
+            content = '%(holder)s has lost the thing %(thing)s' % {"holder": self.holder.username, "thing": self.type.name}
+            )
+        msg.save()
+        MessageUser(
+            message = msg,
+            user = self.owner
+            ).save()
+        MessageUser(
+            message = msg,
+            user = self.holder,
+            author = True
+            ).save()
+        self.available = False
+        self.owner = self.holder
+        if self.deposit_payed:
+            deposit_payed = self.deposit_payed
+            deposit_payed.tentative = False
+            deposit_payed.pending = False
+            deposit_payed.save()
+        self.save()
+
     def save(self, *arg, **kw):
         if self.holder is None:
             self.holder = self.owner
@@ -140,11 +177,17 @@ class Thing(Object):
         return u"%(type)s: %(id)s owned by %(owner)s" % {"type": self.type, "id": self.id, "owner": self.owner}
 
     def handle__request(self, request, style):
+        assert self.holder.id != request.user.id
         lr = appomatic_clib.models.LendingRequest(thing=self, requestor=request.user)
         lr.save()
         raise fcdjangoutils.responseutils.EarlyResponseException(
             django.shortcuts.redirect(lr))
 
+    def handle__lose(self, request, style):
+        assert request.user.id == self.holder.id
+        self.lose()
+        raise fcdjangoutils.responseutils.EarlyResponseException(
+            django.shortcuts.redirect(self))
 
 class LendingRequest(Object):
     thing = django.db.models.ForeignKey(Thing, related_name="requests")
@@ -186,6 +229,11 @@ class LendingRequest(Object):
         thing.save()
         self.delete()
 
+    def comment(self, content, author, recipients=[]):
+        extra = [u for u in [self.requestor, self.thing.holder]
+                 if u.id != author.id]
+        Object.comment(self, content, author, recipients + extra)
+
     def __unicode__(self):
         return u"%(requestor)s requesting %(thing)s at %(time)s" % {"thing": self.thing, "requestor": self.requestor, "time": self.time}
 
@@ -205,8 +253,23 @@ class Message(Object):
     about = django.db.models.ForeignKey(Object, related_name='conversation')
     time = django.db.models.DateTimeField(auto_now_add=True)
     content = django.db.models.TextField(blank=True)
-    author = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name='wrote')
 
+    @property
+    def author(self):
+        authors = self.users.filter(author=True)
+        if authors: return authors[0].user
+
+class MessageUser(django.db.models.Model): 
+    user = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name='messages')
+    message = django.db.models.ForeignKey(Message, related_name='users')
+    author = django.db.models.BooleanField(default=False)
+    seen = django.db.models.BooleanField(default=False)
+
+    def see(self):
+        if not self.seen:
+            self.seen = True
+            self.save()
+        return ""
 
 # FIXME: Move these to the profile
 def needs_labels(self):
@@ -278,3 +341,11 @@ class Profile(userena.models.UserenaBaseProfile):
     @property
     def transaction_history(self):
         return Transaction.objects.filter(django.db.models.Q(src=self.user)|django.db.models.Q(dst=self.user)).order_by('-time')
+
+    @property
+    def messages(self):
+        return self.user.messages.order_by('message__time')
+
+    @property
+    def new_messages(self):
+        return self.user.messages.filter(seen=False).order_by('message__time')

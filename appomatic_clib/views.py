@@ -165,3 +165,13 @@ def get(request, id):
         return appomatic_clib.models.Object.list_render(request, as_response = True)
     else:
         raise Exception("Unknown id %s" % id)
+
+@django.contrib.auth.decorators.login_required
+def messages(request):
+    return django.shortcuts.render(
+        request,
+        'appomatic_clib/messages.html',
+        {
+            "request": request
+        }
+    )

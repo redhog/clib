@@ -16,6 +16,12 @@
               {% endif %}
             {% endif %}
 
+            <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
+              {% csrf_token %}
+              <input type="hidden" name="method" value="lose">
+              <button type="submit" class="btn btn-danger"><i class='fa fa-child'></i> I have lost this item</button>
+            </form>
+
           {% else %}
 
             {% if request.user.id = obj.request.requestor.id %}

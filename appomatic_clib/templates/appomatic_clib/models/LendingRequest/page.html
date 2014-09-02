@@ -19,12 +19,21 @@
          <button type="submit" class="btn btn-success"><i class='glyphicon glyphicon-ok'></i> Mark as received</button>
        </form>
      {% else %}
-       {% if request.user.id = obj.thing.holder.id and not obj.sent %}
-         <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
+       {% if request.user.id = obj.thing.holder.id %}
+         {% if not obj.sent %}
+           <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
+             {% csrf_token %}
+             <input type="hidden" name="method" value="send">
+             <button type="submit" class="btn btn-success"><i class='fa fa-truck'></i> Mark as sent</button>
+           </form>
+         {% endif %}
+
+         <form enctype="multipart/form-data" action="{{obj.thing.get_absolute_url}}" method='post' role="form">
            {% csrf_token %}
-           <input type="hidden" name="method" value="send">
-           <button type="submit" class="btn btn-success"><i class='fa fa-truck'></i> Mark as sent</button>
+           <input type="hidden" name="method" value="lose">
+           <button type="submit" class="btn btn-danger"><i class='fa fa-child'></i> I have lost this item</button>
          </form>
+
        {% endif %}
      {% endif %}
 
