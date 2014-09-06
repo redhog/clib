@@ -12,6 +12,9 @@
        <p><i class='fa fa-clock-o'></i> It has not yet been sent.</p>
      {% endif %}
      <p>Deposit payed: €{{obj.deposit_payed.amount}}.</p>
+     {% if obj.sent %}
+       <p>Transport payed: €{{obj.transport_payed.amount}}.</p>
+     {% endif %}
 
      {% if request.user.id = obj.requestor.id %}
        {% if obj.sent %}
@@ -26,16 +29,22 @@
            <input type="hidden" name="method" value="cancel">
            <button type="submit" class="btn btn-warning"><i class='fa fa-close'></i> Stop waiting and cancel the request</button>
          </form>
+
+         <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
+           {% csrf_token %}
+           <input type="hidden" name="method" value="set_transport_accepted">
+           Maximum accepted transport cost: <input type="text" name="amount" value="{{obj.transport_accepted}}">
+           <button type="submit" class="btn btn-default">Set amount</button>
+         </form>
+
        {% endif %}
      {% else %}
-       {% if request.user.id = obj.thing.holder.id %}
-         {% if not obj.sent %}
-           <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
-             {% csrf_token %}
-             <input type="hidden" name="method" value="send">
-             <button type="submit" class="btn btn-success"><i class='fa fa-truck'></i> Mark as sent</button>
-           </form>
-         {% endif %}
+       {% if request.user.id = obj.thing.holder.id and not obj.sent %}
+         <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
+           {% csrf_token %}
+           <input type="hidden" name="method" value="send">
+           <button type="submit" class="btn btn-success"><i class='fa fa-truck'></i> Mark as sent</button>
+         </form>
 
          <form enctype="multipart/form-data" action="{{obj.thing.get_absolute_url}}" method='post' role="form">
            {% csrf_token %}
@@ -43,6 +52,12 @@
            <button type="submit" class="btn btn-danger"><i class='fa fa-child'></i> I have lost this item</button>
          </form>
 
+         <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
+           {% csrf_token %}
+           <input type="hidden" name="method" value="set_transport_requested">
+           Transport cost: <input type="text" name="amount" value="{{obj.transport_payed.amount}}"> (maximum accepted: €{{obj.transport_accepted}})
+           <button type="submit" class="btn btn-default">Accept amount</button>
+         </form>
        {% endif %}
      {% endif %}
 

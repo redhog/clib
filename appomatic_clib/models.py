@@ -11,9 +11,10 @@ import django.db.models
 import fcdjangoutils.middleware
 import uuid
 import appomatic_renderable.models
+import django.contrib.messages
 
 class Object(django.db.models.Model, appomatic_renderable.models.Renderable):
-    id = django.db.models.CharField(max_length=128, primary_key=True)
+    id = django.db.models.CharField(max_length=128, blank=True, primary_key=True)
 
     def save(self, *arg, **kw):
         if not self.id:
@@ -194,14 +195,23 @@ class LendingRequest(Object):
     requestor = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="requesting")
     time = django.db.models.DateTimeField(auto_now_add=True)
 
-    deposit_payed = django.db.models.ForeignKey(Transaction, null=True, blank=True)
+    deposit_payed = django.db.models.ForeignKey(Transaction, null=True, blank=True, related_name="deposit_payed")
     sent = django.db.models.BooleanField(default=False)
     tracking_barcode_type = django.db.models.CharField(max_length=128, db_index=True)
     tracking_barcode_data = django.db.models.CharField(max_length=512, db_index=True)
 
+    transport_payed = django.db.models.ForeignKey(Transaction, null=True, blank=True, related_name="transport_payed")
+    transport_accepted = django.db.models.FloatField(blank=True)
+
     def save(self, *arg, **kw):
         if not self.id:
             assert self.requestor.profile.available_balance >= self.thing.type.price
+
+            if self.transport_accepted is None:
+                self.transport_accepted = self.requestor.profile.transport_accepted
+
+            self.transport_accepted = min(self.transport_accepted, self.requestor.profile.available_balance - self.thing.type.price)
+
             deposit_payed = Transaction(
                     amount = self.thing.type.price,
                     src = self.requestor,
@@ -209,10 +219,34 @@ class LendingRequest(Object):
                     log = unicode(self) + "\n")
             deposit_payed.save()
             self.deposit_payed = deposit_payed
+
+            transport_payed = Transaction(
+                    amount = 0.0,
+                    src = self.requestor,
+                    dst = self.thing.owner,
+                    log = unicode(self) + "\n")
+            transport_payed.save()
+            self.transport_payed = transport_payed
         Object.save(self, *arg, **kw)
+
+    def set_transport_accepted(self, amount):
+        available = self.transport_payed.amount + self.requestor.profile.available_balance
+        assert amount <= available
+        self.transport_accepted = amount
+        self.save()
+
+    def set_transport_requested(self, amount):
+        assert amount <= self.transport_accepted
+        transport_payed = self.transport_payed
+        transport_payed.amount = amount
+        transport_payed.save()
 
     def send(self):
         assert not self.sent
+        transport_payed = self.transport_payed
+        transport_payed.pending = True
+        transport_payed.tentative = False
+        transport_payed.save()
         self.sent = True
         self.save()
 
@@ -228,11 +262,16 @@ class LendingRequest(Object):
         deposit_payed.save()
         thing.deposit_payed = deposit_payed
         thing.save()
+        transport_payed = self.transport_payed
+        transport_payed.pending = False
+        transport_payed.tentative = False
+        transport_payed.save()
         self.delete()
 
     def cancel(self):
         assert not self.sent
         self.deposit_payed.delete()
+        self.transport_payed.delete()
         self.delete()
 
     def comment(self, content, author, recipients=[]):
@@ -251,9 +290,10 @@ class LendingRequest(Object):
 
     def handle__receive(self, request, style):
         assert self.requestor.id == request.user.id
+        thing = self.thing
         self.receive()
         raise fcdjangoutils.responseutils.EarlyResponseException(
-            django.shortcuts.redirect(self.get_absolute_url()))
+            django.shortcuts.redirect(thing.get_absolute_url()))
 
     def handle__cancel(self, request, style):
         assert self.requestor.id == request.user.id
@@ -261,6 +301,21 @@ class LendingRequest(Object):
         self.cancel()
         raise fcdjangoutils.responseutils.EarlyResponseException(
             django.shortcuts.redirect(thing.get_absolute_url()))
+
+    def handle__set_transport_accepted(self, request, style):
+        self.set_transport_accepted(float(request.POST['amount']))
+        raise fcdjangoutils.responseutils.EarlyResponseException(
+            django.shortcuts.redirect(self.get_absolute_url()))
+
+    def handle__set_transport_requested(self, request, style):
+        amount = float(request.POST['amount'])
+        if amount <= self.transport_accepted:
+            self.set_transport_requested(amount)
+        else:
+            django.contrib.messages.add_message(request, django.contrib.messages.ERROR, 'Requested amount exceeds maximum cost accepted by the other user.')
+        raise fcdjangoutils.responseutils.EarlyResponseException(
+            django.shortcuts.redirect(self.get_absolute_url()))
+
 
 class Message(Object):
     about = django.db.models.ForeignKey(Object, related_name='conversation')
@@ -317,6 +372,7 @@ class Profile(userena.models.UserenaBaseProfile):
         related_name='profile')
 
     location = django.db.models.ForeignKey(Location, related_name="lives_here", null=True, blank=True)
+    transport_accepted = django.db.models.FloatField(default=0.0, verbose_name=_('Maximum transport cost accepted'))
 
     @property
     def tentative_credit(self):
