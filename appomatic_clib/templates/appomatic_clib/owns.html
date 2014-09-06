@@ -4,15 +4,28 @@
   {% if request.user.owns.count %}
     <div class="panel panel-default">
       <table class="table">
-        <tr><th colspan="2">Your things</th><th>by</th><th>held by</th></tr>
-        {% for t in request.user.has.all %}
-          <tr>
-            <td><a href='{{t.get_absolute_url}}'>{{t.type.barcode_type}}:{{t.type.barcode_data}}</td>
-            <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
-            <td><a href='{{t.get_absolute_url}}'>{{t.type.designer}}</a></td>
-            <td><a href='{{t.holder.profile.get_absolute_url}}'>{{t.holder.username}}</a></td>
-          </tr>
-        {% endfor %}
+        {% if request.user.profile.lent_own.count %}
+          <tr><th colspan="2">Lent things</th><th>by</th><th>held by</th></tr>
+          {% for t in request.user.profile.lent_own.all %}
+            <tr>
+              <td><a href='{{t.get_absolute_url}}'>{{t.type.barcode_type}}:{{t.type.barcode_data}}</td>
+              <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
+              <td><a href='{{t.get_absolute_url}}'>{{t.type.designer}}</a></td>
+              <td><a href='{{t.holder.profile.get_absolute_url}}'>{{t.holder.username}}</a></td>
+            </tr>
+          {% endfor %}
+        {% endif %}
+        {% if request.user.profile.has_own.count %}
+          <tr><th colspan="2">Own things held</th><th>by</th><th></th></tr>
+          {% for t in request.user.profile.has_own.all %}
+            <tr>
+              <td><a href='{{t.get_absolute_url}}'>{{t.type.barcode_type}}:{{t.type.barcode_data}}</td>
+              <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
+              <td><a href='{{t.get_absolute_url}}'>{{t.type.designer}}</a></td>
+              <td></td>
+            </tr>
+          {% endfor %}
+        {% endif %}
       </table>
     </div>
   {% else %}

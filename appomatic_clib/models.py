@@ -418,3 +418,15 @@ class Profile(userena.models.UserenaBaseProfile):
     @property
     def new_messages(self):
         return self.user.messages.filter(seen=False).order_by('message__time')
+
+    @property
+    def has_borrowed(self):
+        return self.user.has.filter(~django.db.models.Q(owner=self.user))
+
+    @property
+    def has_own(self):
+        return self.user.has.filter(django.db.models.Q(owner=self.user))
+
+    @property
+    def lent_own(self):
+        return self.user.owns.filter(~django.db.models.Q(holder=self.user))

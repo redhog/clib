@@ -5,8 +5,7 @@
     <div class="container">
       <div class="row">
         <div class="col-md-8">
-
-          {% if not request.user.profile.location.position or not request.user.owns.count or request.user.needs_labels.count or request.user.profile.available_balance <= 0.0 or not request.user.has.count %}
+          {% if not request.user.profile.location.position or not request.user.owns.count or request.user.needs_labels.count or request.user.profile.available_balance <= 0.0 or not request.user.profile.has_borrowed.count %}
             <div class="well">
               <h1>Things do do to get you started:</h1>
 
@@ -29,8 +28,7 @@
                 <h4>You don't have any funds available.</h4>
                 <p><a href="{% url 'appomatic_clib.views_funds.funds' %}">Add some funds</a> or lend some things to be able to start borrowing things.</p>
               {% else %}
-
-                {% if not request.user.has.count %}
+                {% if not request.user.profile.has_borrowed.count %}
                   <h4>You haven't borrowed anything.</h4>
                   <p>Maybe you'd like to search for things to borrow:
                     <form action="{% url 'appomatic_clib.views.search' %}" class="form form-inline" role="form">
