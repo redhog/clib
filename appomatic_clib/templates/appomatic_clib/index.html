@@ -5,43 +5,46 @@
     <div class="container">
       <div class="row">
         <div class="col-md-8">
-          {% if not request.user.profile.location.position %}
-            <div class="alert alert-info" role="alert">
-              <p>You need to <a href="{% url 'userena_profile_edit' request.user.username %}">set your location</a>. Your location is used when others are to send you things, and to sort lists of things by distance. <em>Your position is never shown directly to users except when they need to send you a thing./em></p>
-            </div>
-          {% endif %}
 
-          {% if not request.user.owns.count %}
-            <div class="alert alert-info" role="alert">
-              <p>Your library is empty. <a href="{% url 'appomatic_clib.views.add' %}">Add some things to your library</a> to get started lending.</p>
-            </div>
-          {% endif %}
+          {% if not request.user.profile.location.position or not request.user.owns.count or request.user.needs_labels.count or request.user.profile.available_balance <= 0.0 or not request.user.has.count %}
+            <div class="well">
+              <h1>Things do do to get you started:</h1>
 
-          {% if request.user.needs_labels.count %}
-            <div class="alert alert-info" role="alert">
-              You have new things that need labels. <a href="{% url 'appomatic_clib.views.labels' %}" class="btn btn-default">Print labels</a>
-            </div>
-          {% endif %}
+              {% if not request.user.profile.location.position %}
+                <h4>You need to <a href="{% url 'userena_profile_edit' request.user.username %}">set your location</a>.</h4>
+                <p>Your location is used when others are to send you things, and to sort lists of things by distance. <em>Your position is never shown directly to users except when they need to send you a thing./em></p>
+              {% endif %}
 
-          {% if request.user.profile.available_balance <= 0.0 %}
-            <div class="alert alert-info" role="alert">
-              You don't have any funds available. <a href="{% url 'appomatic_clib.views_funds.funds' %}">Add some funds</a> or lend some things to be able to start borrowing things.
-            </div>
-          {% else %}
+              {% if not request.user.owns.count %}
+                <h4>Your library is empty.</h4>
+                <p><a href="{% url 'appomatic_clib.views.add' %}">Add some things to your library</a> to get started lending.</p>
+              {% endif %}
 
-            {% if not request.user.has.count %}
-              <div class="alert alert-success" role="alert">
-                You haven't borrowed anything. Maybe you'd like to search for things to borrow:
-                <form action="{% url 'appomatic_clib.views.search' %}" class="form form-inline" role="form">
-                  <div class="input-group">
-                    <input type="text" name="query" placeholder="Search" class="form-control">
-                    <span class="input-group-btn">
-                      <button class="btn btn-default" type="submit"><i class='glyphicon glyphicon-search'></i>&nbsp;</button>
-                    </span>
-                  </div>
-                </form>
-              </div>
-            {% endif %}
+              {% if request.user.needs_labels.count %}
+                <h4>You have new things that need labels.</h4>
+                <p><a href="{% url 'appomatic_clib.views.labels' %}" class="btn btn-default">Print labels</a></p>
+              {% endif %}
+
+              {% if request.user.profile.available_balance <= 0.0 %}
+                <h4>You don't have any funds available.</h4>
+                <p><a href="{% url 'appomatic_clib.views_funds.funds' %}">Add some funds</a> or lend some things to be able to start borrowing things.</p>
+              {% else %}
+
+                {% if not request.user.has.count %}
+                  <h4>You haven't borrowed anything.</h4>
+                  <p>Maybe you'd like to search for things to borrow:
+                    <form action="{% url 'appomatic_clib.views.search' %}" class="form form-inline" role="form">
+                      <div class="input-group">
+                        <input type="text" name="query" placeholder="Search" class="form-control">
+                        <span class="input-group-btn">
+                          <button class="btn btn-default" type="submit"><i class='glyphicon glyphicon-search'></i>&nbsp;</button>
+                        </span>
+                      </div>
+                    </form>
+                  </p>
+                {% endif %}
+              {% endif %}
+            </div>
           {% endif %}
 
           {% if request.user.requests.count %}
