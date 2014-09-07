@@ -361,15 +361,6 @@ class MessageUser(django.db.models.Model):
             self.save()
         return ""
 
-# FIXME: Move these to the profile
-def needs_labels(self):
-    return self.owns.filter(label_printed = False)
-django.contrib.auth.models.User.needs_labels = needs_labels
-
-def requests(self):
-    return self.has.filter(requests__sent = False)
-django.contrib.auth.models.User.requests = requests
-
 class Area(django.contrib.gis.db.models.Model):
     objects = django.contrib.gis.db.models.GeoManager()
 
@@ -456,3 +447,11 @@ class Profile(userena.models.UserenaBaseProfile):
     @property
     def disputes(self):
         return self.user.has.filter(requests__disputed=True)
+
+    @property
+    def needs_labels(self):
+        return self.user.owns.filter(label_printed = False)
+
+#    @property
+    def requests(self):
+        return self.user.has.filter(requests__sent = False)

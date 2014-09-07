@@ -8,7 +8,7 @@
     <button name='done' value='true' class="btn btn-default" type="submit">Mark as done</button>
   </form>
 
-  {% for t in request.user.needs_labels.all %}
+  {% for t in request.user.profile.needs_labels.all %}
     {{t.render_as.label}}
   {% endfor %}
 {% endblock %}
