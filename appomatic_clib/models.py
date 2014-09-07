@@ -29,19 +29,11 @@ class Object(django.db.models.Model, appomatic_renderable.models.Renderable):
         return  'http://' + django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse('appomatic_clib.views.get', kwargs={'id': self.id})
 
     def comment(self, content, author, recipients=[]):
-        msg = Message(
+        Message.post(
             about=self,
             content=content,
-            )
-        msg.save()
-        MessageUser(
-            user = author,
-            message = msg,
-            author = True).save()
-        for recipient in recipients:
-            MessageUser(
-                user = recipient,
-                message = msg).save()
+            auto = author,
+            recipients = recipients)
 
     def handle__comment(self, request, style):
         self.comment(request.POST['content'], request.user)
@@ -146,20 +138,11 @@ class Thing(Object):
         return self.requests.order_by('time')[0]
 
     def lose(self):
-        msg = Message(
+        Message.post(
             about = self,
-            content = '%(holder)s has lost the thing %(thing)s' % {"holder": self.holder.username, "thing": self.type.name}
-            )
-        msg.save()
-        MessageUser(
-            message = msg,
-            user = self.owner
-            ).save()
-        MessageUser(
-            message = msg,
-            user = self.holder,
-            author = True
-            ).save()
+            content = '%(holder)s has lost the thing %(thing)s' % {"holder": self.holder.username, "thing": self.type.name},
+            author = self.holder,
+            recipients = [self.owner])
         self.available = False
         self.owner = self.holder
         if self.deposit_payed:
@@ -197,6 +180,7 @@ class LendingRequest(Object):
 
     deposit_payed = django.db.models.ForeignKey(Transaction, null=True, blank=True, related_name="deposit_payed")
     sent = django.db.models.BooleanField(default=False)
+    disputed = django.db.models.BooleanField(default=False)
     tracking_barcode_type = django.db.models.CharField(max_length=128, db_index=True)
     tracking_barcode_data = django.db.models.CharField(max_length=512, db_index=True)
 
@@ -246,6 +230,17 @@ class LendingRequest(Object):
     def send(self):
         assert not self.sent
         self.sent = True
+        self.save()
+
+    def dispute(self):
+        assert self.sent
+        self.disputed = True
+        self.save()
+
+    def returned_to_sender(self):
+        assert self.disputed
+        self.disputed = False
+        self.sent = False
         self.save()
 
     def receive(self):
@@ -300,6 +295,18 @@ class LendingRequest(Object):
         raise fcdjangoutils.responseutils.EarlyResponseException(
             django.shortcuts.redirect(thing.get_absolute_url()))
 
+    def handle__dispute(self, request, style):
+        assert self.requestor.id == request.user.id
+        self.dispute()
+        raise fcdjangoutils.responseutils.EarlyResponseException(
+            django.shortcuts.redirect(self.get_absolute_url()))
+
+    def handle__returned_to_sender(self, request, style):
+        assert self.thing.holder.id == request.user.id
+        self.returned_to_sender()
+        raise fcdjangoutils.responseutils.EarlyResponseException(
+            django.shortcuts.redirect(self.get_absolute_url()))
+
     def handle__set_transport_accepted(self, request, style):
         self.set_transport_accepted(float(request.POST['amount']))
         raise fcdjangoutils.responseutils.EarlyResponseException(
@@ -324,6 +331,23 @@ class Message(Object):
     def author(self):
         authors = self.users.filter(author=True)
         if authors: return authors[0].user
+
+    @classmethod
+    def post(cls, about, content, author, recipients):
+        msg = Message(
+            about=about,
+            content=content,
+            )
+        msg.save()
+        MessageUser(
+            user = author,
+            message = msg,
+            author = True).save()
+        for recipient in recipients:
+            MessageUser(
+                user = recipient,
+                message = msg).save()
+        return msg
 
 class MessageUser(django.db.models.Model): 
     user = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name='messages')
@@ -428,3 +452,7 @@ class Profile(userena.models.UserenaBaseProfile):
     @property
     def lent_own(self):
         return self.user.owns.filter(~django.db.models.Q(holder=self.user))
+
+    @property
+    def disputes(self):
+        return self.user.has.filter(requests__disputed=True)

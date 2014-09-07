@@ -45,6 +45,24 @@
             </div>
           {% endif %}
 
+          {% if request.user.profile.disputes.count %}
+            <div class="panel panel-default">
+              <table class="table bg-danger text-danger">
+                <tr><th>Disputed transports</th><th>to user</th></tr>
+                {% for t in request.user.profile.disputes.all %}
+                  <tr>
+                    <td>
+                      <a href='{{t.request.get_absolute_url}}'>
+                        {{t.type.name}} by {{t.type.designer}}
+                      </a>
+                    </td>
+                    <td>{{t.request.requestor}}</td>
+                  </td></tr>
+                {% endfor %}
+              </table>
+            </div>
+          {% endif %}
+
           {% if request.user.requests.count %}
             <div class="panel panel-default">
               <table class="table">
