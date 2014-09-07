@@ -187,6 +187,12 @@ class LendingRequest(Object):
     transport_payed = django.db.models.ForeignKey(Transaction, null=True, blank=True, related_name="transport_payed")
     transport_accepted = django.db.models.FloatField(blank=True)
 
+    @property
+    def show_well(self):
+        # Used in template... kind of ugly to have here... But too complex logic for the django templating language
+        request = fcdjangoutils.middleware.get_request()
+        return request.user.id == self.requestor.id or ( request.user.id == self.thing.holder.id and not self.sent)
+
     def save(self, *arg, **kw):
         if not self.id:
             assert self.requestor.profile.available_balance >= self.thing.type.price
@@ -309,6 +315,8 @@ class LendingRequest(Object):
 
     def handle__set_transport_accepted(self, request, style):
         self.set_transport_accepted(float(request.POST['amount']))
+        if 'set_default' in request.POST:
+            request.user.profile.set_transport_accepted(float(request.POST['amount']))
         raise fcdjangoutils.responseutils.EarlyResponseException(
             django.shortcuts.redirect(self.get_absolute_url()))
 
@@ -386,6 +394,10 @@ class Profile(userena.models.UserenaBaseProfile):
 
     location = django.db.models.ForeignKey(Location, related_name="lives_here", null=True, blank=True)
     transport_accepted = django.db.models.FloatField(default=0.0, verbose_name=_('Maximum transport cost accepted'))
+
+    def set_transport_accepted(self, amount):
+        self.transport_accepted = amount
+        self.save()
 
     @property
     def tentative_credit(self):
