@@ -6,41 +6,52 @@
       <div class="col-md-6">
 
         {% if request.user.is_authenticated %}
-          {% if request.user.id = obj.holder.id %}
-            {% if t.request %}
-              {% if not obj.request.sent %}
-                <div class="alert alert-warning inline" role="alert">
-                  <i class='glyphicon glyphicon-comment'></i> {{obj.request.requestor}} is requesting this thing.
-                  <a class="btn btn-success" href="{{obj.request.get_absolute_url}}"><i class='fa fa-truck'></i> Send this thing</a>
-                </div>
+          {% if request.user.id = obj.holder.id or request.user.id = obj.request.requestor.id %}
+            <div class="well">
+              {% if request.user.id = obj.holder.id %}
+                {% if t.request %}
+                  {% if not obj.request.sent %}
+                    <div class="alert alert-warning inline" role="alert">
+                      <i class='glyphicon glyphicon-comment'></i> {{obj.request.requestor}} is requesting this thing.
+                      <a class="btn btn-success" href="{{obj.request.get_absolute_url}}"><i class='fa fa-truck'></i> Send this thing</a>
+                    </div>
+                  {% endif %}
+                {% endif %}
+
+                <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
+                  {% csrf_token %}
+                  <input type="hidden" name="method" value="lose">
+                  <button type="submit" class="btn btn-danger"><i class='fa fa-child'></i> I have lost this item</button>
+                </form>
+
+                <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form" class='form-inline'>
+                  {% csrf_token %}
+                  <input type="hidden" name="method" value="set_price">
+                  Requested deposit: <input type="text" name="amount" class="form-control" value="{{obj.price}}">
+                  <button type="submit" class="btn btn-default">Set amount</button>
+                </form>
+
+              {% else %}
+
+                {% if request.user.id = obj.request.requestor.id %}
+                  <div class="alert alert-info inline" role="alert">
+                    <p><a href="{{obj.request.get_absolute_url}}"><i class='glyphicon glyphicon-comment'></i> You are requesting for this thing.</a></p>
+                    {% if obj.request.sent %}
+                      <p><i class='fa fa-truck'></i> It has been sent.</p>
+                    {% else %}
+                      <p><i class='fa fa-clock-o'></i> It has not yet been sent.</p>
+                    {% endif %}
+                    {% if obj.request.sent %}
+                      <form enctype="multipart/form-data" action="{{obj.request.get_absolute_url}}" method='post' role="form">
+                        {% csrf_token %}
+                        <input type="hidden" name="method" value="receive">
+                        <button type="submit" class="btn btn-success"><i class='glyphicon glyphicon-ok'></i> Mark as received</button>
+                      </form>
+                    {% endif %}
+                  </div>
+                {% endif %}
               {% endif %}
-            {% endif %}
-
-            <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
-              {% csrf_token %}
-              <input type="hidden" name="method" value="lose">
-              <button type="submit" class="btn btn-danger"><i class='fa fa-child'></i> I have lost this item</button>
-            </form>
-
-          {% else %}
-
-            {% if request.user.id = obj.request.requestor.id %}
-              <div class="alert alert-info inline" role="alert">
-                <p><a href="{{obj.request.get_absolute_url}}"><i class='glyphicon glyphicon-comment'></i> You are requesting for this thing.</a></p>
-                {% if obj.request.sent %}
-                  <p><i class='fa fa-truck'></i> It has been sent.</p>
-                {% else %}
-                  <p><i class='fa fa-clock-o'></i> It has not yet been sent.</p>
-                {% endif %}
-                {% if obj.request.sent %}
-                  <form enctype="multipart/form-data" action="{{obj.request.get_absolute_url}}" method='post' role="form">
-                    {% csrf_token %}
-                    <input type="hidden" name="method" value="receive">
-                    <button type="submit" class="btn btn-success"><i class='glyphicon glyphicon-ok'></i> Mark as received</button>
-                  </form>
-                {% endif %}
-              </div>
-            {% endif %}
+            </div>
           {% endif %}
         {% endif %}
 

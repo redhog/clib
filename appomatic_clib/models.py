@@ -161,6 +161,10 @@ class Thing(Object):
             deposit_payed.save()
         self.save()
 
+    def set_price(self, amount):
+        self.price = amount
+        self.save()
+
     def save(self, *arg, **kw):
         if self.holder is None:
             self.holder = self.owner
@@ -179,6 +183,12 @@ class Thing(Object):
     def handle__lose(self, request, style):
         assert request.user.id == self.holder.id
         self.lose()
+        raise fcdjangoutils.responseutils.EarlyResponseException(
+            django.shortcuts.redirect(self))
+
+    def handle__set_price(self, request, style):
+        assert request.user.id == self.owner.id
+        self.set_price(request.POST['amount'])
         raise fcdjangoutils.responseutils.EarlyResponseException(
             django.shortcuts.redirect(self))
 
