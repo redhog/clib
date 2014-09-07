@@ -238,15 +238,13 @@ class LendingRequest(Object):
     def set_transport_requested(self, amount):
         assert amount <= self.transport_accepted
         transport_payed = self.transport_payed
+        transport_payed.tentative = False
+        transport_payed.pending = True
         transport_payed.amount = amount
         transport_payed.save()
 
     def send(self):
         assert not self.sent
-        transport_payed = self.transport_payed
-        transport_payed.pending = True
-        transport_payed.tentative = False
-        transport_payed.save()
         self.sent = True
         self.save()
 
