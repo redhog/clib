@@ -1,16 +1,24 @@
 {% extends "appomatic_clib/base.html" %}
 {% load qr_tags %}
+{% load endless %}
+
 {% block full-content %}
   {% if results.count %}
+    {% paginate results as res %}
     <div class="panel panel-default">
       <table class="table">
         <tr><th>Things matching '{{query}}'</th><th>by</th></tr>
-        {% for t in results %}
+        {% for t in res %}
           <tr>
             <td><a href='{{t.get_absolute_url}}'>{{t.name}}</td>
             <td><a href='{{t.get_absolute_url}}'>{{t.designer}}</a></td>
           </tr>
         {% endfor %}
+        <tr>
+          <td colspan="4">
+            {% show_pages %}
+          </td>
+        </tr>
       </table>
     </div>
   {% else %}

@@ -5,7 +5,7 @@
 {% block full-content %}
   <form class="form form-inline noprint" role="form">
     <br>
-    <button name='done' value='true' class="btn btn-default" type="submit">Mark as done</button>
+    <button name='done' value='true' class="btn btn-success" type="submit">Mark as done</button>
   </form>
 
   {% for t in request.user.profile.needs_labels.all %}

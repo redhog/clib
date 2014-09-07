@@ -4,7 +4,8 @@ INSTALLED_APPS += [
     "guardian",
     "easy_thumbnails",
     "django.contrib.gis",
-    "django.contrib.messages"
+    "django.contrib.messages",
+    "endless_pagination"
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -15,7 +16,8 @@ MIDDLEWARE_CLASSES = [
 ]
 
 TEMPLATE_CONTEXT_PROCESSORS = [
-    "django.contrib.messages.context_processors.messages"
+    "django.contrib.messages.context_processors.messages",
+    'django.core.context_processors.request'
 ]
 
 PRE = ["appomatic_admin"]

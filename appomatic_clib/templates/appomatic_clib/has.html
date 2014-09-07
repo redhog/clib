@@ -1,12 +1,15 @@
 {% extends "appomatic_clib/base.html" %}
 {% load qr_tags %}
+{% load endless %}
+
 {% block full-content %}
   {% if request.user.has.count %}
     <div class="panel panel-default">
       <table class="table">
         {% if request.user.profile.has_borrowed.count %}
+          {% paginate request.user.profile.has_borrowed.all using "has_borrowed" as has_borrowed %}
           <tr><th colspan="2">Borrowed things</th><th>by</th><th>owned by</th></tr>
-          {% for t in request.user.profile.has_borrowed.all %}
+          {% for t in has_borrowed %}
             <tr>
               <td><a href='{{t.get_absolute_url}}'>{{t.type.barcode_type}}:{{t.type.barcode_data}}</td>
               <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
@@ -14,10 +17,16 @@
               <td><a href='{{t.owner.profile.get_absolute_url}}'>{{t.owner.username}}</a></td>
             </tr>
           {% endfor %}
+          <tr>
+            <td colspan="4">
+              {% show_pages %}
+            </td>
+          </tr>
         {% endif %}
         {% if request.user.profile.has_own.count %}
+          {% paginate request.user.profile.has_own.all using "has_own" as has_own %}
           <tr><th colspan="2">Own things held</th><th>by</th><th></th></tr>
-          {% for t in request.user.profile.has_own.all %}
+          {% for t in has_own %}
             <tr>
               <td><a href='{{t.get_absolute_url}}'>{{t.type.barcode_type}}:{{t.type.barcode_data}}</td>
               <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
@@ -25,6 +34,11 @@
               <td></td>
             </tr>
           {% endfor %}
+          <tr>
+            <td colspan="4">
+              {% show_pages %}
+            </td>
+          </tr>
         {% endif %}
       </table>
     </div>

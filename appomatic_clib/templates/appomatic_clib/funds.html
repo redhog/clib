@@ -3,6 +3,7 @@
 {% load qr_tags %}
 {% load bootstrap %}
 {% load i18n %}
+{% load endless %}
 
 {% block title %}{% trans "Funds" %}{% endblock %}
 
@@ -49,10 +50,11 @@
         <div class="col-md-12">
           <h1>Transaction history</h1>
           {% if request.user.profile.transaction_history.count %}
+            {% paginate request.user.profile.transaction_history.all as transactions %}
             <div class="panel panel-default">
               <table class="table">
                 <tr><th>Time</th><th>Credit</th><th>Debit</th><th>From</th><th>To</th><th>Status</th></tr>
-                {% for t in request.user.profile.transaction_history.all %}
+                {% for t in transactions %}
                   <tr>
                     <td>{{t.time}}</td>
                     <td class='text-success'>{% if t.dst = request.user %}{{t.amount}}{% endif %}</td>
@@ -65,6 +67,11 @@
                     </td>
                   </tr>
                 {% endfor %}
+                <tr>
+                  <td colspan="4">
+                    {% show_pages %}
+                  </td>
+                </tr>
               </table>
             </div>
           {% else %}
