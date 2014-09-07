@@ -51,11 +51,12 @@
           {% if request.user.profile.transaction_history.count %}
             <div class="panel panel-default">
               <table class="table">
-                <tr><th>Time</th><th>Amount</th><th>From</th><th>To</th><th>Status</th></tr>
+                <tr><th>Time</th><th>Credit</th><th>Debit</th><th>From</th><th>To</th><th>Status</th></tr>
                 {% for t in request.user.profile.transaction_history.all %}
                   <tr>
                     <td>{{t.time}}</td>
-                    <td>{{t.amount}}</td>
+                    <td class='text-success'>{% if t.dst = request.user %}{{t.amount}}{% endif %}</td>
+                    <td class='text-danger'>{% if t.src = request.user %}{{t.amount}}{% endif %}</td>
                     <td>{% if t.src != request.user %}{{t.source}}{% endif %}</td>
                     <td>{% if t.dst != request.user %}{{t.destination}}{% endif %}</td>
                     <td>

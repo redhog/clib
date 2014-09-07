@@ -51,6 +51,9 @@ class Transaction(Object):
     external_data = django.db.models.TextField(null=True, blank=True)
     log = django.db.models.TextField(null=True, blank=True)
 
+    class Meta:
+        ordering = ('time', )
+
     @property
     def source(self):
        if self.src:
@@ -83,6 +86,9 @@ class ThingType(Object):
     producer = django.db.models.CharField(default='', max_length=256, db_index=True)
     designer = django.db.models.CharField(default='', max_length=256, db_index=True)
     description = django.db.models.TextField(default='')
+
+    class Meta:
+        ordering = ('name', )
 
     def save(self, *arg, **kw):
         if self.barcode_type == 'EAN_13' and self.name == '' and self.designer == '':
@@ -119,6 +125,9 @@ class Thing(Object):
     price = django.db.models.FloatField(default=100.0)
 
     available = django.db.models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ('type__name', )
 
     def distance(self):
         request = fcdjangoutils.middleware.get_request()
@@ -334,6 +343,9 @@ class Message(Object):
     about = django.db.models.ForeignKey(Object, related_name='conversation')
     time = django.db.models.DateTimeField(auto_now_add=True)
     content = django.db.models.TextField(blank=True)
+
+    class Meta:
+        ordering = ('time', )
 
     @property
     def author(self):
