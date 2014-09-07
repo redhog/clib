@@ -81,17 +81,17 @@
                  </form>
                {% endif %}
 
+               <form enctype="multipart/form-data" action="{{obj.thing.get_absolute_url}}" method='post' role="form">
+                 {% csrf_token %}
+                 <input type="hidden" name="method" value="lose">
+                 <button type="submit" class="btn btn-danger"><i class='fa fa-child'></i> I have lost this item</button>
+               </form>
+
                <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
                  {% csrf_token %}
                  <input type="hidden" name="method" value="set_transport_requested">
                  Transport cost: <input type="text" name="amount" value="{{obj.transport_payed.amount}}"> (maximum accepted: €{{obj.transport_accepted}})
                  <button type="submit" class="btn {% if obj.transport_payed.pending %}btn-default{% else %}btn-success{% endif %}">Accept amount</button>
-               </form>
-
-               <form enctype="multipart/form-data" action="{{obj.thing.get_absolute_url}}" method='post' role="form">
-                 {% csrf_token %}
-                 <input type="hidden" name="method" value="lose">
-                 <button type="submit" class="btn btn-danger"><i class='fa fa-child'></i> I have lost this item</button>
                </form>
              {% endif %}
            {% endif %}
@@ -102,20 +102,31 @@
 
      <h1>Lending request for <a href="{{obj.thing.get_absolute_url}}">{{obj.thing.type.name}} by {{obj.thing.type.designer}}</a></h1>
 
-     <p><i class='glyphicon glyphicon-comment'></i> <a href="{{obj.requestor.profile.get_absolute_url}}">{{obj.requestor}}</a> is requesting this thing from <a href="{{obj.thing.holder.profile.get_absolute_url}}">{{obj.thing.holder}}</a>.</p>
+     <p><i class='glyphicon glyphicon-comment'></i>
+       {% if obj.requestor.id = request.user.id %}
+         You are requesting this thing from <a href="{{obj.thing.holder.profile.get_absolute_url}}">{{obj.thing.holder}}</a>.</p>
+       {% else %}
+         {% if obj.thing.holder.id = request.user.id %}
+           <a href="{{obj.requestor.profile.get_absolute_url}}">{{obj.requestor}}</a> is requesting this thing from you.
+         {% else %}
+           <a href="{{obj.requestor.profile.get_absolute_url}}">{{obj.requestor}}</a> is requesting this thing from <a href="{{obj.thing.holder.profile.get_absolute_url}}">{{obj.thing.holder}}</a>.
+         {% endif %}
+       {% endif %}
+     </p>
+
      <p><i class='fa fa-clock-o'></i> Waiting since {{obj.time}}.</p>
      {% if obj.sent %}
        <p><i class='fa fa-truck'></i> It has been sent.</p>
      {% else %}
        <p><i class='fa fa-clock-o'></i> It has not yet been sent.</p>
      {% endif %}
-     <p>Deposit payed: €{{obj.deposit_payed.amount}}.</p>
+     <p><i class='fa fa-money'></i> Deposit payed: €{{obj.deposit_payed.amount}}.</p>
      {% if not obj.transport_payed.tentative %}
        {% if obj.sent %}
-         <p>Transport payed: €{{obj.transport_payed.amount}}.</p>
+         <p><i class='fa fa-money'></i> Transport payed: €{{obj.transport_payed.amount}}.</p>
        {% else %}
          {% if request.user.id = obj.requestor.id %}
-           <p>Transport requested: €{{obj.transport_payed.amount}}.</p>
+           <p><i class='fa fa-money'></i> Transport requested: €{{obj.transport_payed.amount}}.</p>
          {% endif %}
        {% endif %}
      {% endif %}
