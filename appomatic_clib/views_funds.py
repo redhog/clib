@@ -11,7 +11,7 @@ import urllib2
 import urllib
 import json
 
-def paypal_withdraw(user, amount):
+def paypal_withdraw(request, user, amount):
     if amount > user.profile.available_balance:
         raise Exception("Too little funds available")
 
@@ -64,7 +64,9 @@ def paypal_withdraw(user, amount):
 
     transaction.save()
 
-def paypal_add(user, amount):
+    django.contrib.messages.add_message(request, django.contrib.messages.INFO, 'Funds withdrawn.')
+
+def paypal_add(request, user, amount):
     req = {
         "actionType": "PAY",
         "feesPayer": "SENDER",
@@ -126,10 +128,55 @@ def paypal_add_return(request):
                 
     return django.shortcuts.redirect('appomatic_clib.views_funds.funds')
 
+def fake_withdraw(request, user, amount):
+    transaction = appomatic_clib.models.Transaction(
+        amount = amount,
+        src = user,
+        dst = None,
+        external_type = "fake",
+        external_data = user.email,
+        tentative = False,
+        pending = False)
+    transaction.save()
+    django.contrib.messages.add_message(request, django.contrib.messages.INFO, 'Funds withdrawn.')
+
+
+def fake_add(request, user, amount):
+    transaction = appomatic_clib.models.Transaction(
+        pending = False,
+        tentative = False,
+        amount = amount,
+        src = None,
+        dst = user,
+        external_type = "fake",
+        external_data = user.email)
+    transaction.save()
+
+    django.contrib.messages.add_message(request, django.contrib.messages.INFO, 'Funds added.')
+                
+    return django.shortcuts.redirect('appomatic_clib.views_funds.funds')
+
+services = {
+    'paypal': {
+        'name': 'PayPal',
+        'withdraw': paypal_withdraw,
+        'add': paypal_add
+        }
+    }
+
+if getattr(settings, 'CLIB_FAKE_MONEY', False):
+    services = {
+        'fake': {
+            'name': 'Fake',
+            'withdraw': fake_withdraw,
+            'add': fake_add
+            }
+        }
+
 
 class FundsForm(django.forms.Form):
-    withdraw = django.forms.FloatField(label="Withdraw", required=False)
-    add = django.forms.FloatField(label="Deposit", required=False)
+    amount = django.forms.FloatField(label="Amount", required=False)
+    service = django.forms.ChoiceField(label="Service", choices=[(key, service['name']) for (key, service) in services.iteritems()])
 
 @django.contrib.auth.decorators.login_required
 def funds(request):
@@ -139,15 +186,16 @@ def funds(request):
         form = FundsForm(request.POST)
 
         if form.is_valid():
+            service = services[form.cleaned_data['service']]
             if 'do_withdraw' in request.POST:
                 try:
-                    paypal_withdraw(request.user, form.cleaned_data['withdraw'])
+                    service['withdraw'](request, request.user, form.cleaned_data['amount'])
                 except Exception, e:
                     django.contrib.messages.add_message(request, django.contrib.messages.ERROR, unicode(e))
                 else:
                     django.contrib.messages.add_message(request, django.contrib.messages.INFO, 'Funds withdrawn.')
             elif 'do_add' in request.POST:
-                return paypal_add(request.user, form.cleaned_data['add'])
+                return service['add'](request, request.user, form.cleaned_data['amount'])
 
     return django.shortcuts.render(request, 'appomatic_clib/funds.html', {
         'form': form,

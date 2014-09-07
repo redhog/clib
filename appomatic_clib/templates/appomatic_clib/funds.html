@@ -20,18 +20,22 @@
       <div class="row">
         <div class="col-md-6">
           <div class="form-group">
-            {{form.withdraw.errors }}
-            {{form.withdraw.label_tag}}
-            {{form.withdraw|formControl}}
+            {{form.amount.errors }}
+            {{form.amount.label_tag}}
+            {{form.amount|formControl}}
           </div>
-          <input name='do_withdraw' type='submit' value='Withdraw funds' class='btn btn-success' />
         </div>
         <div class="col-md-6">
           <div class="form-group">
-            {{form.add.errors }}
-            {{form.add.label_tag}}
-            {{form.add|formControl}}
+            {{form.service.errors }}
+            {{form.service.label_tag}}
+            {{form.service|formControl}}
           </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <input name='do_withdraw' type='submit' value='Withdraw funds' class='btn btn-success' />
           <input name='do_add' type='submit' value='Add funds' class='btn btn-success' />
         </div>
       </div>
