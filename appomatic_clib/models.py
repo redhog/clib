@@ -12,6 +12,7 @@ import fcdjangoutils.middleware
 import uuid
 import appomatic_renderable.models
 import django.contrib.messages
+import fcdjangoutils.fields
 
 class Object(django.db.models.Model, appomatic_renderable.models.Renderable):
     id = django.db.models.CharField(max_length=128, blank=True, primary_key=True)
@@ -86,11 +87,20 @@ class ThingType(Object):
     producer = django.db.models.CharField(default='', max_length=256, db_index=True)
     designer = django.db.models.CharField(default='', max_length=256, db_index=True)
     description = django.db.models.TextField(default='')
+    log = fcdjangoutils.fields.JsonField(default=[], null=True, blank=True)
 
     class Meta:
         ordering = ('name', )
 
     def save(self, *arg, **kw):
+        self.log = self.log + [{
+            "barcode_type": self.barcode_type,
+            "barcode_data": self.barcode_data,
+            "name": self.name,
+            "producer": self.producer,
+            "designer": self.designer,
+            "description": self.description 
+            }]
         if self.barcode_type == 'EAN_13' and self.name == '' and self.designer == '':
             self.designer, self.name = appomatic_clib.isbnlookup.ISBNLookup.lookup(self.barcode_data)
         Object.save(self, *arg, **kw)
@@ -110,6 +120,23 @@ class ThingType(Object):
 
     def __unicode__(self):
         return u"%(name)s: %(barcode_type)s/%(barcode_data)s" % {"name": self.name, "barcode_type": self.barcode_type, "barcode_data": self.barcode_data}
+
+    def handle__save(self, request, style):
+        form = ThingTypeForm(request.POST, instance=self)
+        if form.is_valid():
+            form.save()
+            raise fcdjangoutils.responseutils.EarlyResponseException(
+                django.shortcuts.redirect(self))
+        return {"form": form}
+
+    def handle__edit(self, request, style):
+        form = ThingTypeForm(instance=self)
+        return {"form": form}
+
+class ThingTypeForm(django.forms.ModelForm):
+    class Meta:
+        model = ThingType
+        fields = ['name', 'producer', 'designer', 'description']
 
 
 class Thing(Object):

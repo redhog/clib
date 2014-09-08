@@ -1,42 +1,99 @@
 {% extends "appomatic_clib/base.html" %}
 {% load qr_tags %}
 {% load endless %}
+{% load bootstrap %}
 
-{% block full-content %}
-  <div class='qr-link thing-link'>
-    {% qr_from_text obj.get_absolute_url %}
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8">
+
+        <div class="well clearfix">
+          {% if form %}
+            <form enctype="multipart/form-data" action='{{obj.get_absolute_url}}' method='post' role="form">
+              {% csrf_token %}
+              {{form.non_field_errors}}
+              {{form.profile.non_field_errors}}
+              {{form.location.non_field_errors}}
+              <div class="form-group">
+                {{form.name.errors }}
+                {{form.name.label_tag}}
+                {{form.name|formControl}}
+              </div>
+              <div class="form-group">
+                {{form.producer.errors }}
+                {{form.producer.label_tag}}
+                {{form.producer|formControl}}
+              </div>
+              <div class="form-group">
+                {{form.designer.errors }}
+                {{form.designer.label_tag}}
+                {{form.designer|formControl}}
+              </div>
+              <div class="form-group">
+                {{form.description.errors }}
+                {{form.description.label_tag}}
+                {{form.description|formControl}}
+              </div>
+              <div class="btn-group pull-right">
+                <button type="submit" name="method" value="save" class="btn btn-success"><i class='fa fa-save'></i> Save</button>
+                <button type="submit" name="method" value="read" class="btn btn-default"><i class='fa fa-cancel'></i> Cancel</button>
+              </div>
+            </form>
+          {% else %}
+            <form enctype="multipart/form-data" action='{{obj.get_absolute_url}}' method='post'>
+              {% csrf_token %}
+              <button type="submit" name="method" value="edit" class="btn btn-success"><i class='fa fa-edit'></i> Edit</button>
+            </form>
+          {% endif %}
+        </div>
+
+        <h1>{{obj.name}} by {{obj.designer}}</h1>
+        <p>{{obj.description}}</p>
+
+        <table class="table table-bordered small-table">
+          <tr><th>Id:</th><td>{{obj.id}}</td></tr>
+          <tr><th>Name:</th><td>{{obj.name}}</td></tr>
+          <tr><th>Producer:</th><td>{{obj.producer}}</td></tr>
+          <tr><th>Designer:</th><td>{{obj.designer}}</td></tr>
+          <tr><th>Deposit required:</th><td>{{obj.price}}</td></tr>
+          <tr><th>{{obj.barcode_type}}</th><td>{{obj.barcode_data}}</td></tr>
+        </table>
+
+      </div>
+      <div class="col-md-4">
+
+        <div class='qr-link thing-link'>
+          {% qr_from_text obj.get_absolute_url %}
+        </div>
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+
+        <div class="panel panel-default">
+          <table class="table">
+            {% paginate obj.of_this_type.all as of_this_type %}
+            <tr><th>Thing</th><th>requests</th><th>available (earliest)</th><th>distance</th></tr>
+            {% for t in of_this_type %}
+              <tr>
+                <td><a href='{{t.get_absolute_url}}'>{{t.id}}</td>
+                <td><a href='{{t.get_absolute_url}}'>{{t.requests.count}}</a></td>
+                <td><a href='{{t.get_absolute_url}}'>{{t.lent_until}}</a></td>
+                <td><a href='{{t.get_absolute_url}}'>{{t.distance}}</a></td>
+              </tr>
+            {% endfor %}
+            <tr>
+              <td colspan="4">
+                {% show_pages %}
+              </td>
+            </tr>
+          </table>
+        </div>
+
+      </div>
+    </div>
   </div>
 
-  <h1>{{obj.name}} by {{obj.designer}}</h1>
-  <p>{{obj.description}}</p>
-
-  <table class="table table-bordered small-table">
-    <tr><th>Id:</th><td>{{obj.id}}</td></tr>
-    <tr><th>Name:</th><td>{{obj.name}}</td></tr>
-    <tr><th>Producer:</th><td>{{obj.producer}}</td></tr>
-    <tr><th>Designer:</th><td>{{obj.designer}}</td></tr>
-    <tr><th>Deposit required:</th><td>{{obj.price}}</td></tr>
-    <tr><th>{{obj.barcode_type}}</th><td>{{obj.barcode_data}}</td></tr>
-  </table>
-
-
-  <div class="panel panel-default">
-    <table class="table">
-      {% paginate obj.of_this_type.all as of_this_type %}
-      <tr><th>Thing</th><th>requests</th><th>available (earliest)</th><th>distance</th></tr>
-      {% for t in of_this_type %}
-        <tr>
-          <td><a href='{{t.get_absolute_url}}'>{{t.id}}</td>
-          <td><a href='{{t.get_absolute_url}}'>{{t.requests.count}}</a></td>
-          <td><a href='{{t.get_absolute_url}}'>{{t.lent_until}}</a></td>
-          <td><a href='{{t.get_absolute_url}}'>{{t.distance}}</a></td>
-        </tr>
-      {% endfor %}
-      <tr>
-        <td colspan="4">
-          {% show_pages %}
-        </td>
-      </tr>
-    </table>
-  </div>
 {% endblock %}
