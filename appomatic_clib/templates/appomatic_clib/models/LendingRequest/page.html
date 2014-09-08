@@ -27,6 +27,12 @@
                <button type="submit" class="btn btn-success"><i class='fa fa-reply'></i> Mark as returned to sender</button>
              </form>
 
+             <form enctype="multipart/form-data" action="{{obj.thing.get_absolute_url}}" method='post' role="form">
+               {% csrf_token %}
+               <input type="hidden" name="method" value="lose">
+               <button type="submit" class="btn btn-danger"><i class='fa fa-child'></i> I have lost this item</button>
+             </form>
+
            {% endif %}
          {% endif %}
        </div>
