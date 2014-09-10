@@ -74,14 +74,14 @@
 
         <div class="panel panel-default">
           <table class="table">
-            {% paginate obj.of_this_type.all as of_this_type %}
+            {% paginate obj.available_of_this_type.all as of_this_type %}
             <tr><th>Thing</th><th>requests</th><th>available (earliest)</th><th>distance</th></tr>
             {% for t in of_this_type %}
               <tr>
                 <td><a href='{{t.get_absolute_url}}'>{{t.id}}</td>
                 <td><a href='{{t.get_absolute_url}}'>{{t.requests.count}}</a></td>
                 <td><a href='{{t.get_absolute_url}}'>{{t.lent_until}}</a></td>
-                <td><a href='{{t.get_absolute_url}}'>{{t.distance}}</a></td>
+                <td><a href='{{t.get_absolute_url}}'>{{t.distance.km|floatformat:"0"}} km</a></td>
               </tr>
             {% endfor %}
             <tr>

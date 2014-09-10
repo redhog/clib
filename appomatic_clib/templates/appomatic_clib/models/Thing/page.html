@@ -6,7 +6,6 @@
       <div class="col-md-6">
 
         {% if request.user.is_authenticated %}
-
           {% if obj.request.disputed %}
             <div class="alert alert-danger">
               The delivery of this item has been disputed.
@@ -39,10 +38,19 @@
 
                 {% endif %}
               {% endif %}
+
+              {% if request.user.is_staff %}
+                <a class="btn btn-default" href="{{obj.get_admin_url}}">Admin</a>
+              {% endif %}
+
             </div>
           {% else %}
-            {% if request.user.id = obj.holder.id or request.user.id = obj.request.requestor.id %}
+            {% if request.user.id = obj.holder.id or request.user.id = obj.request.requestor.id or request.user.is_staff %}
               <div class="well">
+                {% if request.user.is_staff %}
+                  <a class="btn btn-default" href="{{obj.get_admin_url}}">Admin</a>
+                {% endif %}
+
                 {% if request.user.id = obj.holder.id %}
                   {% if t.request %}
                     {% if not obj.request.sent %}

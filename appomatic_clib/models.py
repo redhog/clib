@@ -114,6 +114,18 @@ class ThingType(Object):
         tt.save()
         return tt
 
+    def available_of_this_type(self):
+        res = Thing.geoobjects.filter(type=self, available=True)
+        request = fcdjangoutils.middleware.get_request()
+
+        if not request.user.is_authenticated() or not request.user.profile:
+            return res
+        user = request.user.profile.location
+        if not user or not user.position:
+            return res
+
+        return res.distance(user.position, field_name='location__position').order_by('distance')
+
     @property
     def price(self):
         return self.of_this_type.aggregate(django.db.models.Avg('price'))['price__avg']
@@ -140,6 +152,8 @@ class ThingTypeForm(django.forms.ModelForm):
 
 
 class Thing(Object):
+    geoobjects = django.contrib.gis.db.models.GeoManager()
+
     type = django.db.models.ForeignKey(ThingType, related_name='of_this_type')
 
     owner = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="owns")
@@ -153,19 +167,17 @@ class Thing(Object):
 
     available = django.db.models.BooleanField(default=True)
 
+    location = django.db.models.ForeignKey("Location", related_name="held_here", null=True, blank=True)
+
     class Meta:
         ordering = ('type__name', )
 
     def distance(self):
         request = fcdjangoutils.middleware.get_request()
-        if not request.user.is_authenticated() or not request.user.profile or not self.holder or not self.holder.profile:
-            return ''
         user = request.user.profile.location
-        holder = self.holder.profile.location
-        if not user or not holder or not user.position:
-            return ''
-        return user.position.distance(
-            holder.position)
+        if not user or not user.position:
+            return '-'
+        return Thing.geoobjects.filter(id=self.id).distance(user.position, field_name='location__position')[0].distance
 
     @property
     def request(self):
@@ -195,6 +207,8 @@ class Thing(Object):
     def save(self, *arg, **kw):
         if self.holder is None:
             self.holder = self.owner
+        if self.holder is not None:
+            self.location = self.holder.profile.location
         Object.save(self, *arg, **kw)
 
     def __unicode__(self):
@@ -433,8 +447,6 @@ class Location(django.contrib.gis.db.models.Model):
     address = django.db.models.TextField(default='', blank=True)
 
 class Profile(userena.models.UserenaBaseProfile):
-    objects = django.contrib.gis.db.models.GeoManager()
-
     user = django.db.models.OneToOneField(
         django.contrib.auth.models.User,
         unique=True,
