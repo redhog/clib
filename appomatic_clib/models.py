@@ -13,6 +13,8 @@ import uuid
 import appomatic_renderable.models
 import django.contrib.messages
 import fcdjangoutils.fields
+import datetime
+from django.conf import settings
 
 class Object(django.db.models.Model, appomatic_renderable.models.Renderable):
     id = django.db.models.CharField(max_length=128, blank=True, primary_key=True)
@@ -199,6 +201,9 @@ class Thing(Object):
             deposit_payed.pending = False
             deposit_payed.save()
         self.save()
+        
+        for request in self.requests.all():
+            request.cancel()
 
     def set_price(self, amount):
         self.price = amount
@@ -237,12 +242,13 @@ class LendingRequest(Object):
     thing = django.db.models.ForeignKey(Thing, related_name="requests")
     requestor = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="requesting")
     time = django.db.models.DateTimeField(auto_now_add=True)
+    time.editable = True
 
     deposit_payed = django.db.models.ForeignKey(Transaction, null=True, blank=True, related_name="deposit_payed")
-    sent = django.db.models.BooleanField(default=False)
+    sent = django.db.models.DateTimeField(null=True, blank=True)
     disputed = django.db.models.BooleanField(default=False)
-    tracking_barcode_type = django.db.models.CharField(max_length=128, db_index=True)
-    tracking_barcode_data = django.db.models.CharField(max_length=512, db_index=True)
+    tracking_barcode_type = django.db.models.CharField(max_length=128, blank=True, db_index=True)
+    tracking_barcode_data = django.db.models.CharField(max_length=512, blank=True, db_index=True)
 
     transport_payed = django.db.models.ForeignKey(Transaction, null=True, blank=True, related_name="transport_payed")
     transport_accepted = django.db.models.FloatField(blank=True)
@@ -251,7 +257,16 @@ class LendingRequest(Object):
     def show_well(self):
         # Used in template... kind of ugly to have here... But too complex logic for the django templating language
         request = fcdjangoutils.middleware.get_request()
-        return request.user.id == self.requestor.id or ( request.user.id == self.thing.holder.id and not self.sent)
+        return request.user.id == self.requestor.id or ( request.user.id == self.thing.holder.id and self.sent is None)
+
+    @property
+    def overdue(self):
+        begining = self.time
+        if (self.thing.lent_until is not None and self.thing.lent_until > begining):
+            begining = self.thing.lent_until
+        return (    self.id == self.thing.request.id
+                and self.sent is None
+                and datetime.datetime.now() > begining + datetime.timedelta(settings.SENDING_TIME)) 
 
     def save(self, *arg, **kw):
         if not self.id:
@@ -294,19 +309,19 @@ class LendingRequest(Object):
         transport_payed.save()
 
     def send(self):
-        assert not self.sent
-        self.sent = True
+        assert self.sent is None
+        self.sent = datetime.datetime.now()
         self.save()
 
     def dispute(self):
-        assert self.sent
+        assert self.sent is not None
         self.disputed = True
         self.save()
 
     def returned_to_sender(self):
         assert self.disputed
         self.disputed = False
-        self.sent = False
+        self.sent = None
         self.save()
 
     def receive(self):
@@ -320,6 +335,7 @@ class LendingRequest(Object):
         deposit_payed.log += unicode(self.thing) + "\n"
         deposit_payed.save()
         thing.deposit_payed = deposit_payed
+        thing.lent_until = datetime.datetime.now() + datetime.timedelta(settings.LENDING_TIME)
         thing.save()
         transport_payed = self.transport_payed
         transport_payed.pending = False
@@ -327,11 +343,18 @@ class LendingRequest(Object):
         transport_payed.save()
         self.delete()
 
-    def cancel(self):
-        assert not self.sent
+    def simple_cancel(self):
+        assert self.sent is None
         self.deposit_payed.delete()
         self.transport_payed.delete()
         self.delete()
+
+    def cancel(self):
+        overdue = self.overdue
+        thing = self.thing
+        self.simple_cancel()
+        if overdue:
+            thing.lose()
 
     def comment(self, content, author, recipients=[]):
         extra = [u for u in [self.requestor, self.thing.holder]
@@ -511,11 +534,15 @@ class Profile(userena.models.UserenaBaseProfile):
 
     @property
     def has_own(self):
-        return self.user.has.filter(django.db.models.Q(owner=self.user))
+        return self.user.has.filter(owner=self.user, available=True)
 
     @property
     def lent_own(self):
         return self.user.owns.filter(~django.db.models.Q(holder=self.user))
+
+    @property
+    def unavailable_own(self):
+        return self.user.has.filter(owner=self.user, available=False)
 
     @property
     def disputes(self):
@@ -525,6 +552,6 @@ class Profile(userena.models.UserenaBaseProfile):
     def needs_labels(self):
         return self.user.owns.filter(label_printed = False)
 
-#    @property
+    @property
     def requests(self):
-        return self.user.has.filter(requests__sent = False)
+        return self.user.has.annotate(request_count=django.db.models.Count('requests__id')).filter(request_count__gt = 0, requests__sent = None)

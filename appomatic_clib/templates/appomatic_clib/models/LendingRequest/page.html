@@ -35,12 +35,27 @@
 
            {% endif %}
          {% endif %}
+
+         {% if request.user.is_staff %}
+           <a class="btn btn-default" href="{{obj.get_admin_url}}">Admin</a>
+         {% endif %}
+
        </div>
 
      {% else %}
 
        {% if obj.show_well %}
-         <div class="well">
+
+         {% if obj.overdue %}
+           <div class="alert alert-danger">
+             <p>This lending request is overdue. If the request is canceled, the thing will be marked as lost by the current holder.</p>
+         {% else %}
+           <div class="well">
+         {% endif %}
+
+           {% if request.user.is_staff %}
+             <a class="btn btn-default" href="{{obj.get_admin_url}}">Admin</a>
+           {% endif %}
 
            {% if request.user.id = obj.requestor.id %}
              {% if obj.sent %}
@@ -73,7 +88,7 @@
                <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
                  {% csrf_token %}
                  <input type="hidden" name="method" value="cancel">
-                 <button type="submit" class="btn btn-warning"><i class='fa fa-close'></i> Stop waiting and cancel the request</button>
+                 <button type="submit" class="btn {% if obj.overdue %}btn-danger{% else %}btn-warning{% endif %}"><i class='fa fa-close'></i> Stop waiting and cancel the request</button>
                </form>
 
              {% endif %}

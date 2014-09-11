@@ -23,10 +23,29 @@
             </td>
           </tr>
         {% endif %}
+
         {% if request.user.profile.has_own.count %}
           {% paginate request.user.profile.has_own.all using "has_own" as has_own %}
           <tr><th colspan="2">Own things held</th><th>by</th><th></th></tr>
           {% for t in has_own %}
+            <tr>
+              <td><a href='{{t.get_absolute_url}}'>{{t.type.barcode_type}}:{{t.type.barcode_data}}</td>
+              <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
+              <td><a href='{{t.get_absolute_url}}'>{{t.type.designer}}</a></td>
+              <td></td>
+            </tr>
+          {% endfor %}
+          <tr>
+            <td colspan="4">
+              {% show_pages %}
+            </td>
+          </tr>
+        {% endif %}
+
+        {% if request.user.profile.unavailable_own.count %}
+          {% paginate request.user.profile.unavailable_own.all using "unavailable_own" as unavailable_own %}
+          <tr><th colspan="2">Unavailable own things held</th><th>by</th><th></th></tr>
+          {% for t in unavailable_own %}
             <tr>
               <td><a href='{{t.get_absolute_url}}'>{{t.type.barcode_type}}:{{t.type.barcode_data}}</td>
               <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
