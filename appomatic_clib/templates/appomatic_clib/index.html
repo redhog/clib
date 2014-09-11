@@ -89,7 +89,7 @@
           {% if request.user.requesting.count %}
             <div class="panel panel-default">
               <table class="table">
-                <tr><th>Waiting for</th><th>since</th><th>sent</th></tr>
+                <tr><th>Waiting for</th><th>since</th><th>sent</th><th>overdue</th></tr>
                 {% for r in request.user.requesting.all %}
                   <tr>
                     <td>
@@ -100,9 +100,16 @@
                     <td>
                       {{r.time}}
                     </td>
-                    <td>
-                      {% if r.sent %}<i class='glyphicon glyphicon-ok'></i> yes{% endif %}
-                    </td>
+                    {% if r.sent %}
+                      <td class="bg-success text-success"><i class='glyphicon glyphicon-ok'></i> yes</td>
+                    {% else %}
+                      <td></td>
+                    {% endif %}
+                    {% if r.overdue %}
+                      <td class="bg-danger text-danger"><i class='fa fa-clock-o'></i> yes</td>
+                    {% else %}
+                      <td></td>
+                    {% endif %}
                   </li>
                 {% endfor %}
               </table>
