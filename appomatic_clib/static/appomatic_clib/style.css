@@ -79,6 +79,7 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
       img {
         width: 180pt;
         height: auto;
+        margin: -20px;
       }
     }
     .text {
@@ -91,9 +92,20 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
       }
       .owner {
         margin-top: 5pt;
+        .owner-name, .address {
+          margin-right: 100pt - 16pt;
+        }
+        p {
+          margin-bottom: 0;
+        }
       }
-      .about {
-        margin-top: 5pt;
+      .logo {
+        width: 100pt;
+        height: auto;
+        float: right;
+        margin-top: -57pt;
+        margin-bottom: -16pt;
+        margin-right: -16pt;
       }
     }
   }
@@ -120,6 +132,13 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
 
   .receiver {
     border-left: 0.2em solid black;
+    .logo {
+      width: 100%;
+      margin-top: 1em;
+      margin-left: -1em;
+      margin-right: auto;
+      border-top: 0.2em solid black;
+    }
   }
 
   .sender {

@@ -156,7 +156,7 @@
 
    {{obj.render_as.conversation__html}}
 
-   {% if request.user.id = obj.requestor.id %}
+   {% if request.user.id = obj.requestor.id or request.user.id = obj.thing.holder.id %}
      <div class="sending-label">
        <div class="meta">
          <div class="row1">
@@ -187,6 +187,7 @@
          <br>
          <div class='email'>{{obj.requestor.email}}</div>
          <div class='owner-url'>{{obj.requestor.profile.get_absolute_url}}</div>
+         <img src="{{STATIC_URL}}/appomatic_clib/CommonLib.path.svg" class="logo">
        </div>
      </div>
 
