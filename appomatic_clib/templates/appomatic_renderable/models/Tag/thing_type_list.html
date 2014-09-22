@@ -4,7 +4,7 @@
     {% paginate obj.things.all as res %}
     <div class="panel panel-default">
       <table class="table">
-        <tr><th>Things tagged with <span class="label label-primary">{{obj.name}}</span></th><th>by</th></tr>
+        <tr><th>Things tagged with <span class="label label-primary">{{obj.path}}</span></th><th>by</th></tr>
         {% for t in res %}
           <tr>
             <td><a href='{{t.get_absolute_url}}'>{{t.name}}</td>
@@ -20,7 +20,7 @@
     </div>
   {% else %}
      <div class="alert alert-info" role="alert">
-       <p>There are no things tagged with <span class="label label-primary">{{obj}}</span>.</p>
+       <p>There are no things tagged with <span class="label label-primary">{{obj.path}}</span>.</p>
      </div>
   {% endif %}
 {% endblock %}

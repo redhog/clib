@@ -153,21 +153,21 @@ class ThingTypeForm(django.forms.ModelForm):
     class Meta:
         model = ThingType
         fields = ['name', 'producer', 'designer', 'description']
-    tags = django.forms.CharField(widget=django.forms.Textarea(), label="Tags")
+    tags = django.forms.CharField(widget=django.forms.Textarea(attrs={'rows': 4}), label="Tags")
 
     def __init__(self, *arg, **kw):
         if 'instance' in kw:
             if 'initial' not in kw: kw['initial'] = {}
             kw['initial']['tags'] = '\n'.join(
-                "/".join(item.name
-                         for item in tag.get_ancestors(include_self=True))
+                tag.path
                 for tag in kw['instance'].tags.all())
         super(ThingTypeForm, self).__init__(*arg, **kw)
 
     def save(self, commit=True):
         res = super(ThingTypeForm, self).save(commit=commit)
         res.tags.clear()
-        for tag in self.cleaned_data['tags'].replace(",", "\n").split("\n"):
+        for tag in self.cleaned_data['tags'].replace("\r", "").replace(",", "\n").split("\n"):
+            if not tag: continue
             tag_model = None
             for item in tag.split("/"):
                 existing = appomatic_renderable.models.Tag.objects.filter(parent=tag_model, name=item)
@@ -581,3 +581,12 @@ class Profile(userena.models.UserenaBaseProfile):
     @property
     def requests(self):
         return self.user.has.annotate(request_count=django.db.models.Count('requests__id')).filter(request_count__gt = 0, requests__sent = None)
+
+
+@property
+def path(self):
+    return "/".join(
+        item.name
+        for item in self.get_ancestors(include_self=True))
+appomatic_renderable.models.Tag.path = path
+

@@ -1,6 +1,6 @@
 {% load endless %}
 {% block list %}
   {% for tag in obj.children.all %}
-    <a href="{{tag.get_absolute_url}}"><span class="label label-primary">{{tag.name}}</span></a>
+    <a href="{{tag.get_absolute_url}}"><span class="label label-primary">{{tag.path}}</span></a>
   {% endfor %}
 {% endblock %}
