@@ -1,0 +1,20 @@
+{% extends "appomatic_clib/base.html" %}
+{% load qr_tags %}
+{% load endless %}
+
+{% block full-content %}
+  <h1>Tag: {{ obj.name }}</h1>
+  <div class="breadcrumb">
+    <a href="/">Home</a>
+    {% for item in obj.breadcrumb %}
+      &gt;&gt; <a href="{{item.get_absolute_url}}">{{item.name}}</a>
+    {% endfor %}
+  </div>
+
+  {% if obj.children.count %}
+    <div>Child tags: {{obj.render_as.children|safe}}</div>
+    <br>
+  {% endif %}
+
+  {{obj.render_as.thing_type_list|safe}}
+{% endblock %}

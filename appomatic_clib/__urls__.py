@@ -21,5 +21,7 @@ urlpatterns = django.conf.urls.patterns('',
     django.conf.urls.url(r'^accounts/(?P<username>.*)/edit/?$', 'appomatic_clib.views_profile.edit'),
     django.conf.urls.url(r'^accounts/', django.conf.urls.include('userena.urls')),
 
+    django.conf.urls.url(r'^tag(?P<url>.*)/?$', 'appomatic_renderable.views.tag'),
+
     django.conf.urls.url(r'^(?P<id>.*)/?$', 'appomatic_clib.views.get'),
 )

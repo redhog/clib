@@ -49,6 +49,11 @@
         </div>
 
         <h1>{{obj.name}} by {{obj.designer}}</h1>
+        <div>
+          {% for tag in obj.tags.all %}
+            <a href="{{tag.get_absolute_url}}"><span class="label label-primary">{{tag.name}}</span></a>
+          {% endfor %}
+        </div>
         <p>{{obj.description}}</p>
 
         <table class="table table-bordered small-table">

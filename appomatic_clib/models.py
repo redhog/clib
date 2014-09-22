@@ -85,11 +85,13 @@ class Transaction(Object):
 class ThingType(Object):
     barcode_type = django.db.models.CharField(max_length=128, db_index=True)
     barcode_data = django.db.models.CharField(max_length=512, db_index=True)
-    name = django.db.models.CharField(default='', max_length=256, db_index=True)
-    producer = django.db.models.CharField(default='', max_length=256, db_index=True)
-    designer = django.db.models.CharField(default='', max_length=256, db_index=True)
-    description = django.db.models.TextField(default='')
+    name = django.db.models.CharField(default='', blank=True, max_length=256, db_index=True)
+    producer = django.db.models.CharField(default='', blank=True, max_length=256, db_index=True)
+    designer = django.db.models.CharField(default='', blank=True, max_length=256, db_index=True)
+    description = django.db.models.TextField(default='', blank=True)
     log = fcdjangoutils.fields.JsonField(default=[], null=True, blank=True)
+
+    tags = django.db.models.ManyToManyField(appomatic_renderable.models.Tag, null=True, blank=True, related_name='things')
 
     class Meta:
         ordering = ('name', )

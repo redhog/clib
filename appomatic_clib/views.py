@@ -8,6 +8,7 @@ from django.conf import settings
 import django.views.decorators.csrf
 import django.contrib.auth.decorators
 import appomatic_clib.models
+import appomatic_renderable.models
 
 def start_url(request):
     return 'http://' + django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse(scan_start, kwargs={"user":sign_login(request)})
@@ -38,6 +39,7 @@ def index(request):
         'appomatic_clib/index.html',
         {
             "start_url": start_url(request),
+            "tags": appomatic_renderable.models.Tag.objects.filter(parent=None),
             "request": request
         }
     )

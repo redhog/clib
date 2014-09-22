@@ -1,4 +1,5 @@
 INSTALLED_APPS += [
+    "mptt",
     "qrcode",
     "userena",
     "guardian",
@@ -21,3 +22,4 @@ TEMPLATE_CONTEXT_PROCESSORS = [
 ]
 
 PRE = ["appomatic_admin"]
+POST = ["appomatic_renderable"]

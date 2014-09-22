@@ -122,6 +122,15 @@
               {% qr_from_text start_url %}
             </div>
           {% endif %}
+          <div class="clearfix"></div>
+          <div class="panel panel-default">
+            <div class="panel-heading">Search for things by tag:</div>
+              <div class="list-group">
+              {% for tag in tags %}
+                <a href="{{tag.get_absolute_url}}" class="list-group-item">{{tag.name}}</a>
+              {% endfor %}
+            </div>
+          </div>
         </div>
       </div>
     </div>
