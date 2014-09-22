@@ -153,7 +153,31 @@ class ThingTypeForm(django.forms.ModelForm):
     class Meta:
         model = ThingType
         fields = ['name', 'producer', 'designer', 'description']
+    tags = django.forms.CharField(widget=django.forms.Textarea(), label="Tags")
 
+    def __init__(self, *arg, **kw):
+        if 'instance' in kw:
+            if 'initial' not in kw: kw['initial'] = {}
+            kw['initial']['tags'] = '\n'.join(
+                "/".join(item.name
+                         for item in tag.get_ancestors(include_self=True))
+                for tag in kw['instance'].tags.all())
+        super(ThingTypeForm, self).__init__(*arg, **kw)
+
+    def save(self, commit=True):
+        res = super(ThingTypeForm, self).save(commit=commit)
+        res.tags.clear()
+        for tag in self.cleaned_data['tags'].replace(",", "\n").split("\n"):
+            tag_model = None
+            for item in tag.split("/"):
+                existing = appomatic_renderable.models.Tag.objects.filter(parent=tag_model, name=item)
+                if existing:
+                    tag_model = existing[0]
+                else:
+                    tag_model = appomatic_renderable.models.Tag(parent=tag_model, name=item)
+                    tag_model.save()
+            res.tags.add(tag_model)
+        return res
 
 class Thing(Object):
     geoobjects = django.contrib.gis.db.models.GeoManager()

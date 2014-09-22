@@ -35,6 +35,11 @@
                 {{form.description.label_tag}}
                 {{form.description|formControl}}
               </div>
+              <div class="form-group">
+                {{form.tags.errors }}
+                {{form.tags.label_tag}}
+                {{form.tags|formControl}}
+              </div>
               <div class="btn-group pull-right">
                 <button type="submit" name="method" value="save" class="btn btn-success"><i class='fa fa-save'></i> Save</button>
                 <button type="submit" name="method" value="read" class="btn btn-default"><i class='fa fa-cancel'></i> Cancel</button>
