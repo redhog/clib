@@ -152,9 +152,10 @@
        {% endif %}
      {% endif %}
      <br>
-   </div>
 
-   {{obj.render_as.conversation__html}}
+    {{obj.render_as.conversation__html}}
+
+   </div>
 
    {% if request.user.id = obj.requestor.id or request.user.id = obj.thing.holder.id %}
      <div class="sending-label">
