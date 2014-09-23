@@ -16,11 +16,11 @@
           <div class='email'>{{obj.owner.email}}</div>
           <div class='owner-url'>{{obj.owner.profile.get_absolute_url}}</div>
           <br>
+          <img src="{{STATIC_URL}}/appomatic_clib/CommonLib.path.svg" class="logo">
           <div class='owner-name'>{{obj.owner.first_name}} {{obj.owner.last_name}}</div>
           <div class='address'>{{obj.owner.profile.location.address|linebreaks}}</div>
         </div>
       {% endif %}
-      <img src="{{STATIC_URL}}/appomatic_clib/CommonLib.path.svg" class="logo">
     </div>
   </div>
   <div class="footer">

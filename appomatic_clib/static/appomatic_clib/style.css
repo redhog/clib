@@ -85,27 +85,26 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
     .text {
       display: table-cell;
       vertical-align: top;
-      padding-top: 16pt;
-      padding-right: 16pt;
-      padding-bottom: 16pt;
+      padding-top: 2em;
+      padding-right: 2em;
+      padding-bottom: 2em;
       .name {
       }
       .owner {
         margin-top: 5pt;
         .owner-name, .address {
-          margin-right: 100pt - 16pt;
+          margin-right: 10em - 2em;
         }
         p {
           margin-bottom: 0;
         }
       }
       .logo {
-        width: 100pt;
+        width: 10em;
         height: auto;
         float: right;
-        margin-top: -57pt;
-        margin-bottom: -16pt;
-        margin-right: -16pt;
+        margin-bottom: -2em;
+        margin-right: -2em;
       }
     }
   }
@@ -209,6 +208,7 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
       .qr {
         img {
           width: 100pt;
+          margin: 0;
         }
       }
       .text {
