@@ -8,13 +8,14 @@
       <table class="table">
         {% if request.user.profile.lent_own.count %}
           {% paginate request.user.profile.lent_own.all using "lent_own" as lent_own %}
-          <tr><th colspan="2">Lent things</th><th>by</th><th>held by</th></tr>
+          <tr><th colspan="2">Lent things: {{request.user.profile.lent_own.count}}</th><th>by</th><th>held by</th><th>tags</th></tr>
           {% for t in lent_own %}
             <tr>
               <td><a href='{{t.get_absolute_url}}'>{{t.type.barcode_type}}:{{t.type.barcode_data}}</td>
               <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
-              <td><a href='{{t.get_absolute_url}}'>{{t.type.designer}}</a></td>
+              <td><a href='{% url 'appomatic_clib.views.search' %}?query={{t.type.designer}}'>{{t.type.designer}}</a></td>
               <td><a href='{{t.holder.profile.get_absolute_url}}'>{{t.holder.username}}</a></td>
+              <td>{{t.type.render_as.tags|safe}}</td>
             </tr>
           {% endfor %}
           <tr>
@@ -27,13 +28,14 @@
         {% if request.user.profile.has_own.count %}
           {% paginate request.user.profile.has_own.all using "has_own" as has_own %}
 
-          <tr><th colspan="2">Own things held</th><th>by</th><th></th></tr>
+          <tr><th colspan="2">Own things held: {{request.user.profile.has_own.count}}</th><th>by</th><th></th><th>tags</th></tr>
           {% for t in has_own %}
             <tr>
               <td><a href='{{t.get_absolute_url}}'>{{t.type.barcode_type}}:{{t.type.barcode_data}}</td>
               <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
-              <td><a href='{{t.get_absolute_url}}'>{{t.type.designer}}</a></td>
+              <td><a href='{% url 'appomatic_clib.views.search' %}?query={{t.type.designer}}'>{{t.type.designer}}</a></td>
               <td></td>
+              <td>{{t.type.render_as.tags|safe}}</td>
             </tr>
           {% endfor %}
           <tr>
@@ -45,13 +47,14 @@
 
         {% if request.user.profile.unavailable_own.count %}
           {% paginate request.user.profile.unavailable_own.all using "unavailable_own" as unavailable_own %}
-          <tr><th colspan="2">Unavailable own things held</th><th>by</th><th></th></tr>
+          <tr><th colspan="2">Unavailable own things held: {{request.user.profile.unavailable_own.count}}</th><th>by</th><th></th><th>tags</th></tr>
           {% for t in unavailable_own %}
             <tr>
               <td><a href='{{t.get_absolute_url}}'>{{t.type.barcode_type}}:{{t.type.barcode_data}}</td>
               <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
-              <td><a href='{{t.get_absolute_url}}'>{{t.type.designer}}</a></td>
+              <td><a href='{% url 'appomatic_clib.views.search' %}?query={{t.type.designer}}'>{{t.type.designer}}</a></td>
               <td></td>
+              <td>{{t.type.render_as.tags|safe}}</td>
             </tr>
           {% endfor %}
           <tr>

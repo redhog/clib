@@ -1,0 +1,3 @@
+{% for tag in obj.tags.all %}
+  <a href="{{tag.get_absolute_url}}"><span class="label label-primary">{{tag.path}}</span></a>
+{% endfor %}

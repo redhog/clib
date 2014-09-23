@@ -89,7 +89,11 @@ def scan_item(request, user):
 @django.views.decorators.csrf.csrf_exempt
 def search(request):
     q = request.GET['query']
-    results = appomatic_clib.models.ThingType.objects.filter(django.db.models.Q(name__icontains=q) | django.db.models.Q(description__icontains=q))
+    results = appomatic_clib.models.ThingType.objects.filter(
+        django.db.models.Q(name__icontains=q)
+        | django.db.models.Q(designer__icontains=q)
+        | django.db.models.Q(producer__icontains=q)
+        | django.db.models.Q(description__icontains=q))
 
     return django.shortcuts.render(
         request,

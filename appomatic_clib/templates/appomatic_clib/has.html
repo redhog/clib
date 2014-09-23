@@ -8,13 +8,14 @@
       <table class="table">
         {% if request.user.profile.has_borrowed.count %}
           {% paginate request.user.profile.has_borrowed.all using "has_borrowed" as has_borrowed %}
-          <tr><th colspan="2">Borrowed things</th><th>by</th><th>owned by</th></tr>
+          <tr><th colspan="2">Borrowed things: {{request.user.profile.has_borrowed.count}}</th><th>by</th><th>owned by</th><th>tags</th></tr>
           {% for t in has_borrowed %}
             <tr>
               <td><a href='{{t.get_absolute_url}}'>{{t.type.barcode_type}}:{{t.type.barcode_data}}</td>
               <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
-              <td><a href='{{t.get_absolute_url}}'>{{t.type.designer}}</a></td>
+              <td><a href='{% url 'appomatic_clib.views.search' %}?query={{t.type.designer}}'>{{t.type.designer}}</a></td>
               <td><a href='{{t.owner.profile.get_absolute_url}}'>{{t.owner.username}}</a></td>
+              <td>{{t.type.render_as.tags|safe}}</td>
             </tr>
           {% endfor %}
           <tr>
@@ -26,13 +27,14 @@
 
         {% if request.user.profile.has_own.count %}
           {% paginate request.user.profile.has_own.all using "has_own" as has_own %}
-          <tr><th colspan="2">Own things held</th><th>by</th><th></th></tr>
+          <tr><th colspan="2">Own things held: {{request.user.profile.has_own.count}}</th><th>by</th><th></th><th>tags</th></tr>
           {% for t in has_own %}
             <tr>
               <td><a href='{{t.get_absolute_url}}'>{{t.type.barcode_type}}:{{t.type.barcode_data}}</td>
               <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
-              <td><a href='{{t.get_absolute_url}}'>{{t.type.designer}}</a></td>
+              <td><a href='{% url 'appomatic_clib.views.search' %}?query={{t.type.designer}}'>{{t.type.designer}}</a></td>
               <td></td>
+              <td>{{t.type.render_as.tags|safe}}</td>
             </tr>
           {% endfor %}
           <tr>

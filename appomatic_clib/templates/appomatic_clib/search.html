@@ -7,11 +7,12 @@
     {% paginate results as res %}
     <div class="panel panel-default">
       <table class="table">
-        <tr><th>Things matching '{{query}}'</th><th>by</th></tr>
+        <tr><th>Things matching '{{query}}': {{results.count}}</th><th>by</th><th>tags</th></tr>
         {% for t in res %}
           <tr>
             <td><a href='{{t.get_absolute_url}}'>{{t.name}}</td>
-            <td><a href='{{t.get_absolute_url}}'>{{t.designer}}</a></td>
+            <td><a href='{% url 'appomatic_clib.views.search' %}?query={{t.designer}}'>{{t.designer}}</a></td>
+            <td>{{t.render_as.tags|safe}}</td>
           </tr>
         {% endfor %}
         <tr>

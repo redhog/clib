@@ -96,6 +96,9 @@
         {% endif %}
 
         <h1><a href="{{obj.type.get_absolute_url}}">{{obj.type.name}} by {{obj.type.designer}}</a></h1>
+        <p>
+          {{obj.type.render_as.tags|safe}}
+        </p>
 
         {% if request.user.id = obj.owner.id %}
           <p><i class='glyphicon glyphicon-heart'></i> You own this thing.</p>
