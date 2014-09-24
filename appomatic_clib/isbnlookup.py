@@ -7,6 +7,9 @@ import contextlib
 import re
 import csv
 import json
+import HTMLParser
+
+html = HTMLParser.HTMLParser()
 
 class ISBNLookup(object):
     @classmethod
@@ -109,6 +112,13 @@ class ISBNLookup(object):
         headers, content = cls.get_url("http://www.bokrecension.se/query.php?q=%s" % isbn)
         title = re.search(r'<h1>([^>]*)</h1>', content).groups()[0].decode('utf-8')
         author = re.search(r'<a class=author href=".*">([^>]*)</a> ', content).groups()[0].decode('utf-8')
+        return [author, title]
+
+    @classmethod
+    def lookup_bokborsen_se(cls, isbn):
+        headers, content = cls.get_url("http://www.bokborsen.se/page-start?issearch=1&sallstr=%s" % isbn)
+        title = html.unescape(re.search(r'<h1 style="font:bold 14px/1.2em arial,verdana">([^>]*)</h1>', content).groups()[0].decode('utf-8'))
+        author = html.unescape(re.search(r'<strong>F&ouml;rfattare:</strong> ([^>]*)<br />', content).groups()[0].decode('utf-8'))
         return [author, title]
 
     #### Partial lookups
