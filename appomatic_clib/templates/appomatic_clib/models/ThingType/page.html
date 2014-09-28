@@ -49,6 +49,7 @@
             <form enctype="multipart/form-data" action='{{obj.get_absolute_url}}' method='post'>
               {% csrf_token %}
               <button type="submit" name="method" value="edit" class="btn btn-success"><i class='fa fa-edit'></i> Edit</button>
+              <button type="submit" name="method" value="lookup" class="btn btn-success"><i class='fa fa-search'></i> Update data from online sources</button>
             </form>
           {% endif %}
         </div>

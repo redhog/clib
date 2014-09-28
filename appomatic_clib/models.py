@@ -105,8 +105,10 @@ class ThingType(Object):
             "designer": self.designer,
             "description": self.description 
             }]
-        if self.barcode_type == 'EAN_13' and self.name == '' and self.designer == '':
-            self.designer, self.name = appomatic_clib.isbnlookup.ISBNLookup.lookup(self.barcode_data)
+        if self.barcode_type == 'EAN_13' and ((self.name == '' and self.designer == '') or self.do_lookup):
+            res = appomatic_clib.isbnlookup.ISBNLookup.lookup(self.barcode_data)
+            if res is not None:
+                self.designer, self.name = res
         Object.save(self, *arg, **kw)
 
     @classmethod
@@ -136,6 +138,12 @@ class ThingType(Object):
 
     def __unicode__(self):
         return u"%(name)s: %(barcode_type)s/%(barcode_data)s" % {"name": self.name, "barcode_type": self.barcode_type, "barcode_data": self.barcode_data}
+
+    def handle__lookup(self, request, style):
+        self.do_lookup = True
+        self.save()
+        raise fcdjangoutils.responseutils.EarlyResponseException(
+            django.shortcuts.redirect(self))
 
     def handle__save(self, request, style):
         form = ThingTypeForm(request.POST, instance=self)
