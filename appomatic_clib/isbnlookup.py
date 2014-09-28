@@ -25,6 +25,39 @@ class ISBNLookup(object):
         return ['', '']
 
     @classmethod
+    def test(cls):
+        data = {
+            "lookup_isbn2book_com": {"7500756704": [u'Herge', u'Tintin Chinese: Tintin and the Broken Ear']},
+            "lookup_www_lookupbyisbn_com": {"0425256863": [u'Charles Stross', u'The Rhesus Chart (Laundry Files)']},
+            "lookup_google_com": {"0425256863": [u'Charles Stross', u'The Rhesus Chart']},
+            "lookup_www_bokus_com": {"0425256863": [u'Charles Stross', u'The Rhesus Chart']},
+            "lookup_bookdepository_co_uk": {"0425256863": [u'Charles Stross', u'The Rhesus Chart']},
+            "lookup_bookstation_ro": {"9781909489400": [u'DASHNER, JAMES', u'The Maze Runner']},
+            "lookup_kurslitteratur_se": {"9780262011532": [u'Abelson, Harold', u'Structure and interpretation of computer programs']},
+            "lookup_biblio_com": {"0425256863": [u'Charles Stross', u'The Rhesus Chart']},
+            "lookup_abebooks_com": {"0425256863": [u'Stross, Charles', u'The Rhesus Chart (Laundry Files)']},
+            "lookup_btj_se": {"9780765329110": [u'Stross, Charles', u'Rapture of the Nerds, The']},
+            "lookup_bokrecension_se": {"0425256863": [u'Charles Stross', u'The Rhesus Chart (Laundry Files Novel)']},
+            "lookup_bokborsen_se": {"9789147100392": [u'Andersson, Jan-Olof', u'E2000 Classic F\xf6retagsekonomi 1 L\xf6sningsbok']}
+            }
+
+        for method in dir(cls):
+            if method.startswith("lookup_") and method not in data:
+                print "%s UNTESTED" % (method,)
+
+        for method, examples in data.iteritems():
+            fn = getattr(cls, method)
+            for isbn, value in examples.iteritems():
+                try:
+                    res = fn(isbn)
+                except Exception, e:
+                    print "%s(%s): %s" % (method, isbn, e) 
+                else:
+                    if res != value:
+                        print "%s(%s) != %s" % (method, isbn, res)
+                    else:
+                        print "%s OK" % (method,)
+    @classmethod
     def get_url(cls, url):
         with contextlib.closing(urllib.urlopen(url)) as f:
             return f.info(), f.read()
@@ -49,7 +82,7 @@ class ISBNLookup(object):
     @classmethod
     def lookup_www_bokus_com(cls, isbn):
         headers, content = cls.get_url("http://www.bokus.com/bok/%s" % isbn)
-        title = re.search(r'<span class="fn">([^<]*)</span>', content).groups()[0].decode('latin-1')
+        title = re.search(r'<h1><span itemprop="name">([^<]*)</span></h1>', content).groups()[0].decode('latin-1')
         author = re.search(r'class="author-link" [^>]*>([^<]*)</a>', content).groups()[0].decode('latin-1')
         return [author, title]
 
@@ -62,7 +95,7 @@ class ISBNLookup(object):
 
     @classmethod
     def lookup_bookstation_ro(cls, isbn):
-         headers, content = cls.get_url("http://www.bookstation.ro/search/%s" % isbn)
+         headers, content = cls.get_url("http://bookstation.ro/search/%s" % isbn)
          title = re.search(r'<a href="/item/[^>]*>[^<:]* : ([^</]*) / [^</]*</a>', content).groups()[0].decode('latin-1')
          author = re.search(r'<a href="/item/[^>]*>([^<:]*) : [^</]* / [^</]*</a>', content).groups()[0].decode('latin-1')
          return [author, title]
@@ -70,8 +103,8 @@ class ISBNLookup(object):
     @classmethod
     def lookup_kurslitteratur_se(cls, isbn):
          headers, content = cls.get_url("http://www.kurslitteratur.se/ISBN/%s" % isbn)
-         title = re.search(r'<table id="titleinfo"><th colspan="2">([^<]*)</th><tr>', content).groups()[0].decode('utf-8')
-         author = re.search(r'<h2>([^<]*)</h2>', content).groups()[0].decode('utf-8')
+         title = re.search(r'<meta name="title" content="([^<]*)" />', content).groups()[0].decode('utf-8')
+         author = re.search(r'<tr><td>Author</td><td>([^<]*)</td>', content).groups()[0].decode('utf-8')
          return [author, title]
 
     @classmethod
@@ -84,8 +117,8 @@ class ISBNLookup(object):
     @classmethod
     def lookup_abebooks_com(cls, isbn):
          headers, content = cls.get_url("http://www.abebooks.com/servlet/SearchResults?isbn=%s" % isbn)
-         title = re.search(r'<b><a *href="/servlet/BookDetailsPL\?bi=.*" *>([^>]*)</a></b>', content).groups()[0].decode('utf-8')
-         author = re.search(r'<b><a *href="/servlet/BookDetailsPL\?bi=.*" *>.*<br/><b>*([^<]*)</b>', content).groups()[0].decode('utf-8')
+         title = re.search(r'<span property="name">(.*)</span>', content).groups()[0].decode('utf-8')
+         author = re.search(r'<strong property="author">(.*)</strong>', content).groups()[0].decode('utf-8')
          return [author, title]
 
     @classmethod
@@ -96,14 +129,14 @@ class ISBNLookup(object):
             if c == 10: c = 'X'
             isbn += str(c)
         headers, content = cls.get_url("http://isbn2book.com/q/%s" % isbn)
-        title = re.search(r'<a href=".*"><font size="-1">([^>/]*) / [^>]*</font></a>', content).groups()[0].decode('latin-1')
-        author = re.search(r'<a href=".*"><font size="-1">[^>/]* / ([^()>]*) \([^)>]*\)</font></a>', content).groups()[0].decode('latin-1')
+        title = re.search(r'alt="[^-"]* - ([^"]*)"', content).groups()[0].decode('latin-1')
+        author = re.search(r'alt="([^-"]*) - [^"]*"', content).groups()[0].decode('latin-1')
         return [author, title]
 
     @classmethod
     def lookup_btj_se(cls, isbn):
         headers, content = cls.get_url("http://www.btj.se/default.aspx?search=%s" % isbn)
-        title = re.search(r'id="ctl00_MainContent_SearchResultList_ArticleRepeat_ctl00_Article1_AbstractArticle_ArticleDetail_Image1" src=".*" alt="([^"]*)"', content).groups()[0].decode('utf-8')
+        title = re.search(r'<span id="ctl00_MainContent_SearchResultList_ArticleRepeat_ctl00_Article1_BookFacts_TitleText1">(.*)</span>', content).groups()[0].decode('utf-8')
         author = re.search(r'av <a href=".*">([^>]*)</a>', content).groups()[0].decode('utf-8')
         return [author, title]
 
@@ -132,10 +165,14 @@ class ISBNLookup(object):
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
-        out = csv.writer(sys.stdout, dialect='excel')
-        out.writerow(['author', 'title'])
-        out.writerow([x.encode('utf-8')
-                      for x in ISBNLookup.lookup(sys.argv[1])])
+        if '--test' in sys.argv:
+            ISBNLookup.test()
+        else:
+            out = csv.writer(sys.stdout, dialect='excel')
+            out.writerow(['author', 'title'])
+            for isbn in sys.argv[1:]:
+                out.writerow([x.encode('utf-8')
+                              for x in ISBNLookup.lookup(isbn)])
     else:
         rows = csv.reader(sys.stdin, dialect='excel')
         headers = rows.next()
