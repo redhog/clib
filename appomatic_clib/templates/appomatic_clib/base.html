@@ -1,4 +1,6 @@
 {% load qr_tags %}
+{% load widgettag_tags %}
+
 <html>
   <head>
     <title>{% block title %}CommonLibrary{% endblock %}</title>
@@ -10,9 +12,15 @@
       <script src='{{STATIC_URL}}/jquery-1.11.1.min.js'></script>
       <script src='{{STATIC_URL}}/bootstrap-3.2.0-dist/js/bootstrap.js'></script>
       <script src='{{STATIC_URL}}/less-1.6.2.min.js'></script>
+
+      %WidgetTagMiddleware.head.javascript%
+      %WidgetTagMiddleware.head.css%
+
     {% endblock %}
   </head>
   <body class="{% block body-class %}{% endblock %}">
+
+    %WidgetTagMiddleware.body.dialog%
 
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="navbar-header">

@@ -1,18 +1,7 @@
 {% extends "appomatic_clib/base.html" %}
+{% load objfeed_tags %}
 {% load qr_tags %}
+
 {% block full-content %}
-  {% if request.user.profile.messages.count %}
-    {% for m in request.user.profile.messages %}
-      <div class="message">
-        {% if not m.seen %}<em>New</em>{% endif %}
-        {{m.message.render_as.inline__html}}
-        <div>Attached to {{m.message.about.render_as.link|safe}}.</div>
-        {{m.see}}
-      </div>
-    {% endfor %}
-  {% else %}
-    <div class="alert alert-success" role="alert">
-      You don't have any messages.
-    </div>
-  {% endif %}
+  {% objfeed_for_obj request.user %}
 {% endblock %}

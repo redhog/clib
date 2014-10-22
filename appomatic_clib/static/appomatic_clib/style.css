@@ -164,6 +164,19 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
   }
 }
 
+.feed_entry .feed_entry {
+  margin-left: 2em;
+}
+
+.feed_entry .avatar {
+  float: left;
+  margin-right: 10pt;
+}
+
+.feed_entry textarea {
+  display: block;
+}
+
 @page {
   margin: 0cm 0cm 0cm 0cm;
 }

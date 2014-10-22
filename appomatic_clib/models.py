@@ -478,7 +478,7 @@ class Message(Object):
         return msg
 
 class MessageUser(django.db.models.Model): 
-    user = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name='messages')
+    user = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name='messagesX')
     message = django.db.models.ForeignKey(Message, related_name='users')
     author = django.db.models.BooleanField(default=False)
     seen = django.db.models.BooleanField(default=False)
