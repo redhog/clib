@@ -5,6 +5,8 @@ from django.utils.translation import ugettext as _
 from . import transactions
 
 class Area(django.contrib.gis.db.models.Model):
+    class Meta:
+        app_label = 'appomatic_clib'
     objects = django.contrib.gis.db.models.GeoManager()
 
     name = django.db.models.CharField(default='', max_length=256, db_index=True)
@@ -12,6 +14,8 @@ class Area(django.contrib.gis.db.models.Model):
     parent = django.db.models.ForeignKey("Area", related_name="children", null=True, blank=True)
 
 class Location(django.contrib.gis.db.models.Model):
+    class Meta:
+        app_label = 'appomatic_clib'
     objects = django.contrib.gis.db.models.GeoManager()
 
     position = django.contrib.gis.db.models.PointField(geography=True, null=True, blank=True)
@@ -19,6 +23,8 @@ class Location(django.contrib.gis.db.models.Model):
     address = django.db.models.TextField(default='', blank=True)
 
 class Profile(userena.models.UserenaBaseProfile):
+    class Meta:
+        app_label = 'appomatic_clib'
     user = django.db.models.OneToOneField(
         django.contrib.auth.models.User,
         unique=True,
@@ -71,11 +77,11 @@ class Profile(userena.models.UserenaBaseProfile):
 
     @property
     def messages(self):
-        return self.user.messages.order_by('message__time')
+        return self.user.feed.entries
 
     @property
     def new_messages(self):
-        return self.user.messages.filter(seen=False).order_by('message__time')
+        return self.user.feed.new_entries
 
     @property
     def has_borrowed(self):

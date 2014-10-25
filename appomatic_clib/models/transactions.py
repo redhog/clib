@@ -14,6 +14,7 @@ class Transaction(base.Object):
     log = django.db.models.TextField(null=True, blank=True)
 
     class Meta:
+        app_label = 'appomatic_clib'
         ordering = ('time', )
 
     @property

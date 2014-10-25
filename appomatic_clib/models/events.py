@@ -9,14 +9,20 @@ from . import base
 from . import transactions
 
 class OwnershipTransfer(base.Object):
+    class Meta:
+        app_label = 'appomatic_clib'
     thing = django.db.models.ForeignKey("Thing", related_name='ownership_transfers')
     old_owner = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="old_ownerships")
     new_owner = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="new_ownerships")
 
 class Lost(OwnershipTransfer):
-    pass
+    class Meta:
+        app_label = 'appomatic_clib'
 
 class LostFeedEntry(appomatic_djangoobjfeed.models.ObjFeedEntry):
+    class Meta:
+        app_label = 'appomatic_clib'
+
     obj = django.db.models.ForeignKey(Lost, related_name='feed_entry')
 
     @classmethod
@@ -27,6 +33,8 @@ class LostFeedEntry(appomatic_djangoobjfeed.models.ObjFeedEntry):
 
 
 class LendingRequest(base.Object):
+    class Meta:
+        app_label = 'appomatic_clib'
     thing = django.db.models.ForeignKey("Thing", related_name="requests")
     requestor = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="requesting")
     time = django.db.models.DateTimeField(auto_now_add=True)

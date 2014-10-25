@@ -6,6 +6,8 @@ import appomatic_renderable.models
 import fcdjangoutils.modelhelpers
 
 class Object(django.db.models.Model, appomatic_renderable.models.Renderable):
+    class Meta:
+        app_label = 'appomatic_clib'
     id = django.db.models.CharField(max_length=128, blank=True, primary_key=True)
 
     def save(self, *arg, **kw):

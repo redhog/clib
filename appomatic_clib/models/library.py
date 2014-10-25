@@ -22,6 +22,7 @@ class ThingType(base.Object):
     tags = django.db.models.ManyToManyField(appomatic_renderable.models.Tag, null=True, blank=True, related_name='things')
 
     class Meta:
+        app_label = 'appomatic_clib'
         ordering = ('name', )
 
     def save(self, *arg, **kw):
@@ -87,6 +88,7 @@ class ThingType(base.Object):
 
 class ThingTypeForm(django.forms.ModelForm):
     class Meta:
+        app_label = 'appomatic_clib'
         model = ThingType
         fields = ['name', 'producer', 'designer', 'description']
     tags = django.forms.CharField(widget=django.forms.Textarea(attrs={'rows': 4}), label="Tags")
@@ -134,6 +136,7 @@ class Thing(base.Object):
     location = django.db.models.ForeignKey("Location", related_name="held_here", null=True, blank=True)
 
     class Meta:
+        app_label = 'appomatic_clib'
         ordering = ('type__name', )
 
     def distance(self):
