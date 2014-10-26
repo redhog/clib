@@ -8,6 +8,7 @@ import appomatic_djangoobjfeed.models
 from . import base
 from . import transactions
 
+
 class OwnershipTransfer(base.Object):
     class Meta:
         app_label = 'appomatic_clib'
@@ -207,3 +208,11 @@ class LendingRequest(base.Object):
             django.contrib.messages.add_message(request, django.contrib.messages.ERROR, 'Requested amount exceeds maximum cost accepted by the other user.')
         raise fcdjangoutils.responseutils.EarlyResponseException(
             django.shortcuts.redirect(self.get_absolute_url()))
+
+class LendingRequestFeed(appomatic_djangoobjfeed.models.ObjFeed):
+    class Meta:
+        app_label = 'appomatic_clib'
+    owner = django.db.models.OneToOneField(LendingRequest, primary_key=True, related_name="feed")
+
+    def allowed_to_post(self, user):
+        return user.id in (self.owner.requestor.id, self.owner.thing.holder.id, self.owner.thing.owner.id)

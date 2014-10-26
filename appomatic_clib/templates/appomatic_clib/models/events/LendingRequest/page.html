@@ -1,5 +1,6 @@
 {% extends "appomatic_clib/base.html" %}
 {% load qr_tags %}
+{% load objfeed_tags %}
 {% block full-content %}
    <div class="noprint">
 
@@ -153,7 +154,7 @@
      {% endif %}
      <br>
 
-    {{obj.render_as.conversation__html}}
+    {% objfeed_for_obj obj %}
 
    </div>
 
