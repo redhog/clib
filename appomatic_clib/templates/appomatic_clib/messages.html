@@ -3,5 +3,5 @@
 {% load qr_tags %}
 
 {% block full-content %}
-  {% objfeed_for_obj request.user %}
+  {{request.user.feed.render_as.inline__html|safe}}
 {% endblock %}
