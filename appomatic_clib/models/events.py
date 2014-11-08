@@ -229,3 +229,7 @@ def actor_feeds_for_obj(cls, instance, author):
                 yield lambda feed_entry: True, instance.feed.owner.thing.holder.feed
 
 appomatic_djangoobjfeed.models.ObjFeedEntry.actor_feeds_for_obj = actor_feeds_for_obj
+
+def allowed_to_post_comment(self, user):
+    return False
+appomatic_djangoobjfeed.models.ObjFeedEntry.allowed_to_post_comment = allowed_to_post_comment
