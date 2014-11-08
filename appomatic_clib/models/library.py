@@ -21,6 +21,8 @@ class ThingType(base.Object):
 
     tags = django.db.models.ManyToManyField(appomatic_renderable.models.Tag, null=True, blank=True, related_name='things')
 
+    do_lookup = False
+
     class Meta:
         app_label = 'appomatic_clib'
         ordering = ('name', )

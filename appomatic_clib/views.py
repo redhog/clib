@@ -129,7 +129,7 @@ def add(request):
 @django.contrib.auth.decorators.login_required
 def labels(request):
     if request.GET.get('done', None):
-        for thing in request.user.needs_labels().all():
+        for thing in request.user.profile.needs_labels.all():
             thing.label_printed = True
             thing.save()
         return django.shortcuts.redirect('appomatic_clib.views.index')
