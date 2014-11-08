@@ -29,92 +29,96 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
 }
 
 .thing-label {
-  page-break-inside: avoid;
-  border: 4pt solid black;
-  .rounded-corners(10pt);
-  margin: 10pt;
   float: left;
-  background: #000000 !important;
   font-size: 12pt;
-  width: 400pt;
 
-  a, a:hover, a:visited {
-    color: inherit !important;
-  }
+  .frame {
+    margin: 0.83em;
 
-  .header, .footer {
-    color: #ffffff !important;
-    padding: 4pt;
-  }
-  .header {
-    font-size: 14pt;
-    .title {
-      white-space: nowrap;
-      overflow: hidden;
-      display: block;
+    page-break-inside: avoid;
+    border: 0.33em solid black;
+    .rounded-corners(1em);
+    background: #000000 !important;
+    width: 33em;
+
+    a, a:hover, a:visited {
+      color: inherit !important;
+    }
+
+    .header, .footer {
       color: #ffffff !important;
-      background: #000000 !important;
+      padding: 0.33em;
+    }
+    .header {
+      font-size: 1.16em;
+      .title {
+        white-space: nowrap;
+        overflow: hidden;
+        display: block;
+        color: #ffffff !important;
+        background: #000000 !important;
 
-    }
-    .owner {
-      float: right;
-      color: #ffffff !important;
-      background: #000000 !important;
-      padding-left: 10pt;
-    }
-  }
-  .footer {
-    font-size: 10pt;
-  }
-  .body {
-    background: #ffffff !important;
-    color: #000000;
-    display: table;
-    vertical-align: top;
-    width: 100%;
-    overflow: hidden;
-    .qr {
-      display: table-cell;
-      width: 0;
-      img {
-        width: 180pt;
-        height: auto;
-        margin: -20px;
-      }
-    }
-    .text {
-      display: table-cell;
-      vertical-align: top;
-      padding-top: 2em;
-      padding-right: 2em;
-      padding-bottom: 2em;
-      .name {
       }
       .owner {
-        margin-top: 5pt;
-        .owner-name, .address {
-          margin-right: 10em - 2em;
-        }
-        p {
-          margin-bottom: 0;
+        float: right;
+        color: #ffffff !important;
+        background: #000000 !important;
+        padding-left: 0.83em;
+      }
+    }
+    .footer {
+      font-size: 0.83em;
+    }
+    .body {
+      background: #ffffff !important;
+      color: #000000;
+      display: table;
+      vertical-align: top;
+      width: 100%;
+      overflow: hidden;
+      .qr {
+        display: table-cell;
+        width: 0;
+        img {
+          width: 15em;
+          height: auto;
+          margin: -20px;
         }
       }
-      .logo {
-        width: 10em;
-        height: auto;
-        float: right;
-        margin-bottom: -2em;
-        margin-right: -2em;
+      .text {
+        display: table-cell;
+        vertical-align: top;
+        padding-top: 2em;
+        padding-right: 2em;
+        padding-bottom: 2em;
+        .name {
+        }
+        .owner {
+          margin-top: 0.42em;
+          .owner-name, .address {
+            margin-right: 10em - 2em;
+          }
+          p {
+            margin-bottom: 0;
+          }
+        }
+        .logo {
+          width: 10em;
+          height: auto;
+          float: right;
+          margin-bottom: -2em;
+          margin-right: -2em;
+        }
       }
     }
   }
 }
 
 .sending-label {
-  float: left;
-  display: table;
   font-size: 11pt;
   margin: 1em;
+  float: left;
+  display: table;
 
   .row1 {
     width: 100%;
@@ -198,41 +202,29 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
     padding: 0;
   }
   body.labels .container {
+    margin-left: 7.21mm;
+    margin-right: 7.21mm;
+    margin-top: 15.15mm;
+    margin-bottom: 15.15mm;
     width: 100%;
   }
 
   .thing-label {
-    width: 268pt;
-    border: 2pt solid black;
-    .rounded-corners(5pt);
-    margin: 5pt;
-    font-size: 7pt;
+    font-size: 5.3pt;
+    width: 63.5mm;
+    height: 38.1mm;
+    margin-left: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-right: 2.54mm;
 
-    .header, .footer {
-      padding: 2pt;
-    }
-    .header {
-      font-size: 12pt;
-    }
-    .footer {
-      font-size: 8pt;
-    }
-    .body {
-      .qr {
-        img {
-          width: 100pt;
-          margin: 0;
-        }
-      }
-      .text {
-        padding-top: 8pt;
-        padding-right: 8pt;
-        padding-bottom: 8pt;
-        .owner {
-          margin-top: 2.5pt;
-        }
-        .about {
-          margin-top: 2.5pt;
+    .frame {
+      margin: 0;
+      .body {
+        .qr {
+          img {
+            margin: 0;
+          }
         }
       }
     }

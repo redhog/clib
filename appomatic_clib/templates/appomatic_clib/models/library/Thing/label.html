@@ -1,29 +1,31 @@
 {% load qr_tags %}
 <div class='thing-label'>
-  <div class="header">
-    {% if request.user.id = obj.owner.id or request.user.id = obj.holder.id %}
-      <span class="owner">{{obj.owner.first_name}} {{obj.owner.last_name}}</span>
-    {% endif %}
-    <span class="title">{{obj.type.name}}</span>
-  </div>
-  <div class="body">
-    <div class='qr'>
-      {% qr_from_text obj.get_absolute_url %}
-    </div>
-    <div class='text'>
+  <div class="frame">
+    <div class="header">
       {% if request.user.id = obj.owner.id or request.user.id = obj.holder.id %}
-        <div class='owner'>
-          <div class='email'>{{obj.owner.email}}</div>
-          <div class='owner-url'>{{obj.owner.profile.get_absolute_url}}</div>
-          <br>
-          <img src="{{STATIC_URL}}/appomatic_clib/CommonLib.path.svg" class="logo">
-          <div class='owner-name'>{{obj.owner.first_name}} {{obj.owner.last_name}}</div>
-          <div class='address'>{{obj.owner.profile.location.address|linebreaks}}</div>
-        </div>
+        <span class="owner">{{obj.owner.first_name}} {{obj.owner.last_name}}</span>
       {% endif %}
+      <span class="title">{{obj.type.name}}</span>
     </div>
-  </div>
-  <div class="footer">
-    <a href="{{obj.get_absolute_url}}">{{obj.get_absolute_url}}</a>
+    <div class="body">
+      <div class='qr'>
+        {% qr_from_text obj.get_absolute_url %}
+      </div>
+      <div class='text'>
+        {% if request.user.id = obj.owner.id or request.user.id = obj.holder.id %}
+          <div class='owner'>
+            <div class='email'>{{obj.owner.email}}</div>
+            <div class='owner-url'>{{obj.owner.profile.get_absolute_url}}</div>
+            <br>
+            <img src="{{STATIC_URL}}/appomatic_clib/CommonLib.path.svg" class="logo">
+            <div class='owner-name'>{{obj.owner.first_name}} {{obj.owner.last_name}}</div>
+            <div class='address'>{{obj.owner.profile.location.address|linebreaks}}</div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    <div class="footer">
+      <a href="{{obj.get_absolute_url}}">{{obj.get_absolute_url}}</a>
+    </div>
   </div>
 </div>
