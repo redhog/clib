@@ -14,7 +14,7 @@
 
                 <form enctype="multipart/form-data" action="{{obj.request.get_absolute_url}}" method='post' role="form">
                   {% csrf_token %}
-                  <input type="hidden" name="method" value="receive">
+                  <input type="hidden" name="{{obj.fieldname}}method" value="receive">
                   <button type="submit" class="btn btn-success"><i class='glyphicon glyphicon-ok'></i> Mark as received</button>
                 </form>
               {% else %}
@@ -26,13 +26,13 @@
 
                   <form enctype="multipart/form-data" action="{{obj.request.get_absolute_url}}" method='post' role="form">
                     {% csrf_token %}
-                    <input type="hidden" name="method" value="returned_to_sender">
+                    <input type="hidden" name="{{obj.fieldname}}method" value="returned_to_sender">
                     <button type="submit" class="btn btn-success"><i class='fa fa-reply'></i> Mark as returned to sender</button>
                   </form>
 
                   <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
                     {% csrf_token %}
-                    <input type="hidden" name="method" value="lose">
+                    <input type="hidden" name="{{obj.fieldname}}method" value="lose">
                     <button type="submit" class="btn btn-danger"><i class='fa fa-child'></i> I have lost this item</button>
                   </form>
 
@@ -61,13 +61,13 @@
 
                   <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
                     {% csrf_token %}
-                    <input type="hidden" name="method" value="lose">
+                    <input type="hidden" name="{{obj.fieldname}}method" value="lose">
                     <button type="submit" class="btn btn-danger"><i class='fa fa-child'></i> I have lost this item</button>
                   </form>
 
                   <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form" class='form-inline'>
                     {% csrf_token %}
-                    <input type="hidden" name="method" value="set_price">
+                    <input type="hidden" name="{{obj.fieldname}}method" value="set_price">
                     Requested deposit: <input type="text" name="amount" class="form-control" value="{{obj.price}}">
                     <button type="submit" class="btn btn-default">Set amount</button>
                   </form>
@@ -84,7 +84,7 @@
                     {% if obj.request.sent %}
                       <form enctype="multipart/form-data" action="{{obj.request.get_absolute_url}}" method='post' role="form">
                         {% csrf_token %}
-                        <input type="hidden" name="method" value="receive">
+                        <input type="hidden" name="{{obj.fieldname}}method" value="receive">
                         <button type="submit" class="btn btn-success"><i class='glyphicon glyphicon-ok'></i> Mark as received</button>
                       </form>
                     {% endif %}
@@ -115,7 +115,7 @@
               {% if request.user.profile.available_balance >= obj.type.price %}
                 <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
                   {% csrf_token %}
-                  <input type="hidden" name="method" value="request">
+                  <input type="hidden" name="{{obj.fieldname}}method" value="request">
                   <button type="submit" class="btn btn-success"><i class='glyphicon glyphicon-comment'></i> Request this thing</button>
                 </form>
               {% else %}

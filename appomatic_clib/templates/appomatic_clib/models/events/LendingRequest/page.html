@@ -12,7 +12,7 @@
 
            <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
              {% csrf_token %}
-             <input type="hidden" name="method" value="receive">
+             <input type="hidden" name="{{obj.fieldname}}method" value="receive">
              <button type="submit" class="btn btn-success"><i class='glyphicon glyphicon-ok'></i> Mark as received</button>
            </form>
          {% else %}
@@ -24,13 +24,13 @@
 
              <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
                {% csrf_token %}
-               <input type="hidden" name="method" value="returned_to_sender">
+               <input type="hidden" name="{{obj.fieldname}}method" value="returned_to_sender">
                <button type="submit" class="btn btn-success"><i class='fa fa-reply'></i> Mark as returned to sender</button>
              </form>
 
              <form enctype="multipart/form-data" action="{{obj.thing.get_absolute_url}}" method='post' role="form">
                {% csrf_token %}
-               <input type="hidden" name="method" value="lose">
+               <input type="hidden" name="{{obj.fieldname}}method" value="lose">
                <button type="submit" class="btn btn-danger"><i class='fa fa-child'></i> I have lost this item</button>
              </form>
 
@@ -62,14 +62,14 @@
              {% if obj.sent %}
                <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
                  {% csrf_token %}
-                 <input type="hidden" name="method" value="receive">
+                 <input type="hidden" name="{{obj.fieldname}}method" value="receive">
                  <button type="submit" class="btn btn-success"><i class='glyphicon glyphicon-ok'></i> Mark as received</button>
                </form>
 
                {% if not  obj.disputed %}
                  <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
                    {% csrf_token %}
-                   <input type="hidden" name="method" value="dispute">
+                   <input type="hidden" name="{{obj.fieldname}}method" value="dispute">
                    <button type="submit" class="btn btn-danger"><i class='glyphicon glyphicon-thumbs-down'></i> Dispute this delivery</button>
                  </form>
                {% endif %}
@@ -78,7 +78,7 @@
 
                <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form" class='form-inline'>
                  {% csrf_token %}
-                 <input type="hidden" name="method" value="set_transport_accepted">
+                 <input type="hidden" name="{{obj.fieldname}}method" value="set_transport_accepted">
                  Maximum accepted transport cost: <input type="text" name="amount" class="form-control" value="{{obj.transport_accepted}}">
                  <div class="btn-group">
                    <button type="submit" class="btn {% if obj.transport_payed.pending %}btn-default{% else %}btn-success{% endif %}">Set amount</button>
@@ -88,7 +88,7 @@
 
                <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
                  {% csrf_token %}
-                 <input type="hidden" name="method" value="cancel">
+                 <input type="hidden" name="{{obj.fieldname}}method" value="cancel">
                  <button type="submit" class="btn {% if obj.overdue %}btn-danger{% else %}btn-warning{% endif %}"><i class='fa fa-close'></i> Stop waiting and cancel the request</button>
                </form>
 
@@ -98,20 +98,20 @@
                {% if obj.transport_payed.pending %}
                  <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
                    {% csrf_token %}
-                   <input type="hidden" name="method" value="send">
+                   <input type="hidden" name="{{obj.fieldname}}method" value="send">
                    <button type="submit" class="btn btn-success"><i class='fa fa-truck'></i> Mark as sent</button>
                  </form>
                {% endif %}
 
                <form enctype="multipart/form-data" action="{{obj.thing.get_absolute_url}}" method='post' role="form">
                  {% csrf_token %}
-                 <input type="hidden" name="method" value="lose">
+                 <input type="hidden" name="{{obj.fieldname}}method" value="lose">
                  <button type="submit" class="btn btn-danger"><i class='fa fa-child'></i> I have lost this item</button>
                </form>
 
                <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
                  {% csrf_token %}
-                 <input type="hidden" name="method" value="set_transport_requested">
+                 <input type="hidden" name="{{obj.fieldname}}method" value="set_transport_requested">
                  Transport cost: <input type="text" name="amount" value="{{obj.transport_payed.amount}}"> (maximum accepted: €{{obj.transport_accepted}})
                  <button type="submit" class="btn {% if obj.transport_payed.pending %}btn-default{% else %}btn-success{% endif %}">Accept amount</button>
                </form>
@@ -154,7 +154,7 @@
      {% endif %}
      <br>
 
-    {% objfeed_for_obj obj %}
+     {{obj.feed.render_as.inline__html|safe}}
 
    </div>
 

@@ -41,15 +41,15 @@
                 {{form.tags|formControl}}
               </div>
               <div class="btn-group pull-right">
-                <button type="submit" name="method" value="save" class="btn btn-success"><i class='fa fa-save'></i> Save</button>
-                <button type="submit" name="method" value="read" class="btn btn-default"><i class='fa fa-cancel'></i> Cancel</button>
+                <button type="submit" name="{{obj.fieldname}}method" value="save" class="btn btn-success"><i class='fa fa-save'></i> Save</button>
+                <button type="submit" name="{{obj.fieldname}}method" value="read" class="btn btn-default"><i class='fa fa-cancel'></i> Cancel</button>
               </div>
             </form>
           {% else %}
             <form enctype="multipart/form-data" action='{{obj.get_absolute_url}}' method='post'>
               {% csrf_token %}
-              <button type="submit" name="method" value="edit" class="btn btn-success"><i class='fa fa-edit'></i> Edit</button>
-              <button type="submit" name="method" value="lookup" class="btn btn-success"><i class='fa fa-search'></i> Update data from online sources</button>
+              <button type="submit" name="{{obj.fieldname}}method" value="edit" class="btn btn-success"><i class='fa fa-edit'></i> Edit</button>
+              <button type="submit" name="{{obj.fieldname}}method" value="lookup" class="btn btn-success"><i class='fa fa-search'></i> Update data from online sources</button>
             </form>
           {% endif %}
         </div>

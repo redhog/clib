@@ -4,6 +4,7 @@ import django.db.models
 import django.contrib.auth.models
 from django.conf import settings
 import fcdjangoutils.responseutils
+import fcdjangoutils.middleware
 import appomatic_djangoobjfeed.models
 from . import base
 from . import transactions
@@ -214,5 +215,17 @@ class LendingRequestFeed(appomatic_djangoobjfeed.models.ObjFeed):
         app_label = 'appomatic_clib'
     owner = django.db.models.OneToOneField(LendingRequest, primary_key=True, related_name="feed")
 
-    def allowed_to_post(self, user):
+    def allowed_to_post(self, user = None):
+        if user is None: user = fcdjangoutils.middleware.get_request().user
         return user.id in (self.owner.requestor.id, self.owner.thing.holder.id, self.owner.thing.owner.id)
+
+
+@classmethod
+def actor_feeds_for_obj(cls, instance, author):
+    if hasattr(instance, "feed"):
+        if hasattr(instance.feed.owner, "requestor"):
+            yield lambda feed_entry: True, instance.feed.owner.requestor.feed
+            if hasattr(instance.feed.owner, "thing") and hasattr(instance.feed.owner.thing, "holder"):
+                yield lambda feed_entry: True, instance.feed.owner.thing.holder.feed
+
+appomatic_djangoobjfeed.models.ObjFeedEntry.actor_feeds_for_obj = actor_feeds_for_obj
