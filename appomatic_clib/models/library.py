@@ -9,6 +9,7 @@ import fcdjangoutils.fields
 from django.conf import settings
 from . import base
 from . import transactions
+from . import events
 
 class ThingType(base.Object):
     barcode_type = django.db.models.CharField(max_length=128, db_index=True)
@@ -129,7 +130,7 @@ class Thing(base.Object):
 
     label_printed = django.db.models.BooleanField(default=False)
 
-    lent_until = django.db.models.DateField(null=True, blank=True)
+    lent_until = django.db.models.DateTimeField(null=True, blank=True)
     deposit_payed =  django.db.models.ForeignKey(transactions.Transaction, null=True, blank=True)
     price = django.db.models.FloatField(default=100.0)
 
@@ -155,8 +156,9 @@ class Thing(base.Object):
         return self.requests.order_by('time')[0]
 
     def lose(self):
-        library.Lost(
+        events.Lost(
             thing = self,
+            affected = self.request and self.request.requestor,
             old_owner = self.owner,
             new_owner = self.holder).save()
 
@@ -194,6 +196,7 @@ class Thing(base.Object):
             django.shortcuts.redirect(lr))
 
     def handle__lose(self, request, style):
+        print "LOSE", self, request.user.id == self.holder.id
         assert request.user.id == self.holder.id
         self.lose()
         raise fcdjangoutils.responseutils.EarlyResponseException(

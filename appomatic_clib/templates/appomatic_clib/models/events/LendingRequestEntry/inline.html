@@ -1,0 +1,25 @@
+{% extends "appomatic_djangoobjfeed/models/ObjFeedEntry/inline.html" %}
+{% load i18n %}
+
+{% block feed_entry_body %}
+  <p><a href="{{obj.obj.requestor.get_absolute_url}}">{{obj.obj.requestor}}</a> is requesting:</p>
+  <p>{{obj.obj.thing.render_as.link__html|safe}}</p>
+
+  <p><i class='fa fa-clock-o'></i> Waiting since {{obj.obj.time}}.</p>
+  {% if obj.obj.sent %}
+    <p><i class='fa fa-truck'></i> It has been sent.</p>
+  {% else %}
+    <p><i class='fa fa-clock-o'></i> It has not yet been sent.</p>
+  {% endif %}
+  <p><i class='fa fa-money'></i> Deposit payed: €{{obj.obj.deposit_payed.amount}}.</p>
+  {% if not obj.obj.transport_payed.tentative %}
+    {% if obj.obj.sent %}
+      <p><i class='fa fa-money'></i> Transport payed: €{{obj.obj.transport_payed.amount}}.</p>
+    {% else %}
+      {% if request.user.id = obj.obj.requestor.id %}
+        <p><i class='fa fa-money'></i> Transport requested: €{{obj.obj.transport_payed.amount}}.</p>
+      {% endif %}
+    {% endif %}
+  {% endif %}
+
+{% endblock %}

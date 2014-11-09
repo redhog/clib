@@ -18,6 +18,8 @@ class OwnershipTransfer(base.Object):
     new_owner = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="new_ownerships")
 
 class Lost(OwnershipTransfer):
+    affected = django.db.models.ForeignKey(django.contrib.auth.models.User, null=True, related_name="affected")
+
     class Meta:
         app_label = 'appomatic_clib'
 
@@ -31,7 +33,10 @@ class LostFeedEntry(appomatic_djangoobjfeed.models.ObjFeedEntry):
     def get_author_from_obj(cls, obj):
         return obj.new_owner
 
-    template = "djangoobjfeed/render_lost_thing.%(format)s"
+    @classmethod
+    def holder_feeds_for_obj(cls, instance, author):
+        yield lambda feed_entry: True, instance.old_owner.feed
+        if instance.affected: yield lambda feed_entry: True, instance.affected.feed
 
 
 class LendingRequest(base.Object):
@@ -143,9 +148,11 @@ class LendingRequest(base.Object):
 
     def simple_cancel(self):
         assert self.sent is None
-        self.deposit_payed.delete()
-        self.transport_payed.delete()
+        deposit_payed = self.deposit_payed
+        transport_payed = self.transport_payed
         self.delete()
+        deposit_payed.delete()
+        transport_payed.delete()
 
     def cancel(self):
         overdue = self.overdue
@@ -220,6 +227,23 @@ class LendingRequestFeed(appomatic_djangoobjfeed.models.ObjFeed):
         return user.id in (self.owner.requestor.id, self.owner.thing.holder.id, self.owner.thing.owner.id)
 
 
+class LendingRequestEntry(appomatic_djangoobjfeed.models.ObjFeedEntry):
+    class Meta:
+        app_label = 'appomatic_clib'
+
+    obj = django.db.models.ForeignKey(LendingRequest, related_name='feed_entry')
+
+    @classmethod
+    def get_author_from_obj(cls, obj):
+        return obj.requestor
+
+    def render__title(self, request, context):
+        return 'Lending request'
+
+    @classmethod
+    def holder_feeds_for_obj(cls, instance, author):
+        yield lambda feed_entry: True, instance.thing.holder.feed
+
 @classmethod
 def actor_feeds_for_obj(cls, instance, author):
     if hasattr(instance, "feed"):
@@ -227,7 +251,6 @@ def actor_feeds_for_obj(cls, instance, author):
             yield lambda feed_entry: True, instance.feed.owner.requestor.feed
             if hasattr(instance.feed.owner, "thing") and hasattr(instance.feed.owner.thing, "holder"):
                 yield lambda feed_entry: True, instance.feed.owner.thing.holder.feed
-
 appomatic_djangoobjfeed.models.ObjFeedEntry.actor_feeds_for_obj = actor_feeds_for_obj
 
 def allowed_to_post_comment(self, user):
