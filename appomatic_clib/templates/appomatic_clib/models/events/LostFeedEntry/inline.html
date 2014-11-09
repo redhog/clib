@@ -1,0 +1,20 @@
+{% extends "appomatic_djangoobjfeed/models/ObjFeedEntry/inline.html" %}
+{% load i18n %}
+
+{% block feed_entry_body %}
+
+  <p>{{obj.obj.thing.render_as.link__html|safe}}</p>
+  <p><i class='fa fa-clock-o'></i> Lost at {{obj.obj.time}}</p>
+
+  {% if obj.obj.new_owner.id != request.user.id %}
+    <p><i class='fa fa-search'></i> Lost by <a href="{{obj.obj.new_owner.get_absolute_url}}">{{obj.obj.new_owner}}</a></p>
+  {% endif %}
+
+  {% if obj.obj.old_owner.id != request.user.id %}
+    <p>Previous owner was <a href="{{obj.obj.old_owner.get_absolute_url}}">{{obj.obj.old_owner}}</a></p>
+  {% endif %}
+
+  {% if obj.obj.affected and obj.obj.affected.id != request.user.id %}
+    <p><i class='glyphicon glyphicon-comment'></i> Affected the requestor <a href="{{obj.obj.affected.get_absolute_url}}">{{obj.obj.affected}}</a></p>
+  {% endif %}
+{% endblock %}

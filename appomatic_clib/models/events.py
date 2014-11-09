@@ -13,6 +13,8 @@ from . import transactions
 class OwnershipTransfer(base.Object):
     class Meta:
         app_label = 'appomatic_clib'
+    time = django.db.models.DateTimeField(auto_now_add=True)
+    time.editable = True
     thing = django.db.models.ForeignKey("Thing", related_name='ownership_transfers')
     old_owner = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="old_ownerships")
     new_owner = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="new_ownerships")
@@ -38,6 +40,8 @@ class LostFeedEntry(appomatic_djangoobjfeed.models.ObjFeedEntry):
         yield lambda feed_entry: True, instance.old_owner.feed
         if instance.affected: yield lambda feed_entry: True, instance.affected.feed
 
+    def render__title(self, request, context):
+        return 'Thing got lost'
 
 class LendingRequest(base.Object):
     class Meta:
