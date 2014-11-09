@@ -1,0 +1,12 @@
+{% extends "appomatic_djangoobjfeed/models/ObjFeedEntry/inline.txt" %}
+
+{% block feed_entry_body %}{{obj.obj.requestor}} [{{obj.obj.requestor.get_absolute_url}}] is requesting:
+{{obj.obj.thing.render_as.title|safe}} [{{obj.obj.thing.get_absolute_url}}
+
+Waiting since {{obj.obj.time}}.
+{% if obj.obj.sent %}It has been sent.
+{% else %}It has not yet been sent.
+{% endif %}Deposit payed: €{{obj.obj.deposit_payed.amount}}.
+{% if not obj.obj.transport_payed.tentative %}{% if obj.obj.sent %}Transport payed: €{{obj.obj.transport_payed.amount}}.
+{% else %}{% if request.user.id = obj.obj.requestor.id %}Transport requested: €{{obj.obj.transport_payed.amount}}.
+{% endif %}{% endif %}{% endif %}{% endblock %}
