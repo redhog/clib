@@ -160,7 +160,7 @@ class LendingRequest(base.Object):
         base.Object.comment(self, content, author, recipients + extra)
 
     def __unicode__(self):
-        return u"%(requestor)s requesting %(thing)s at %(time)s" % {"thing": self.thing, "requestor": self.requestor, "time": self.time}
+        return u"%(requestor)s requesting %(thing)s at %(time)s" % {"thing": self.thing.type, "requestor": self.requestor, "time": self.time}
 
     def handle__send(self, request, style):
         assert self.thing.holder.id == request.user.id

@@ -168,17 +168,32 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
   }
 }
 
-.feed_entry .feed_entry {
-  margin-left: 2em;
-}
+.feed {
+  form {
+    textarea {
+      display: block;
+      margin-bottom: 5pt;
+      width: 30em;
+      height: 5em;
+    }
+  }
+  .feed_entry {
+    padding-bottom: 4pt;
+    border-bottom: 1pt solid #aaaaaa;
 
-.feed_entry .avatar {
-  float: left;
-  margin-right: 10pt;
-}
+    .feed_entry {
+      margin-left: 2em;
+    }
 
-.feed_entry textarea {
-  display: block;
+    .avatar {
+      float: left;
+      margin-right: 10pt;
+    }
+
+    textarea {
+      display: block;
+    }
+  }
 }
 
 @page {
