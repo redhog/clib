@@ -28,6 +28,9 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
   width: auto;
 }
 
+@thing-label-frame-background: #ffffff;
+@thing-label-frame-foreground: #000000;
+
 .thing-label {
   float: left;
   font-size: 12pt;
@@ -38,7 +41,7 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
     page-break-inside: avoid;
     border: 0.33em solid black;
     .rounded-corners(1em);
-    background: #000000 !important;
+    background: @thing-label-frame-background !important;
     width: 33em;
 
     a, a:hover, a:visited {
@@ -46,28 +49,29 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
     }
 
     .header, .footer {
-      color: #ffffff !important;
+      color: @thing-label-frame-foreground !important;
       padding: 0.33em;
+    }
+    .footer {
+      font-size: 1.05em;
     }
     .header {
       font-size: 1.16em;
+      border-bottom: 0.2em solid black;
       .title {
         white-space: nowrap;
         overflow: hidden;
         display: block;
-        color: #ffffff !important;
-        background: #000000 !important;
+        color: @thing-label-frame-foreground !important;
+        background: @thing-label-frame-background !important;
 
       }
       .owner {
         float: right;
-        color: #ffffff !important;
-        background: #000000 !important;
+        color: @thing-label-frame-foreground !important;
+        background: @thing-label-frame-background !important;
         padding-left: 0.83em;
       }
-    }
-    .footer {
-      font-size: 0.83em;
     }
     .body {
       background: #ffffff !important;
@@ -201,6 +205,13 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
 }
 
 @media print {
+  @page {
+    margin-left: 7.21mm;
+    margin-right: 0;
+    margin-top: 15.15mm;
+    margin-bottom: 0;
+  }
+
   a[href]:after {
     content: none !important;
   }
@@ -216,25 +227,15 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
     margin: 0;
     padding: 0;
   }
-  body.labels .container {
-    margin-left: 7.21mm;
-    margin-right: 7.21mm;
-    margin-top: 15.15mm;
-    margin-bottom: 15.15mm;
-    width: 100%;
-  }
-
   .thing-label {
-    font-size: 5.3pt;
-    width: 63.5mm;
-    height: 38.1mm;
-    margin-left: 0;
-    margin-top: 0;
-    margin-bottom: 0;
-    margin-right: 2.54mm;
+    page-break-inside: avoid;
+    font-size: 4.5pt;
+    width: 62mm;
+    height: 35.84mm;
+    margin: 0;
 
     .frame {
-      margin: 0;
+      margin-top: 2.5mm;
       .body {
         .qr {
           img {

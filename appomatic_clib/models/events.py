@@ -19,6 +19,9 @@ class OwnershipTransfer(base.Object):
     old_owner = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="old_ownerships")
     new_owner = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="new_ownerships")
 
+    def get_absolute_url(self):
+        raise NotImplementedError
+
 class Lost(OwnershipTransfer):
     affected = django.db.models.ForeignKey(django.contrib.auth.models.User, null=True, related_name="affected")
 

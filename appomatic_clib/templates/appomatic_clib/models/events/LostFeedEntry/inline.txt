@@ -1,6 +1,6 @@
 {% extends "appomatic_djangoobjfeed/models/ObjFeedEntry/inline.txt" %}
 
-{% block feed_entry_body %}{{obj.obj.thing.render_as.title|safe}} [{{obj.obj.thing.get_absolute_url}}]
+{% block feed_entry_body %}{{obj.obj.thing.render_as.link_txt|safe}}
 Lost at {{obj.obj.time}}{% if obj.obj.new_owner.id != request.user.id %}
 Lost by {{obj.obj.new_owner}} [{{obj.obj.new_owner.get_absolute_url}}]{% endif %}{% if obj.obj.old_owner.id != request.user.id %}
 Previous owner was {{obj.obj.old_owner}} [{{obj.obj.old_owner.get_absolute_url}}]{% endif %}{% if obj.obj.affected and obj.obj.affected.id != request.user.id %}
