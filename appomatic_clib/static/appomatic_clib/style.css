@@ -230,9 +230,9 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
   }
   .thing-label {
     page-break-inside: avoid;
-    font-size: 4.5pt;
-    width: 60mm;
-    height: 33.84mm;
+    font-size: 4.6pt;
+    width: 62mm;
+    height: 35.84mm;
     padding: 2.5mm;
   }
 
