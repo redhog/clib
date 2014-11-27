@@ -1,5 +1,4 @@
 {% extends "appomatic_clib/base.html" %}
-{% load qr_tags %}
 
 {% block body-class %}labels{% endblock %}
 {% block full-content %}
@@ -8,7 +7,13 @@
     <button name='done' value='true' class="btn btn-success" type="submit">Mark as done</button>
   </form>
 
+  <div class="label-group">
   {% for t in request.user.profile.needs_labels.all %}
     {{t.render_as.label}}
+
+    {% if forloop.counter|divisibleby:21 %}
+      </div><div class="label-group">
+    {% endif %}
   {% endfor %}
+  </div>
 {% endblock %}

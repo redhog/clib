@@ -1,5 +1,5 @@
 {% extends "appomatic_clib/base.html" %}
-{% load qr_tags %}
+
 {% block content %}
   {% if request.user.is_authenticated %}
     <div class="container">
@@ -119,7 +119,7 @@
         <div class="col-md-4">
           {% if request.user.is_authenticated %}
             <div class='qr-link start-scan-link'>
-              {% qr_from_text start_url %}
+              <img src="{% url 'appomatic_clib.views.render_qr' %}?url={{start_url|iriencode}}">
             </div>
           {% endif %}
           <div class="clearfix"></div>

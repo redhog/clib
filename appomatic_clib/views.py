@@ -9,6 +9,9 @@ import django.views.decorators.csrf
 import django.contrib.auth.decorators
 import appomatic_clib.models
 import appomatic_renderable.models
+import qrcode
+import qrcode.image.svg
+import StringIO
 
 def start_url(request):
     return 'http://' + django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse(scan_start, kwargs={"user":sign_login(request)})
@@ -181,3 +184,16 @@ def messages(request):
             "request": request
         }
     )
+
+def render_qr(request):
+    url = request.GET['url']
+    print url
+    
+    qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H, image_factory=qrcode.image.svg.SvgImage)
+    qr.add_data(url)
+    qr.make(fit=True)
+    img = qr.make_image()
+    stream = StringIO.StringIO()
+    img.save(stream)
+
+    return django.http.HttpResponse(stream.getvalue(), content_type="image/svg+xml")

@@ -1,4 +1,3 @@
-{% load qr_tags %}
 <div class='thing-label'>
   <div class="frame">
     <div class="header">
@@ -9,7 +8,7 @@
     </div>
     <div class="body">
       <div class='qr'>
-        {% qr_from_text obj.get_absolute_url %}
+        <img src="{% url 'appomatic_clib.views.render_qr' %}?url={{obj.get_absolute_url|iriencode}}">
       </div>
       <div class='text'>
         {% if request.user.id = obj.owner.id or request.user.id = obj.holder.id %}

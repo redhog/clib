@@ -23,5 +23,8 @@ urlpatterns = django.conf.urls.patterns('',
 
     django.conf.urls.url(r'^tag(?P<url>.*)/?$', 'appomatic_renderable.views.tag'),
 
+    django.conf.urls.url(r'^qr/?$', 'appomatic_clib.views.render_qr'),
+
     django.conf.urls.url(r'^(?P<id>.*)/?$', 'appomatic_clib.views.get'),
+
 )

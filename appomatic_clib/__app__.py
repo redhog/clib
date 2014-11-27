@@ -1,6 +1,5 @@
 INSTALLED_APPS += [
     "mptt",
-    "qrcode",
     "userena",
     "guardian",
     "easy_thumbnails",

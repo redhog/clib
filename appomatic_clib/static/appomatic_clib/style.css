@@ -34,10 +34,10 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
 .thing-label {
   float: left;
   font-size: 12pt;
+  padding: 0.83em;
+  overflow: hidden;
 
   .frame {
-    margin: 0.83em;
-
     page-break-inside: avoid;
     border: 0.33em solid black;
     .rounded-corners(1em);
@@ -84,34 +84,28 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
         display: table-cell;
         width: 0;
         img {
-          width: 15em;
+          width: 12em;
           height: auto;
-          margin: -20px;
         }
       }
       .text {
         display: table-cell;
         vertical-align: top;
-        padding-top: 2em;
-        padding-right: 2em;
-        padding-bottom: 2em;
-        .name {
-        }
         .owner {
-          margin-top: 0.42em;
           .owner-name, .address {
             margin-right: 10em - 2em;
           }
-          p {
-            margin-bottom: 0;
+          .address {
+            p {
+              padding: 0;
+              margin: 0;
+            }
           }
         }
         .logo {
           width: 10em;
           height: auto;
           float: right;
-          margin-bottom: -2em;
-          margin-right: -2em;
         }
       }
     }
@@ -212,6 +206,13 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
     margin-bottom: 0;
   }
 
+  .label-group {
+    page-break-before: always;
+    float: left;
+    height: 100%;
+    width: 100%;
+  }
+
   a[href]:after {
     content: none !important;
   }
@@ -230,20 +231,9 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
   .thing-label {
     page-break-inside: avoid;
     font-size: 4.5pt;
-    width: 62mm;
-    height: 35.84mm;
-    margin: 0;
-
-    .frame {
-      margin-top: 2.5mm;
-      .body {
-        .qr {
-          img {
-            margin: 0;
-          }
-        }
-      }
-    }
+    width: 60mm;
+    height: 33.84mm;
+    padding: 2.5mm;
   }
 
   .sending-label {

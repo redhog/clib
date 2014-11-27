@@ -1,5 +1,4 @@
 {% extends "appomatic_clib/base.html" %}
-{% load qr_tags %}
 {% block content %}
   <div class="container">
     <div class="row">
@@ -33,7 +32,7 @@
           <p>Scan this QR-code with the app to log in and then scan all your things:</p>
 
           <div class='qr-link start-scan-link'>
-            {% qr_from_text start_url %}
+            <img src="{% url 'appomatic_clib.views.render_qr' %}?url={{start_url|iriencode}}">
           </div>
         </div>
       </div>
