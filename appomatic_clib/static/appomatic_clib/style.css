@@ -82,7 +82,7 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
       overflow: hidden;
       .qr {
         display: table-cell;
-        width: 0;
+        width: 12em;
         img {
           width: 12em;
           height: auto;
@@ -90,7 +90,6 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
       }
       .text {
         display: table-cell;
-        width: 100%;
         vertical-align: top;
         .owner {
           .owner-name, .address {
