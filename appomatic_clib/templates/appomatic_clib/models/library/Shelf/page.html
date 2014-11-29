@@ -1,0 +1,31 @@
+{% extends "appomatic_clib/base.html" %}
+{% load endless %}
+
+{% block full-content %}
+  <h1>Shelf {{obj.name}} at <a href="{{obj.owner.get_absolute_url}}">{{obj.owner}}</a></h1>
+
+  {{obj.render_as.label}}
+
+  <div class="panel panel-default" style="clear: both;">
+    <table class="table">
+      {% if obj.contains.count %}
+        {% paginate obj.contains.all using "contains" as contains %}
+        <tr><th colspan="2">On this shelf: {{obj.contains.count}}</th><th>by</th><th>owned by</th><th>tags</th></tr>
+        {% for t in contains %}
+          <tr>
+            <td><a href='{{t.get_absolute_url}}'>{{t.type.barcode_type}}:{{t.type.barcode_data}}</td>
+            <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
+            <td><a href='{% url 'appomatic_clib.views.search' %}?query={{t.type.designer}}'>{{t.type.designer}}</a></td>
+            <td><a href='{{t.owner.profile.get_absolute_url}}'>{{t.owner.username}}</a></td>
+            <td>{{t.type.render_as.tags|safe}}</td>
+          </tr>
+        {% endfor %}
+        <tr>
+          <td colspan="5">
+            {% show_pages %}
+          </td>
+        </tr>
+      {% endif %}
+    </table>
+  </div>
+{% endblock %}

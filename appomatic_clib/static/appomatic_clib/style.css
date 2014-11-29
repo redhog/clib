@@ -90,6 +90,7 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
       }
       .text {
         display: table-cell;
+        width: 100%;
         vertical-align: top;
         .owner {
           .owner-name, .address {
@@ -101,6 +102,11 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
               margin: 0;
             }
           }
+        }
+        .shelf-label {
+          font-size: 4em;
+          line-height: 1em;
+          padding-top: 0.11em;
         }
         .logo {
           width: 10em;

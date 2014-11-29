@@ -1,0 +1,19 @@
+<div class='thing-label'>
+  <div class="frame">
+    <div class="header">
+      <span class="title">{{obj.owner.first_name}} {{obj.owner.last_name}}</span>
+    </div>
+    <div class="body">
+      <div class='qr'>
+        <img src="{% url 'appomatic_clib.views.render_qr' %}?url={{obj.get_absolute_url|iriencode}}">
+      </div>
+      <div class='text'>
+        <div class="shelf-label">{{obj.name}}</div>
+        <img src="{{STATIC_URL}}/appomatic_clib/CommonLib.path.svg" class="logo">
+      </div>
+    </div>
+    <div class="footer">
+      <a href="{{obj.get_absolute_url}}">{{obj.get_absolute_url}}</a>
+    </div>
+  </div>
+</div>

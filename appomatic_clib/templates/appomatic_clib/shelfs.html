@@ -1,0 +1,47 @@
+{% extends "appomatic_clib/base.html" %}
+{% load endless %}
+
+{% block full-content %}
+  {% if request.user.shelfs.count %}
+    <div class="panel panel-default">
+      <table class="table">
+        {% paginate request.user.shelfs.all using "shelfs" as shelfs %}
+        <tr><th style="width: 100%;">Shelfs: {{request.user.shelfs.count}}</th><th>items</th><th></th></tr>
+        {% for t in shelfs %}
+          <tr>
+            <td><a href='{{t.get_absolute_url}}'>{{t.name}}</a></td>
+            <td><a href='{{t.get_absolute_url}}'>{{t.contains.count}}</td>
+            <td>
+              <form action="{% url 'appomatic_clib.views.shelfs' %}" method="post" class="form form-inline" role="form">
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{t.id}}">
+                <button class="btn btn-default" name="action" value="delete" type="submit">Delete</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+        <tr>
+          <td colspan="5">
+            {% show_pages %}
+          </td>
+        </tr>
+      </table>
+    </div>
+  {% else %}
+    <div class="alert alert-success" role="alert">
+      You don't have any shelfs set up yet.
+    </div>
+  {% endif %}
+
+   <form action="{% url 'appomatic_clib.views.shelfs' %}" method="post" class="form form-inline" role="form">
+     {% csrf_token %} 
+     <div class="input-group">
+       <input type="text" name="name" placeholder="Name" class="form-control">
+       <span class="input-group-btn">
+         <button class="btn btn-default" name="action" value="add" type="submit">Add shelf</button>
+       </span>
+     </div>
+   </form>
+
+
+{% endblock %}

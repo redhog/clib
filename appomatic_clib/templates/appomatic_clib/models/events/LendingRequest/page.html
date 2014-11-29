@@ -1,5 +1,4 @@
 {% extends "appomatic_clib/base.html" %}
-{% load qr_tags %}
 {% load objfeed_tags %}
 {% block full-content %}
    <div class="noprint">
@@ -163,7 +162,7 @@
        <div class="meta">
          <div class="row1">
            <div class='qr'>
-             {% qr_from_text obj.get_absolute_url %}
+             <img src="{% url 'appomatic_clib.views.render_qr' %}?url={{obj.get_absolute_url|iriencode}}">
            </div>
            <div class="sender">
              <div class="header">From:</div>

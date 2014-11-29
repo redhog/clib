@@ -11,6 +11,19 @@ from . import base
 from . import transactions
 from . import events
 
+
+class Shelf(base.Object):
+    class Meta:
+        app_label = 'appomatic_clib'
+        ordering = ('name', )
+
+    name = django.db.models.CharField(default='', blank=True, max_length=512, db_index=True)
+    owner = django.db.models.ForeignKey(django.contrib.auth.models.User, related_name="shelfs")
+    label_printed = django.db.models.BooleanField(default=False)
+
+    def __unicode__(self):
+        return self.name
+
 class ThingType(base.Object):
     barcode_type = django.db.models.CharField(max_length=128, db_index=True)
     barcode_data = django.db.models.CharField(max_length=512, db_index=True)
@@ -137,6 +150,7 @@ class Thing(base.Object):
     available = django.db.models.BooleanField(default=True)
 
     location = django.db.models.ForeignKey("Location", related_name="held_here", null=True, blank=True)
+    shelf = django.db.models.ForeignKey("Shelf", related_name="contains", null=True, blank=True)
 
     class Meta:
         app_label = 'appomatic_clib'
@@ -208,10 +222,19 @@ class Thing(base.Object):
         raise fcdjangoutils.responseutils.EarlyResponseException(
             django.shortcuts.redirect(self))
 
+    def handle__set_shelf(self, request, style):
+        assert request.user.id == self.holder.id
+        if request.POST['shelf']:
+            self.shelf = Shelf.objects.get(id=request.POST['shelf'])
+        else:
+            self.shelf = None
+        self.save()
+        raise fcdjangoutils.responseutils.EarlyResponseException(
+            django.shortcuts.redirect(self))
+
 @property
 def path(self):
     return "/".join(
         item.name
         for item in self.get_ancestors(include_self=True))
 appomatic_renderable.models.Tag.path = path
-

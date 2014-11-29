@@ -5,7 +5,7 @@
     <div class="container">
       <div class="row">
         <div class="col-md-8">
-          {% if not request.user.profile.location.position or not request.user.owns.count or request.user.profile.needs_labels.count or request.user.profile.available_balance <= 0.0 or not request.user.profile.has_borrowed.count %}
+          {% if not request.user.profile.location.position or not request.user.owns.count or request.user.profile.things_needs_labels.count or rrequest.user.profile.shelfs_needs_labels.count or equest.user.profile.available_balance <= 0.0 or not request.user.profile.has_borrowed.count %}
             <div class="well">
               <h1>Things do do to get you started:</h1>
 
@@ -19,7 +19,7 @@
                 <p><a href="{% url 'appomatic_clib.views.add' %}">Add some things to your library</a> to get started lending.</p>
               {% endif %}
 
-              {% if request.user.profile.needs_labels.count %}
+              {% if request.user.profile.things_needs_labels.count or request.user.profile.shelfs_needs_labels.count%}
                 <h4>You have new things that need labels.</h4>
                 <p><a href="{% url 'appomatic_clib.views.labels' %}" class="btn btn-default">Print labels</a></p>
               {% endif %}

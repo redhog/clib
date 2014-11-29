@@ -104,8 +104,12 @@ class Profile(userena.models.UserenaBaseProfile):
         return self.user.has.filter(requests__disputed=True)
 
     @property
-    def needs_labels(self):
+    def things_needs_labels(self):
         return self.user.owns.filter(label_printed = False)
+
+    @property
+    def shelfs_needs_labels(self):
+        return self.user.shelfs.filter(label_printed = False)
 
     @property
     def requests(self):

@@ -132,9 +132,12 @@ def add(request):
 @django.contrib.auth.decorators.login_required
 def labels(request):
     if request.GET.get('done', None):
-        for thing in request.user.profile.needs_labels.all():
+        for thing in request.user.profile.things_needs_labels.all():
             thing.label_printed = True
             thing.save()
+        for shelf in request.user.profile.shelfs_needs_labels.all():
+            shelf.label_printed = True
+            shelf.save()
         return django.shortcuts.redirect('appomatic_clib.views.index')
         
     return django.shortcuts.render(
@@ -174,6 +177,28 @@ def get(request, id):
         return appomatic_clib.models.Object.list_render(request, as_response = True)
     else:
         raise Exception("Unknown id %s" % id)
+
+@django.contrib.auth.decorators.login_required
+def shelfs(request):
+    if request.method == 'POST':
+        action = request.POST['action']
+        if action == "add":
+            appomatic_clib.models.Shelf(
+                name = request.POST['name'],
+                owner = request.user).save()
+        elif action == "delete":
+            shelf = appomatic_clib.models.Shelf.objects.get(id=request.POST['id'])
+            for thing in shelf.contains.all():
+                thing.shelf = None
+                thing.save()
+            shelf.delete()
+    return django.shortcuts.render(
+        request,
+        'appomatic_clib/shelfs.html',
+        {
+            "request": request
+        }
+    )
 
 @django.contrib.auth.decorators.login_required
 def messages(request):
