@@ -2,6 +2,7 @@ import django.db.models
 import django.contrib.gis.db.models
 import userena.models
 from django.utils.translation import ugettext as _
+from . import library
 from . import transactions
 
 class Area(django.contrib.gis.db.models.Model):
@@ -33,6 +34,7 @@ class Profile(userena.models.UserenaBaseProfile):
 
     location = django.db.models.ForeignKey(Location, related_name="lives_here", null=True, blank=True)
     transport_accepted = django.db.models.FloatField(default=0.0, verbose_name=_('Maximum transport cost accepted'))
+    current_thing = django.db.models.ForeignKey(library.Thing, null=True, blank=True)
 
     def set_transport_accepted(self, amount):
         self.transport_accepted = amount

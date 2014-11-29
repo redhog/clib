@@ -66,19 +66,28 @@ def scan_item(request, user):
 
     print "SCAN:", request.user.username, request.GET['data'], request.GET['type']
 
-    if request.GET['type'] == 'QR_CODE' and '/clib/thing/' in request.GET['data']:
-        tid = int(request.GET['data'].split('/clib/thing/')[1].split("/")[0])
-        t = appomatic_clib.models.Thing.objects.get(id=tid)
+    if request.GET['type'] == 'QR_CODE':
+        t = appomatic_clib.models.Object.objects.get(id=request.GET['data'].split('/')[-1]).subclassobject
 
-        if t.holder.id == request.user.id:
-            if t.request:
-                t.request.send()
+        if isinstance(t, appomatic_clib.models.Thing):
+            profile = request.user.profile
+            profile.current_thing = t
+            profile.save()
+            
+            # if t.holder.id == request.user.id:
+            #     if t.request:
+            #         t.request.send()
+            #     else:
+            #         raise Exception("Hm, why'd you scan this one now?")
+            if t.request and t.request.requestor.id == request.user.id:
+                t.request.receive()
             else:
-                print "Hm, why'd you scan this one now?"
-        elif t.request.requestor.id == request.user.id:
-            t.request.receive()
-        else:
-            print "How on earth did this user get the QR-code??"
+                raise Exception("How on earth did this user get the QR-code??")
+        elif isinstance(t, appomatic_clib.models.Shelf):
+            thing = request.user.profile.current_thing
+            if thing:
+                thing.shelf = t
+                thing.save()
     else:
         data = dict(request.GET.iteritems())
         data['barcode_type'] = data.pop('type')
