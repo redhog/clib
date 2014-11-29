@@ -1,6 +1,5 @@
 {% extends "appomatic_clib/base.html" %}
 {% load objfeed_tags %}
-{% load qr_tags %}
 
 {% block full-content %}
   {{request.user.feed.render_as.inline__html|safe}}

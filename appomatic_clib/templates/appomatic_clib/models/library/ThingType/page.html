@@ -1,5 +1,4 @@
 {% extends "appomatic_clib/base.html" %}
-{% load qr_tags %}
 {% load endless %}
 {% load bootstrap %}
 
@@ -73,7 +72,7 @@
       <div class="col-md-4">
 
         <div class='qr-link thing-link'>
-          {% qr_from_text obj.get_absolute_url %}
+          <img src="{% url 'appomatic_clib.views.render_qr' %}?url={{obj.get_absolute_url|iriencode}}">
         </div>
 
       </div>
