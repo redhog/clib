@@ -107,7 +107,7 @@ class Profile(userena.models.UserenaBaseProfile):
 
     @property
     def things_needs_labels(self):
-        return self.user.owns.filter(label_printed = False)
+        return self.user.owns.filter(label_printed = False, available=True)
 
     @property
     def shelfs_needs_labels(self):
