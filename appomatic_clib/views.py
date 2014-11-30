@@ -125,14 +125,22 @@ def search(request):
 def add(request):
     if request.method == 'POST':
         type = request.POST['type']
-        for code in request.POST['codes'].split(" "):
-            data = {
-                'barcode_type': type,
-                'barcode_data': code
-                }
-            tt = appomatic_clib.models.ThingType.get(**data)
+        if type == "none":
+            tt = appomatic_clib.models.ThingType(name = request.POST['name'])
+            tt.save()
             t = appomatic_clib.models.Thing(type=tt, owner=request.user, holder=request.user)
             t.save()
+            return django.shortcuts.redirect(
+                tt.get_absolute_url() + "?" + tt.fieldname + "method=edit")
+        else:
+            for code in request.POST['codes'].split(" "):
+                data = {
+                    'barcode_type': type,
+                    'barcode_data': code
+                    }
+                tt = appomatic_clib.models.ThingType.get(**data)
+                t = appomatic_clib.models.Thing(type=tt, owner=request.user, holder=request.user)
+                t.save()
     return django.shortcuts.render(
         request,
         'appomatic_clib/add.html',

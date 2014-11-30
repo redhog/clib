@@ -25,8 +25,8 @@ class Shelf(base.Object):
         return self.name
 
 class ThingType(base.Object):
-    barcode_type = django.db.models.CharField(max_length=128, db_index=True)
-    barcode_data = django.db.models.CharField(max_length=512, db_index=True)
+    barcode_type = django.db.models.CharField(max_length=128, blank=True, db_index=True)
+    barcode_data = django.db.models.CharField(max_length=512, blank=True, db_index=True)
     name = django.db.models.CharField(default='', blank=True, max_length=256, db_index=True)
     producer = django.db.models.CharField(default='', blank=True, max_length=256, db_index=True)
     designer = django.db.models.CharField(default='', blank=True, max_length=256, db_index=True)
@@ -113,7 +113,7 @@ class ThingTypeForm(django.forms.ModelForm):
         app_label = 'appomatic_clib'
         model = ThingType
         fields = ['name', 'producer', 'designer', 'description']
-    tags = django.forms.CharField(widget=django.forms.Textarea(attrs={'rows': 4}), label="Tags")
+    tags = django.forms.CharField(widget=django.forms.Textarea(attrs={'rows': 4}), label="Tags", required = False)
 
     def __init__(self, *arg, **kw):
         if 'instance' in kw:
