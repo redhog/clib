@@ -49,6 +49,7 @@
               {% csrf_token %}
               <button type="submit" name="{{obj.fieldname}}method" value="edit" class="btn btn-success"><i class='fa fa-edit'></i> Edit</button>
               <button type="submit" name="{{obj.fieldname}}method" value="lookup" class="btn btn-success"><i class='fa fa-search'></i> Update data from online sources</button>
+              <button type="submit" name="{{obj.fieldname}}method" value="add" class="btn btn-success"><i class='fa fa-plus'></i> Add a thing of this type</button>
             </form>
           {% endif %}
         </div>

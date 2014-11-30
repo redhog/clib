@@ -30,12 +30,19 @@
                     <button type="submit" class="btn btn-success"><i class='fa fa-reply'></i> Mark as returned to sender</button>
                   </form>
 
-                  <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
-                    {% csrf_token %}
-                    <input type="hidden" name="{{obj.fieldname}}method" value="lose">
-                    <button type="submit" class="btn btn-danger"><i class='fa fa-child'></i> I have lost this item</button>
-                  </form>
-
+                  {% if obj.available %}
+                    <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
+                      {% csrf_token %}
+                      <input type="hidden" name="{{obj.fieldname}}method" value="lose">
+                      <button type="submit" class="btn btn-danger"><i class='fa fa-child'></i> I have lost this item</button>
+                    </form>
+                  {% else %}
+                    <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
+                      {% csrf_token %}
+                      <input type="hidden" name="{{obj.fieldname}}method" value="make_available">
+                      <button type="submit" class="btn btn-success"><i class='fa fa-share-alt'></i> Share this thing</button>
+                    </form>
+                  {% endif %}
                 {% endif %}
               {% endif %}
 
@@ -59,11 +66,19 @@
                     {% endif %}
                   {% endif %}
 
-                  <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
-                    {% csrf_token %}
-                    <input type="hidden" name="{{obj.fieldname}}method" value="lose">
-                    <button type="submit" class="btn btn-danger"><i class='fa fa-child'></i> I have lost this item</button>
-                  </form>
+                  {% if obj.available %}
+                    <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
+                      {% csrf_token %}
+                      <input type="hidden" name="{{obj.fieldname}}method" value="lose">
+                      <button type="submit" class="btn btn-danger"><i class='fa fa-child'></i> I have lost this item</button>
+                    </form>
+                  {% else %}
+                    <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form">
+                      {% csrf_token %}
+                      <input type="hidden" name="{{obj.fieldname}}method" value="make_available">
+                      <button type="submit" class="btn btn-success"><i class='fa fa-share-alt'></i> Share this thing</button>
+                    </form>
+                  {% endif %}
 
                   <form enctype="multipart/form-data" action="{{obj.get_absolute_url}}" method='post' role="form" class='form-inline'>
                     {% csrf_token %}

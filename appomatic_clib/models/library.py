@@ -98,6 +98,12 @@ class ThingType(base.Object):
                 django.shortcuts.redirect(self))
         return {"form": form}
 
+    def handle__add(self, request, style):
+        thing = Thing(type=self, owner=request.user)
+        thing.save()
+        raise fcdjangoutils.responseutils.EarlyResponseException(
+            django.shortcuts.redirect(thing))
+
     def handle__edit(self, request, style):
         form = ThingTypeForm(instance=self)
         return {"form": form}
@@ -193,10 +199,14 @@ class Thing(base.Object):
         self.save()
 
     def save(self, *arg, **kw):
-        if self.holder is None:
+        try:
+            holder = self.holder
+        except:
             self.holder = self.owner
-        if self.holder is not None:
+        try:
             self.location = self.holder.profile.location
+        except:
+            pass
         base.Object.save(self, *arg, **kw)
 
     def __unicode__(self):
@@ -210,9 +220,15 @@ class Thing(base.Object):
             django.shortcuts.redirect(lr))
 
     def handle__lose(self, request, style):
-        print "LOSE", self, request.user.id == self.holder.id
         assert request.user.id == self.holder.id
         self.lose()
+        raise fcdjangoutils.responseutils.EarlyResponseException(
+            django.shortcuts.redirect(self))
+
+    def handle__make_available(self, request, style):
+        assert request.user.id == self.holder.id
+        self.available = True
+        self.save()
         raise fcdjangoutils.responseutils.EarlyResponseException(
             django.shortcuts.redirect(self))
 
