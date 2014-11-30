@@ -2,6 +2,8 @@
 {% load endless %}
 
 {% block full-content %}
+  <p>Tip: If you're using our android app, you can add things to a shelf by first scanning the label on the thing, then the label on the shelf.</p>
+
   {% if request.user.shelfs.count %}
     <div class="panel panel-default">
       <table class="table">
