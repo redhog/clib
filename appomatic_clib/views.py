@@ -74,20 +74,23 @@ def scan_item(request, user):
             profile.current_thing = t
             profile.save()
             
-            # if t.holder.id == request.user.id:
+            if t.holder.id == request.user.id:
+                return {"text": "Current book: %s" % (t,)}
             #     if t.request:
             #         t.request.send()
             #     else:
             #         raise Exception("Hm, why'd you scan this one now?")
-            if t.request and t.request.requestor.id == request.user.id:
+            elif t.request and t.request.requestor.id == request.user.id:
                 t.request.receive()
+                return {text: "Received %s" % (t,)}
             else:
-                raise Exception("How on earth did this user get the QR-code??")
+                return {"text": "How on earth did this user get the QR-code??"}
         elif isinstance(t, appomatic_clib.models.Shelf):
             thing = request.user.profile.current_thing
             if thing:
                 thing.shelf = t
                 thing.save()
+                return {"text": "%s set on shelf %s" % (thing, t)}
     else:
         data = dict(request.GET.iteritems())
         data['barcode_type'] = data.pop('type')
@@ -95,6 +98,7 @@ def scan_item(request, user):
         tt = appomatic_clib.models.ThingType.get(**data)
         t = appomatic_clib.models.Thing(type=tt, owner=request.user, holder=request.user)
         t.save()
+        return {"text": "Added %s" % (t,)}
 
     return {}
 
