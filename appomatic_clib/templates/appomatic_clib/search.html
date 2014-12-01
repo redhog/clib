@@ -9,10 +9,10 @@
         <tr><th colspan="2">Things matching '{{query}}': {{results.count}}</th><th>by</th><th>tags</th></tr>
         {% for t in res %}
           <tr>
-            <td><a href='{{t.get_absolute_url}}'>{{t.type.barcode_type}}:{{t.type.barcode_data}}</td>
-            <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
-            <td><a href='{% url 'appomatic_clib.views.search' %}?query={{t.type.designer}}'>{{t.type.designer}}</a></td>
-            <td>{{t.type.render_as.tags|safe}}</td>
+            <td><a href='{{t.get_absolute_url}}'>{{t.barcode_type}}:{{t.barcode_data}}</td>
+            <td><a href='{{t.get_absolute_url}}'>{{t.name}}</td>
+            <td><a href='{% url 'appomatic_clib.views.search' %}?query={{t.designer}}'>{{t.designer}}</a></td>
+            <td>{{t.render_as.tags|safe}}</td>
           </tr>
         {% endfor %}
         <tr>
