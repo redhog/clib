@@ -109,7 +109,8 @@ def search(request):
         django.db.models.Q(name__icontains=q)
         | django.db.models.Q(designer__icontains=q)
         | django.db.models.Q(producer__icontains=q)
-        | django.db.models.Q(description__icontains=q))
+        | django.db.models.Q(description__icontains=q)
+        | django.db.models.Q(barcode_data__icontains=q))
 
     return django.shortcuts.render(
         request,
