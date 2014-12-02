@@ -166,7 +166,6 @@ class Thing(base.Object):
         app_label = 'appomatic_clib'
         ordering = ('type__name', )
 
-    @property
     def distance(self):
         request = fcdjangoutils.middleware.get_request()
         if hasattr(request.user, 'profile'):
