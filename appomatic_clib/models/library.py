@@ -162,12 +162,14 @@ class Thing(base.Object):
         app_label = 'appomatic_clib'
         ordering = ('type__name', )
 
+    @property
     def distance(self):
         request = fcdjangoutils.middleware.get_request()
-        user = request.user.profile.location
-        if not user or not user.position:
-            return '-'
-        return Thing.geoobjects.filter(id=self.id).distance(user.position, field_name='location__position')[0].distance
+        if hasattr(request.user, 'profile'):
+            user = request.user.profile.location
+            if user and user.position:
+                return Thing.geoobjects.filter(id=self.id).distance(user.position, field_name='location__position')[0].distance
+        return '-'
 
     @property
     def request(self):
