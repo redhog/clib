@@ -35,6 +35,8 @@ class ThingType(base.Object):
 
     tags = django.db.models.ManyToManyField(appomatic_renderable.models.Tag, null=True, blank=True, related_name='things')
 
+    added = django.db.models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
     do_lookup = False
 
     class Meta:
@@ -157,6 +159,8 @@ class Thing(base.Object):
 
     location = django.db.models.ForeignKey("Location", related_name="held_here", null=True, blank=True)
     shelf = django.db.models.ForeignKey("Shelf", related_name="contains", null=True, blank=True)
+
+    added = django.db.models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     class Meta:
         app_label = 'appomatic_clib'

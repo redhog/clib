@@ -43,6 +43,7 @@ def index(request):
         {
             "start_url": start_url(request),
             "tags": appomatic_renderable.models.Tag.objects.filter(parent=None),
+            "latest_additions": appomatic_clib.models.ThingType.objects.order_by('-added'),
             "request": request
         }
     )

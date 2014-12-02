@@ -1,4 +1,5 @@
 {% extends "appomatic_clib/base.html" %}
+{% load endless %}
 
 {% block content %}
   {% if request.user.is_authenticated %}
@@ -110,18 +111,37 @@
                     {% else %}
                       <td></td>
                     {% endif %}
-                  </li>
+                  </tr>
                 {% endfor %}
               </table>
             </div>
           {% endif %}
+
+          <div class="panel panel-default">
+            <table class="table">
+              <tr><th colspan="2">Our latest additions</th><th>by</th><th>tags</th></tr>
+              {% paginate latest_additions using "latest_additions" as paginated_latest_additions %}
+              {% for t in paginated_latest_additions %}
+                <tr>
+                  <td><a href='{{t.get_absolute_url}}'>{{t.barcode_type}}:{{t.barcode_data}}</td>
+                  <td><a href='{{t.get_absolute_url}}'>{{t.name}}</td>
+                  <td><a href='{% url 'appomatic_clib.views.search' %}?query={{t.designer}}'>{{t.designer}}</a></td>
+                  <td>{{t.render_as.tags|safe}}</td>
+                </tr>
+              {% endfor %}
+              <tr>
+                <td colspan="6">
+                  {% show_pages %}
+                </td>
+              </tr>
+            </table>
+          </div>
+
         </div>
         <div class="col-md-4">
-          {% if request.user.is_authenticated %}
-            <div class='qr-link start-scan-link'>
-              <img src="{% url 'appomatic_clib.views.render_qr' %}?url={{start_url|iriencode}}">
-            </div>
-          {% endif %}
+          <div class='qr-link start-scan-link'>
+            <img src="{% url 'appomatic_clib.views.render_qr' %}?url={{start_url|iriencode}}">
+          </div>
           <div class="clearfix"></div>
           <div class="panel panel-default">
             <div class="panel-heading">Search for things by tag:</div>
