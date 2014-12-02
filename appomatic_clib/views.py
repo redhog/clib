@@ -134,6 +134,7 @@ def add(request):
             return django.shortcuts.redirect(
                 tt.get_absolute_url() + "?" + tt.fieldname + "method=edit")
         else:
+            res = []
             for code in request.POST['codes'].split(" "):
                 data = {
                     'barcode_type': type,
@@ -142,6 +143,14 @@ def add(request):
                 tt = appomatic_clib.models.ThingType.get(**data)
                 t = appomatic_clib.models.Thing(type=tt, owner=request.user, holder=request.user)
                 t.save()
+                res.append(t)
+            if len(res) == 1:
+                return django.shortcuts.redirect(res[0].get_absolute_url())
+            else:
+                django.contrib.messages.add_message(
+                    request, django.contrib.messages.INFO,
+                    '<div>Added multiple things:</div>%s' % ''.join("<div>%s</div>" % item.render(style='link__html') for item in res))
+
     return django.shortcuts.render(
         request,
         'appomatic_clib/add.html',
