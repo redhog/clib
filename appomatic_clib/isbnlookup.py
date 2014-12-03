@@ -63,6 +63,13 @@ class ISBNLookup(object):
             return f.info(), f.read()
 
     @classmethod
+    def lookup_www_goodreads_com(cls, isbn):
+        headers, content = cls.get_url("https://www.goodreads.com/search?query=%s" % isbn)
+        title = re.search(r'<span class="item" style="display:none"><span class="fn">(.*)</span></span>', content).groups()[0].decode('utf-8')
+        author = re.search(r'class="authorName" itemprop="url"><span itemprop="name">(.*)</span>', content).groups()[0].decode('utf-8')
+        return [author, title]
+
+    @classmethod
     def lookup_www_lookupbyisbn_com(cls, isbn):
         headers, content = cls.get_url("http://www.lookupbyisbn.com/Search/Book/%s/1" % isbn)
         title = re.search(isbn + r'/1" title="Details for (.*)"', content).groups()[0].decode('utf-8')
