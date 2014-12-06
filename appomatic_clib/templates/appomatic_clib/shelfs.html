@@ -4,6 +4,8 @@
 {% block full-content %}
   <p>Tip: If you're using our android app, you can add things to a shelf by first scanning the label on the thing, then the label on the shelf.</p>
 
+  <p><a href="{% url 'appomatic_clib.views.shelf_no_shelf' %}">Books that are not on any particular shelf: {{request.user.profile.not_on_a_particular_shelf.count}}.</a></p>
+
   {% if request.user.shelfs.count %}
     <div class="panel panel-default">
       <table class="table">
@@ -14,10 +16,10 @@
             <td><a href='{{t.get_absolute_url}}'>{{t.name}}</a></td>
             <td><a href='{{t.get_absolute_url}}'>{{t.contains.count}}</td>
             <td>
-              <form action="{% url 'appomatic_clib.views.shelfs' %}" method="post" class="form form-inline" role="form">
+              <form action="{% url 'appomatic_clib.views.shelfs' %}" method="post" class="form form-inline" role="form" style="margin: 0;">
                 {% csrf_token %}
                 <input type="hidden" name="id" value="{{t.id}}">
-                <button class="btn btn-default" name="action" value="delete" type="submit">Delete</button>
+                <button class="btn btn-default btn-xs" name="action" value="delete" type="submit">Delete</button>
               </form>
             </td>
           </tr>

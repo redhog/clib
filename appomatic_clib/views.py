@@ -233,6 +233,16 @@ def shelfs(request):
     )
 
 @django.contrib.auth.decorators.login_required
+def shelf_no_shelf(request):
+    return django.shortcuts.render(
+        request,
+        'appomatic_clib/shelfs_no_shelf.html',
+        {
+            "request": request
+        }
+    )
+
+@django.contrib.auth.decorators.login_required
 def messages(request):
     return django.shortcuts.render(
         request,

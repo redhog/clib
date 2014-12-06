@@ -116,3 +116,7 @@ class Profile(userena.models.UserenaBaseProfile):
     @property
     def requests(self):
         return self.user.has.annotate(request_count=django.db.models.Count('requests__id')).filter(request_count__gt = 0, requests__sent = None)
+
+    #@property
+    def not_on_a_particular_shelf(self):
+        return self.user.has.filter(shelf=None)
