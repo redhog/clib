@@ -142,6 +142,7 @@ class ThingTypeForm(django.forms.ModelForm):
         return res
 
 class Thing(base.Object):
+    objects = django.db.models.Manager()
     geoobjects = django.contrib.gis.db.models.GeoManager()
 
     type = django.db.models.ForeignKey(ThingType, related_name='of_this_type')
