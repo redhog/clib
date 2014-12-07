@@ -5,6 +5,7 @@ urlpatterns = django.conf.urls.patterns('',
     django.conf.urls.url(r'^/?$', 'appomatic_clib.views.index'),
 
     django.conf.urls.url(r'^search/?$', 'appomatic_clib.views.search'),
+    django.conf.urls.url(r'^search/thing/?$', 'appomatic_clib.views.search_thing'),
 
     django.conf.urls.url(r'^add/?$', 'appomatic_clib.views.add'),
     django.conf.urls.url(r'^labels/?$', 'appomatic_clib.views.labels'),

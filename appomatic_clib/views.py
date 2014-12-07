@@ -105,19 +105,100 @@ def scan_item(request, user):
 
 @django.views.decorators.csrf.csrf_exempt
 def search(request):
-    q = request.GET['query']
-    results = appomatic_clib.models.ThingType.objects.filter(
-        django.db.models.Q(name__icontains=q)
-        | django.db.models.Q(designer__icontains=q)
-        | django.db.models.Q(producer__icontains=q)
-        | django.db.models.Q(description__icontains=q)
-        | django.db.models.Q(barcode_data__icontains=q))
+    get = request.GET
+
+    results = appomatic_clib.models.ThingType.objects
+
+    if 'query' in get:
+        q = get['query']
+        results = results.filter(
+            django.db.models.Q(name__icontains=q)
+            | django.db.models.Q(designer__icontains=q)
+            | django.db.models.Q(producer__icontains=q)
+            | django.db.models.Q(description__icontains=q)
+            | django.db.models.Q(barcode_data__icontains=q))
 
     return django.shortcuts.render(
         request,
         'appomatic_clib/search.html',
         {
             "query": q,
+            "results": results,
+            "request": request
+        }
+    )
+
+def get_tag_by_path(path):
+    tag_model = None
+    for item in path.split('/'):
+        tag_model = appomatic_renderable.models.Tag.objects.filter(parent=tag_model, name=item)[0]
+    return tag_model
+
+@django.views.decorators.csrf.csrf_exempt
+def search_thing(request):
+    query = dict(
+        text = "",
+        tags = [],
+        shelf = "",
+        has = "",
+        owns = ""
+        )
+    for key, value in request.GET.iteritems():
+        query[key] = value
+    query['tags'] = request.GET.getlist('tags')
+
+    results = appomatic_clib.models.Thing.objects.all()
+
+    text = query.get('text', None)
+    if text:
+        results = results.filter(
+            django.db.models.Q(type__name__icontains=text)
+            | django.db.models.Q(type__designer__icontains=text)
+            | django.db.models.Q(type__producer__icontains=text)
+            | django.db.models.Q(type__description__icontains=text)
+            | django.db.models.Q(type__barcode_data__icontains=text))
+
+    for t in query.get('tags'):
+        results = results.filter(type__tags = get_tag_by_path(t))
+
+    shelf = query.get('shelf', None)
+    if shelf:
+        if shelf == "none":
+            results = results.filter(
+                shelf = None)
+        else:
+            shelf = request.user.shelfs.get(name = shelf)
+            results = results.filter(
+                shelf = shelf)
+
+    available = query.get('available', None)
+    if available:
+        results = results.filter(
+                available = available == "true")
+
+    has = query.get('has', None)
+    if has:
+        q = django.db.models.Q(holder = request.user)
+        if has == "true":
+            results = results.filter(q)
+        else:
+            results = results.filter(~q)
+
+    owns = query.get('owns', None)
+    if owns:
+        q = django.db.models.Q(owner = request.user)
+        if owns == "true":
+            results = results.filter(q)
+        else:
+            results = results.filter(~q)
+
+    return django.shortcuts.render(
+        request,
+        'appomatic_clib/search_thing.html',
+        {
+            "query": query,
+            "tags": appomatic_renderable.models.Tag.objects.all(),
+            "shelfs": request.user.shelfs.all(),
             "results": results,
             "request": request
         }

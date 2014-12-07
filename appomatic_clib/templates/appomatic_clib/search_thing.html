@@ -1,0 +1,112 @@
+{% extends "appomatic_clib/base.html" %}
+{% load endless %}
+
+{% block full-content %}
+  <p>
+    <a href="javascript: void(0);" data-toggle="collapse" data-target="#query" aria-expanded="true" aria-controls="query">
+     Update search query
+    </a>
+
+    <div id="query" class="collapse">
+      <form class="form" role="form">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="text">Text search:</label>
+                <input type="text" class="form-control" name="text" placeholder="Enter text to search for" value="{{query.text}}">
+              </div>
+
+              <div class="form-group">
+                <label for="tags">Tags:</label>
+                <select class="form-control" multiple="multiple" name="tags">
+                  {% for t in tags %}
+                    <option value="{{t.path}}" {% if t.name in query.tags %}selected='selected'{% endif %}>{{t.path}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+
+              <div class="form-group">
+                <label for="shelf">Shelf:</label>
+                <select class="form-control" name="shelf">
+                  <option value="" {% if query.shelf == '' %}selected='selected'{% endif %}>No filter</option>
+                  <option value="none" {% if query.shelf == 'none' %}selected='selected'{% endif %}>Not on any particular shelf</option>
+                  {% for shelf in shelfs %}
+                    <option value="{{shelf.name}}" {% if query.shelf == shelf.id %}selected='selected'{% endif %}>{{shelf.name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="available">Availability:</label>
+                <select class="form-control" name="available">
+                  <option value="" {% if query.available == '' %}selected='selected'{% endif %}>No filter</option>
+                  <option value="false" {% if query.available == 'false' %}selected='selected'{% endif %}>Unavailable</option>
+                  <option value="true" {% if query.available == 'true' %}selected='selected'{% endif %}>Available</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="has">Holder:</label>
+                <select class="form-control" name="has">
+                  <option value="" {% if query.has == '' %}selected='selected'{% endif %}>No filter</option>
+                  <option value="false" {% if query.has == 'false' %}selected='selected'{% endif %}>Someone else</option>
+                  <option value="true" {% if query.has == 'true' %}selected='selected'{% endif %}>You</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="owns">Owner:</label>
+                <select class="form-control" name="owns">
+                  <option value="" {% if query.owns == '' %}selected='selected'{% endif %}>No filter</option>
+                  <option value="false" {% if query.owns == 'false' %}selected='selected'{% endif %}>Someone else</option>
+                  <option value="true" {% if query.owns == 'true' %}selected='selected'{% endif %}>You</option>
+                </select>
+              </div>
+
+              <button type="submit" class="btn btn-success">Update search</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </p>
+
+  {% if results.count %}
+    {% paginate results as res %}
+    <div class="panel panel-default">
+      <table class="table">
+        <tr><th colspan="2">Things: {{results.count}}</th><th>by</th><th>tags</th><th>holder</th><th>owner</th><th>shelf</th><th>distance</th></tr>
+        {% for t in res %}
+          <tr>
+            <td><a href='{{t.get_absolute_url}}'>{{t.type.barcode_type}}:{{t.type.barcode_data}}</td>
+            <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
+            <td><a href='{% url 'appomatic_clib.views.search' %}?query={{t.type.designer}}'>{{t.type.designer}}</a></td>
+            <td>{{t.type.render_as.tags|safe}}</td>
+            {% if t.owner.id == request.user.id or t.holder.id == request.user.id %}
+              <td><a href="{{t.holder.get_absolute_url}}">{{t.holder}}</a></td>
+              <td><a href="{{t.owner.get_absolute_url}}">{{t.owner}}</a></td>
+              <td>{{t.shelf.render_as.link__html|safe}}</td>
+            {% else %}
+              <td></td>
+              <td></td>
+              <td></td>
+            {% endif %}
+            <td>{{t.distance.km|floatformat:"0"}} km</td>
+          </tr>
+        {% endfor %}
+        <tr>
+          <td colspan="8">
+            {% show_pages %}
+          </td>
+        </tr>
+      </table>
+    </div>
+  {% else %}
+     <div class="alert alert-info" role="alert">
+       <p>No things matches your query.</p>
+     </div>
+  {% endif %}
+{% endblock %}
