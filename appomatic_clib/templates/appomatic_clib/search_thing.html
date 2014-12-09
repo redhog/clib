@@ -2,13 +2,15 @@
 {% load endless %}
 
 {% block full-content %}
-  <p>
-    <a href="javascript: void(0);" data-toggle="collapse" data-target="#query" aria-expanded="true" aria-controls="query">
-     Update search query
-    </a>
+  <form class="form" role="form">
+    <input type="hidden" name="sort" value="{{query.sort}}">
 
-    <div id="query" class="collapse">
-      <form class="form" role="form">
+    <p>
+      <a href="javascript: void(0);" data-toggle="collapse" data-target="#query" aria-expanded="true" aria-controls="query">
+       Update search query
+      </a>
+
+      <div id="query" class="collapse">
         <div class="container">
           <div class="row">
             <div class="col-md-6">
@@ -70,43 +72,55 @@
             </div>
           </div>
         </div>
-      </form>
-    </div>
-  </p>
+      </div>
+    </p>
 
-  {% if results.count %}
-    {% paginate results as res %}
-    <div class="panel panel-default">
-      <table class="table">
-        <tr><th colspan="2">Things: {{results.count}}</th><th>by</th><th>tags</th><th>holder</th><th>owner</th><th>shelf</th><th>distance</th></tr>
-        {% for t in res %}
+    {% if results.count %}
+      {% paginate results as res %}
+      <div class="panel panel-default">
+        <table class="table">
           <tr>
-            <td><a href='{{t.get_absolute_url}}'>{{t.type.barcode_type}}:{{t.type.barcode_data}}</td>
-            <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
-            <td><a href='{% url 'appomatic_clib.views.search' %}?query={{t.type.designer}}'>{{t.type.designer}}</a></td>
-            <td>{{t.type.render_as.tags|safe}}</td>
-            {% if t.owner.id == request.user.id or t.holder.id == request.user.id %}
-              <td><a href="{{t.holder.get_absolute_url}}">{{t.holder}}</a></td>
-              <td><a href="{{t.owner.get_absolute_url}}">{{t.owner}}</a></td>
-              <td>{{t.shelf.render_as.link__html|safe}}</td>
-            {% else %}
-              <td></td>
-              <td></td>
-              <td></td>
-            {% endif %}
-            <td>{{t.distance.km|floatformat:"0"}} km</td>
+            <th colspan="2"><button type="submit" name="update-sort" value="type__name" class="btn btn-link">{{sort_icons.type__name|safe}} Things: {{results.count}}</button></th>
+            <th><button type="submit" name="update-sort" value="type__designer" class="btn btn-link">{{sort_icons.type__designer|safe}} by</button></th>
+            <th>tags</th>
+            <th><button type="submit" name="update-sort" value="holder" class="btn btn-link">{{sort_icons.holder|safe}} holder</button></th>
+            <th><button type="submit" name="update-sort" value="owner" class="btn btn-link">{{sort_icons.owner|safe}} owner</button></th>
+            <th><button type="submit" name="update-sort" value="shelf" class="btn btn-link">{{sort_icons.shelf|safe}} shelf</button></th>
+            <th><button type="submit" name="update-sort" value="distance" class="btn btn-link">{{sort_icons.distance|safe}} distance</button></th>
           </tr>
-        {% endfor %}
-        <tr>
-          <td colspan="8">
-            {% show_pages %}
-          </td>
-        </tr>
-      </table>
-    </div>
-  {% else %}
-     <div class="alert alert-info" role="alert">
-       <p>No things matches your query.</p>
-     </div>
-  {% endif %}
+          {% for t in res %}
+            <tr>
+              <td><a href='{{t.get_absolute_url}}'>{{t.type.barcode_type}}:{{t.type.barcode_data}}</td>
+              <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
+              <td><a href='{% url 'appomatic_clib.views.search' %}?query={{t.type.designer}}'>{{t.type.designer}}</a></td>
+              <td>
+                {% for tag in t.type.tags.all %}
+                  <button type="submit" name="update-tags" value="{{tag.path}}" class="btn btn-link label label-primary">{{tag.path}}</button>
+                {% endfor %}
+              </td>
+              {% if t.owner.id == request.user.id or t.holder.id == request.user.id %}
+                <td><a href="{{t.holder.get_absolute_url}}">{{t.holder}}</a></td>
+                <td><a href="{{t.owner.get_absolute_url}}">{{t.owner}}</a></td>
+                <td>{{t.shelf.render_as.link__html|safe}}</td>
+              {% else %}
+                <td></td>
+                <td></td>
+                <td></td>
+              {% endif %}
+              <td>{{t.distance.km|floatformat:"0"}} km</td>
+            </tr>
+          {% endfor %}
+          <tr>
+            <td colspan="8">
+              {% show_pages %}
+            </td>
+          </tr>
+        </table>
+      </div>
+    {% else %}
+       <div class="alert alert-info" role="alert">
+         <p>No things matches your query.</p>
+       </div>
+    {% endif %}
+  </form>
 {% endblock %}

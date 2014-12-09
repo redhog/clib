@@ -141,13 +141,40 @@ def search_thing(request):
         tags = [],
         shelf = "",
         has = "",
-        owns = ""
+        owns = "",
+        sort = ""
         )
     for key, value in request.GET.iteritems():
         query[key] = value
     query['tags'] = request.GET.getlist('tags')
 
-    results = appomatic_clib.models.Thing.objects.all()
+    if 'update-sort' in query:
+        sort = []
+        if query['sort']: sort = query['sort'].split(",")
+        col = query['update-sort']
+        if sort and sort[0] == col:
+            sort[0] = "-" + col
+        elif sort and sort[0] == "-" + col:
+            sort[0] = col
+        else:
+            if col in sort:
+                sort.remove(col)
+            if "-" + col in sort:
+                sort.remove("-" + col)
+            sort[0:0] = [col]
+        query['sort'] = ",".join(sort)
+    
+
+    if 'update-tags' in query:
+        tag = query['update-tags']
+        if tag in query['tags']:
+            query['tags'].remove(tag)
+        else:
+            query['tags'].append(tag)
+
+    results = appomatic_clib.models.Thing.geoobjects.all()
+
+    results = results.distance(request.user.profile.location.position, field_name='location__position')
 
     text = query.get('text', None)
     if text:
@@ -192,6 +219,20 @@ def search_thing(request):
         else:
             results = results.filter(~q)
 
+    sort = []
+    if query['sort']: sort = query['sort'].split(",")
+ 
+    if sort:
+        results = results.order_by(*sort)
+
+    sort_icons = {}
+    for col in sort:
+        if col.startswith("-"):
+            sort_icons[col[1:]] = "<i class='fa fa-arrow-up'></i> "
+        else:
+            sort_icons[col] = "<i class='fa fa-arrow-down'></i> "
+        break
+
     return django.shortcuts.render(
         request,
         'appomatic_clib/search_thing.html',
@@ -199,6 +240,7 @@ def search_thing(request):
             "query": query,
             "tags": appomatic_renderable.models.Tag.objects.all(),
             "shelfs": request.user.shelfs.all(),
+            "sort_icons": sort_icons,
             "results": results,
             "request": request
         }
