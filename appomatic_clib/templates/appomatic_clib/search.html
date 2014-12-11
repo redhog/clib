@@ -2,29 +2,86 @@
 {% load endless %}
 
 {% block full-content %}
-  {% if results.count %}
-    {% paginate results as res %}
-    <div class="panel panel-default">
-      <table class="table">
-        <tr><th colspan="2">Things matching '{{query}}': {{results.count}}</th><th>by</th><th>tags</th></tr>
-        {% for t in res %}
+  <form class="form" role="form">
+    <input type="hidden" name="sort" value="{{query.sort}}">
+
+    <p>
+      <a href="javascript: void(0);" data-toggle="collapse" data-target="#query" aria-expanded="true" aria-controls="query">
+       Update search query
+      </a>
+
+      <div id="query" class="collapse">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="text">Text search:</label>
+                <input type="text" class="form-control" name="text" placeholder="Enter text to search for" value="{{query.text}}">
+              </div>
+
+              <div class="form-group">
+                <label for="tags">Tags:</label>
+                <select class="form-control" multiple="multiple" name="tags">
+                  {% for t in tags %}
+                    <option value="{{t.path}}" {% if t.name in query.tags %}selected='selected'{% endif %}>{{t.path}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <button type="submit" class="btn btn-success">Update search</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p>
+
+    {% if results.count %}
+      {% paginate results as res %}
+      <div class="panel panel-default">
+        <table class="table">
           <tr>
-            <td><a href='{{t.get_absolute_url}}'>{{t.barcode_type}}:{{t.barcode_data}}</td>
-            <td><a href='{{t.get_absolute_url}}'>{{t.name}}</td>
-            <td><a href='{% url 'appomatic_clib.views.search' %}?query={{t.designer}}'>{{t.designer}}</a></td>
-            <td>{{t.render_as.tags|safe}}</td>
+            <th colspan="2"><button type="submit" name="update-sort" value="type__name" class="btn-nobtn">{{sort_icons.type__name|safe}} Things: {{results.count}}</button></th>
+            <th><button type="submit" name="update-sort" value="type__designer" class="btn-nobtn">{{sort_icons.type__designer|safe}} by</button></th>
+            <th>tags</th>
+            <th><button type="submit" name="update-sort" value="holder" class="btn-nobtn">{{sort_icons.holder|safe}} holder</button></th>
+            <th><button type="submit" name="update-sort" value="owner" class="btn-nobtn">{{sort_icons.owner|safe}} owner</button></th>
+            <th><button type="submit" name="update-sort" value="shelf" class="btn-nobtn">{{sort_icons.shelf|safe}} shelf</button></th>
+            <th><button type="submit" name="update-sort" value="distance" class="btn-nobtn">{{sort_icons.distance|safe}} distance</button></th>
           </tr>
-        {% endfor %}
-        <tr>
-          <td colspan="4">
-            {% show_pages %}
-          </td>
-        </tr>
-      </table>
-    </div>
-  {% else %}
-     <div class="alert alert-info" role="alert">
-       <p>No things matches your query '{{query}}'.</p>
-     </div>
-  {% endif %}
+          {% for t in res %}
+            <tr>
+              <td><a href='{{t.get_absolute_url}}'>{{t.type.barcode_type}}:{{t.type.barcode_data}}</td>
+              <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
+              <td><a href='{% url 'appomatic_clib.views.search' %}?query={{t.type.designer}}'>{{t.type.designer}}</a></td>
+              <td>
+                {% for tag in t.type.tags.all %}
+                  <button type="submit" name="update-tags" value="{{tag.path}}" class="btn-nobtn label label-primary">{{tag.path}}</button>
+                {% endfor %}
+              </td>
+              {% if t.owner.id == request.user.id or t.holder.id == request.user.id %}
+                <td><a href="{{t.holder.get_absolute_url}}">{{t.holder}}</a></td>
+                <td><a href="{{t.owner.get_absolute_url}}">{{t.owner}}</a></td>
+                <td>{{t.shelf.render_as.link__html|safe}}</td>
+              {% else %}
+                <td></td>
+                <td></td>
+                <td></td>
+              {% endif %}
+              <td>{{t.distance.km|floatformat:"0"}} km</td>
+            </tr>
+          {% endfor %}
+          <tr>
+            <td colspan="8">
+              {% show_pages %}
+            </td>
+          </tr>
+        </table>
+      </div>
+    {% else %}
+       <div class="alert alert-info" role="alert">
+         <p>No things matches your query.</p>
+       </div>
+    {% endif %}
+  </form>
 {% endblock %}
