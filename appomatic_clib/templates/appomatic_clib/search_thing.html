@@ -80,13 +80,13 @@
       <div class="panel panel-default">
         <table class="table">
           <tr>
-            <th colspan="2"><button type="submit" name="update-sort" value="type__name" class="btn btn-link">{{sort_icons.type__name|safe}} Things: {{results.count}}</button></th>
-            <th><button type="submit" name="update-sort" value="type__designer" class="btn btn-link">{{sort_icons.type__designer|safe}} by</button></th>
+            <th colspan="2"><button type="submit" name="update-sort" value="type__name" class="btn-nobtn">{{sort_icons.type__name|safe}} Things: {{results.count}}</button></th>
+            <th><button type="submit" name="update-sort" value="type__designer" class="btn-nobtn">{{sort_icons.type__designer|safe}} by</button></th>
             <th>tags</th>
-            <th><button type="submit" name="update-sort" value="holder" class="btn btn-link">{{sort_icons.holder|safe}} holder</button></th>
-            <th><button type="submit" name="update-sort" value="owner" class="btn btn-link">{{sort_icons.owner|safe}} owner</button></th>
-            <th><button type="submit" name="update-sort" value="shelf" class="btn btn-link">{{sort_icons.shelf|safe}} shelf</button></th>
-            <th><button type="submit" name="update-sort" value="distance" class="btn btn-link">{{sort_icons.distance|safe}} distance</button></th>
+            <th><button type="submit" name="update-sort" value="holder" class="btn-nobtn">{{sort_icons.holder|safe}} holder</button></th>
+            <th><button type="submit" name="update-sort" value="owner" class="btn-nobtn">{{sort_icons.owner|safe}} owner</button></th>
+            <th><button type="submit" name="update-sort" value="shelf" class="btn-nobtn">{{sort_icons.shelf|safe}} shelf</button></th>
+            <th><button type="submit" name="update-sort" value="distance" class="btn-nobtn">{{sort_icons.distance|safe}} distance</button></th>
           </tr>
           {% for t in res %}
             <tr>
@@ -95,7 +95,7 @@
               <td><a href='{% url 'appomatic_clib.views.search' %}?query={{t.type.designer}}'>{{t.type.designer}}</a></td>
               <td>
                 {% for tag in t.type.tags.all %}
-                  <button type="submit" name="update-tags" value="{{tag.path}}" class="btn btn-link label label-primary">{{tag.path}}</button>
+                  <button type="submit" name="update-tags" value="{{tag.path}}" class="btn-nobtn label label-primary">{{tag.path}}</button>
                 {% endfor %}
               </td>
               {% if t.owner.id == request.user.id or t.holder.id == request.user.id %}
