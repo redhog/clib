@@ -38,8 +38,20 @@
             <ul class="nav navbar-nav navbar-left">
               {% block navbar-left %}
                 <li><a href='{% url 'appomatic_clib.views.add' %}'>Add things</a></li>
-                <li><a href='{% url 'appomatic_clib.views.search_thing' %}?owns=true&available=true'>My things</a></li>
-                <li><a href='{% url 'appomatic_clib.views.search_thing' %}?has=true&available=true'>Things I have</a></li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">My things<span class="caret"></span></a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a href='{% url 'appomatic_clib.views.search_thing' %}?owns=true&available=true&sort=type__name'>All my things</a></li>
+                    <li><a href='{% url 'appomatic_clib.views.search_thing' %}?has=false&owns=true&available=true&sort=type__name'>Things lent to others</a></li>
+                  </ul>
+                </li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Things I have <span class="caret"></span></a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a href='{% url 'appomatic_clib.views.search_thing' %}?has=true&owns=true&available=true&sort=type__name'>Own things held</a></li>
+                    <li><a href='{% url 'appomatic_clib.views.search_thing' %}?has=true&owns=false&available=true&sort=type__name'>Borrowed things held</a></li>
+                  </ul>
+                </li>
               {% endblock %}
             </ul>
 
