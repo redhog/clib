@@ -50,6 +50,7 @@
                   <ul class="dropdown-menu" role="menu">
                     <li><a href='{% url 'appomatic_clib.views.search.search_thing' %}?has=true&owns=true&available=true&sort=type__name'>Own things held</a></li>
                     <li><a href='{% url 'appomatic_clib.views.search.search_thing' %}?has=true&owns=false&available=true&sort=type__name'>Borrowed things held</a></li>
+                    <li><a href='{% url 'appomatic_clib.views.shelfs' %}'>My shelfs</a></li>
                   </ul>
                 </li>
               {% endblock %}
