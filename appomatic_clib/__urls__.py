@@ -9,10 +9,7 @@ urlpatterns = django.conf.urls.patterns('',
 
     django.conf.urls.url(r'^add/?$', 'appomatic_clib.views.add'),
     django.conf.urls.url(r'^labels/?$', 'appomatic_clib.views.labels'),
-    django.conf.urls.url(r'^owns/?$', 'appomatic_clib.views.owns'),
-    django.conf.urls.url(r'^has/?$', 'appomatic_clib.views.has'),
     django.conf.urls.url(r'^shelfs/?$', 'appomatic_clib.views.shelfs'),
-    django.conf.urls.url(r'^shelfs/none/?$', 'appomatic_clib.views.shelf_no_shelf'),
     django.conf.urls.url(r'^messages/?$', 'appomatic_clib.views.messages'),
 
     django.conf.urls.url(r'^funds/add/paypal/return/?$', 'appomatic_clib.views.funds.paypal_add_return'),
