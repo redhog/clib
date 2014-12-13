@@ -15,13 +15,13 @@ urlpatterns = django.conf.urls.patterns('',
     django.conf.urls.url(r'^shelfs/none/?$', 'appomatic_clib.views.shelf_no_shelf'),
     django.conf.urls.url(r'^messages/?$', 'appomatic_clib.views.messages'),
 
-    django.conf.urls.url(r'^funds/add/paypal/return/?$', 'appomatic_clib.views_funds.paypal_add_return'),
-    django.conf.urls.url(r'^funds/?$', 'appomatic_clib.views_funds.funds'),
+    django.conf.urls.url(r'^funds/add/paypal/return/?$', 'appomatic_clib.views.funds.paypal_add_return'),
+    django.conf.urls.url(r'^funds/?$', 'appomatic_clib.views.funds.funds'),
 
     django.conf.urls.url(r'^(?P<user>.*)/scan/start/?$', 'appomatic_clib.views.scan_start'),
     django.conf.urls.url(r'^(?P<user>.*)/scan/item/?$', 'appomatic_clib.views.scan_item'),
 
-    django.conf.urls.url(r'^accounts/(?P<username>.*)/edit/?$', 'appomatic_clib.views_profile.edit'),
+    django.conf.urls.url(r'^accounts/(?P<username>.*)/edit/?$', 'appomatic_clib.views.profile.edit'),
     django.conf.urls.url(r'^accounts/', django.conf.urls.include('userena.urls')),
 
     django.conf.urls.url(r'^tag(?P<url>.*)/?$', 'appomatic_renderable.views.tag'),

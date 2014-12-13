@@ -69,7 +69,7 @@
                   </ul>
                 </li>
                 <li>
-                  <a class="{% if request.user.profile.available_balance >= 0.0 %}bg-success{% else %}bg-danger{% endif %}" href="{% url 'appomatic_clib.views_funds.funds' %}">
+                  <a class="{% if request.user.profile.available_balance >= 0.0 %}bg-success{% else %}bg-danger{% endif %}" href="{% url 'appomatic_clib.views.funds.funds' %}">
                     € {{request.user.profile.available_balance}}
                   </a>
                 </li>

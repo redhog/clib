@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block content %}
-  <form enctype="multipart/form-data" action='{% url 'appomatic_clib.views_profile.edit' username=request.user.username %}' method='post' role="form">
+  <form enctype="multipart/form-data" action='{% url 'appomatic_clib.views.profile.edit' username=request.user.username %}' method='post' role="form">
     {% csrf_token %}
     <div class="container">
       <div class="row">

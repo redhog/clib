@@ -79,8 +79,8 @@ def paypal_add(request, user, amount):
                 }],
         "senderEmail": user.email,
         "requestEnvelope": {},
-        "cancelUrl": 'http://' + django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse('appomatic_clib.views_funds.funds'),
-        "returnUrl": 'http://' + django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse('appomatic_clib.views_funds.paypal_add_return') + "?payKey=${payKey}",
+        "cancelUrl": 'http://' + django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse('appomatic_clib.views.funds.funds'),
+        "returnUrl": 'http://' + django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse('appomatic_clib.views.funds.paypal_add_return') + "?payKey=${payKey}",
         }
     req = json.dumps(req)
 
@@ -126,7 +126,7 @@ def paypal_add_return(request):
 
     django.contrib.messages.add_message(request, django.contrib.messages.INFO, 'Funds added.')
                 
-    return django.shortcuts.redirect('appomatic_clib.views_funds.funds')
+    return django.shortcuts.redirect('appomatic_clib.views.funds.funds')
 
 def fake_withdraw(request, user, amount):
     transaction = appomatic_clib.models.Transaction(
@@ -154,7 +154,7 @@ def fake_add(request, user, amount):
 
     django.contrib.messages.add_message(request, django.contrib.messages.INFO, 'Funds added.')
                 
-    return django.shortcuts.redirect('appomatic_clib.views_funds.funds')
+    return django.shortcuts.redirect('appomatic_clib.views.funds.funds')
 
 services = {
     'paypal': {
