@@ -14,7 +14,7 @@
             <tr>
               <td><a href='{{t.get_absolute_url}}'>{{t.type.barcode_type}}:{{t.type.barcode_data}}</td>
               <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
-              <td><a href='{% url 'appomatic_clib.views.search' %}?query={{t.type.designer}}'>{{t.type.designer}}</a></td>
+              <td><a href='{% url 'appomatic_clib.views.search.search' %}?query={{t.type.designer}}'>{{t.type.designer}}</a></td>
               <td><a href='{{t.owner.profile.get_absolute_url}}'>{{t.owner.username}}</a></td>
               <td>{{t.shelf.render_as.link__html|safe}}</td>
               <td>{{t.type.render_as.tags|safe}}</td>
@@ -34,7 +34,7 @@
             <tr>
               <td><a href='{{t.get_absolute_url}}'>{{t.type.barcode_type}}:{{t.type.barcode_data}}</td>
               <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
-              <td><a href='{% url 'appomatic_clib.views.search' %}?query={{t.type.designer}}'>{{t.type.designer}}</a></td>
+              <td><a href='{% url 'appomatic_clib.views.search.search' %}?query={{t.type.designer}}'>{{t.type.designer}}</a></td>
               <td></td>
               <td>{{t.shelf.render_as.link__html|safe}}</td>
               <td>{{t.type.render_as.tags|safe}}</td>
@@ -52,7 +52,7 @@
     <div class="alert alert-success" role="alert">
       You haven't borrowed anything. Maybe you'd like to search for things to borrow:
 
-      <form action="{% url 'appomatic_clib.views.search' %}" class="form form-inline" role="form">
+      <form action="{% url 'appomatic_clib.views.search.search' %}" class="form form-inline" role="form">
         <div class="input-group">
           <input type="text" name="query" placeholder="Search" class="form-control">
           <span class="input-group-btn">

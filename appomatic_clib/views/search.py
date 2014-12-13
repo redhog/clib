@@ -99,6 +99,7 @@ def search_thing(request):
     results = appomatic_clib.models.Thing.geoobjects.all()
 
     results = results.distance(request.user.profile.location.position, field_name='location__position')
+    info_objects = []
 
     text = query.get('text', None)
     if text:
@@ -119,6 +120,7 @@ def search_thing(request):
                 shelf = None)
         else:
             shelf = request.user.shelfs.get(name = shelf)
+            info_objects.append(shelf)
             results = results.filter(
                 shelf = shelf)
 
@@ -167,6 +169,7 @@ def search_thing(request):
             "shelfs": request.user.shelfs.all(),
             "sort_icons": sort_icons,
             "results": results,
+            "info_objects": info_objects,
             "request": request
         }
     )

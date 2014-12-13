@@ -7,6 +7,14 @@
 
     <p>You can organize your things into <a href='{% url 'appomatic_clib.views.shelfs' %}'>shelfs</a> to find them more easily.</p>
 
+    {% if info_objects %}
+      <div class="clearfix">
+        {% for info in info_objects %}
+          {{info.render_as.label|safe}}
+        {% endfor %}
+      </div>
+    {% endif %}
+
     <p>
       <a href="javascript: void(0);" data-toggle="collapse" data-target="#query" aria-expanded="true" aria-controls="query">
        Update search query

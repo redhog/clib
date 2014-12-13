@@ -8,7 +8,7 @@
         {% for t in res %}
           <tr>
             <td><a href='{{t.get_absolute_url}}'>{{t.name}}</td>
-            <td><a href='{% url 'appomatic_clib.views.search' %}?query={{t.designer}}'>{{t.designer}}</a></td>
+            <td><a href='{% url 'appomatic_clib.views.search.search' %}?query={{t.designer}}'>{{t.designer}}</a></td>
             <td>{{t.render_as.tags|safe}}</td>
           </tr>
         {% endfor %}
