@@ -164,6 +164,8 @@ def search_thing(request):
             sort[0:0] = [col]
         query['sort'] = ",".join(sort)
     
+    if 'update-text' in query:
+        query['text'] = query['update-text']
 
     if 'update-tags' in query:
         tag = query['update-tags']
@@ -171,6 +173,18 @@ def search_thing(request):
             query['tags'].remove(tag)
         else:
             query['tags'].append(tag)
+
+    if 'update-shelf' in query:
+        query['shelf'] = query['update-shelf']
+
+    query_string = django.http.QueryDict("", mutable=True)
+    for key, value in query.iteritems():
+        if not key.startswith("update-"):
+            if key == 'tags':
+                query_string.setlist(key, value)
+            else:
+                query_string[key] = value
+    query_string = query_string.urlencode()
 
     results = appomatic_clib.models.Thing.geoobjects.all()
 
@@ -237,6 +251,7 @@ def search_thing(request):
         request,
         'appomatic_clib/search_thing.html',
         {
+            "query_string": request.path + "?" + query_string,
             "query": query,
             "tags": appomatic_renderable.models.Tag.objects.all(),
             "shelfs": request.user.shelfs.all(),

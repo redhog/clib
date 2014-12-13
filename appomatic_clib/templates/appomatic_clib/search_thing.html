@@ -5,6 +5,8 @@
   <form class="form" role="form">
     <input type="hidden" name="sort" value="{{query.sort}}">
 
+    <p>You can organize your things into <a href='{% url 'appomatic_clib.views.shelfs' %}'>shelfs</a> to find them more easily.</p>
+
     <p>
       <a href="javascript: void(0);" data-toggle="collapse" data-target="#query" aria-expanded="true" aria-controls="query">
        Update search query
@@ -36,7 +38,7 @@
                   <option value="" {% if query.shelf == '' %}selected='selected'{% endif %}>No filter</option>
                   <option value="none" {% if query.shelf == 'none' %}selected='selected'{% endif %}>Not on any particular shelf</option>
                   {% for shelf in shelfs %}
-                    <option value="{{shelf.name}}" {% if query.shelf == shelf.id %}selected='selected'{% endif %}>{{shelf.name}}</option>
+                    <option value="{{shelf.name}}" {% if query.shelf == shelf.name %}selected='selected'{% endif %}>{{shelf.name}}</option>
                   {% endfor %}
                 </select>
               </div>
@@ -80,28 +82,30 @@
       <div class="panel panel-default">
         <table class="table">
           <tr>
-            <th colspan="2"><button type="submit" name="update-sort" value="type__name" class="btn-nobtn">{{sort_icons.type__name|safe}} Things: {{results.count}}</button></th>
-            <th><button type="submit" name="update-sort" value="type__designer" class="btn-nobtn">{{sort_icons.type__designer|safe}} by</button></th>
+            <th colspan="2"><a href="{{query_string}}&update-sort=type__name">{{sort_icons.type__name|safe}} Things: {{results.count}}</a></th>
+            <th><a href="{{query_string}}&update-sort=type__designer">{{sort_icons.type__designer|safe}} by</a></th>
             <th>tags</th>
-            <th><button type="submit" name="update-sort" value="holder" class="btn-nobtn">{{sort_icons.holder|safe}} holder</button></th>
-            <th><button type="submit" name="update-sort" value="owner" class="btn-nobtn">{{sort_icons.owner|safe}} owner</button></th>
-            <th><button type="submit" name="update-sort" value="shelf" class="btn-nobtn">{{sort_icons.shelf|safe}} shelf</button></th>
-            <th><button type="submit" name="update-sort" value="distance" class="btn-nobtn">{{sort_icons.distance|safe}} distance</button></th>
+            <th><a href="{{query_string}}&update-sort=holder">{{sort_icons.holder|safe}} holder</a></th>
+            <th><a href="{{query_string}}&update-sort=owner">{{sort_icons.owner|safe}} owner</a></th>
+            <th><a href="{{query_string}}&update-sort=shelf">{{sort_icons.shelf|safe}} shelf</a></th>
+            <th><a href="{{query_string}}&update-sort=distance">{{sort_icons.distance|safe}} distance</a></th>
           </tr>
           {% for t in res %}
             <tr>
               <td><a href='{{t.get_absolute_url}}'>{{t.type.barcode_type}}:{{t.type.barcode_data}}</td>
               <td><a href='{{t.get_absolute_url}}'>{{t.type.name}}</td>
-              <td><a href='{% url 'appomatic_clib.views.search' %}?query={{t.type.designer}}'>{{t.type.designer}}</a></td>
+              <td><a href="{{query_string}}&update-text={{t.type.designer}}">{{t.type.designer}}</a></td>
               <td>
                 {% for tag in t.type.tags.all %}
-                  <button type="submit" name="update-tags" value="{{tag.path}}" class="btn-nobtn label label-primary">{{tag.path}}</button>
+                  <a href="{{query_string}}&update-tags={{tag.path}}" class="label label-primary">{{tag.path}}</a>
                 {% endfor %}
               </td>
               {% if t.owner.id == request.user.id or t.holder.id == request.user.id %}
                 <td><a href="{{t.holder.get_absolute_url}}">{{t.holder}}</a></td>
                 <td><a href="{{t.owner.get_absolute_url}}">{{t.owner}}</a></td>
-                <td>{{t.shelf.render_as.link__html|safe}}</td>
+                <td>
+                  <a href="{{query_string}}&update-shelf={{t.shelf.name}}">{{t.shelf.name}}</a>
+                </td>
               {% else %}
                 <td></td>
                 <td></td>

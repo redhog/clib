@@ -13,8 +13,8 @@
         <tr><th style="width: 100%;">Shelfs: {{request.user.shelfs.count}}</th><th>items</th><th></th></tr>
         {% for t in shelfs %}
           <tr>
-            <td><a href='{{t.get_absolute_url}}'>{{t.name}}</a></td>
-            <td><a href='{{t.get_absolute_url}}'>{{t.contains.count}}</td>
+            <td><a href='{% url 'appomatic_clib.views.search_thing' %}?shelf={{t.name}}'>{{t.name}}</a></td>
+            <td><a href='{% url 'appomatic_clib.views.search_thing' %}?shelf={{t.name}}'>{{t.contains.count}}</td>
             <td>
               <form action="{% url 'appomatic_clib.views.shelfs' %}" method="post" class="form form-inline" role="form" style="margin: 0;">
                 {% csrf_token %}
