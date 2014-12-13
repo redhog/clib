@@ -15,8 +15,8 @@ urlpatterns = django.conf.urls.patterns('',
     django.conf.urls.url(r'^funds/add/paypal/return/?$', 'appomatic_clib.views.funds.paypal_add_return'),
     django.conf.urls.url(r'^funds/?$', 'appomatic_clib.views.funds.funds'),
 
-    django.conf.urls.url(r'^(?P<user>.*)/scan/start/?$', 'appomatic_clib.views.scan_start'),
-    django.conf.urls.url(r'^(?P<user>.*)/scan/item/?$', 'appomatic_clib.views.scan_item'),
+    django.conf.urls.url(r'^(?P<user>.*)/scan/start/?$', 'appomatic_clib.views.scan.scan_start'),
+    django.conf.urls.url(r'^(?P<user>.*)/scan/item/?$', 'appomatic_clib.views.scan.scan_item'),
 
     django.conf.urls.url(r'^accounts/(?P<username>.*)/edit/?$', 'appomatic_clib.views.profile.edit'),
     django.conf.urls.url(r'^accounts/', django.conf.urls.include('userena.urls')),
