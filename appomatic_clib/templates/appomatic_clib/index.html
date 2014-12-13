@@ -34,7 +34,7 @@
                   <p>Maybe you'd like to search for things to borrow:
                     <form action="{% url 'appomatic_clib.views.search.search' %}" class="form form-inline" role="form">
                       <div class="input-group">
-                        <input type="text" name="query" placeholder="Search" class="form-control">
+                        <input type="text" name="text" placeholder="Search" class="form-control">
                         <span class="input-group-btn">
                           <button class="btn btn-default" type="submit"><i class='glyphicon glyphicon-search'></i>&nbsp;</button>
                         </span>
@@ -125,7 +125,7 @@
                 <tr>
                   <td><a href='{{t.get_absolute_url}}'>{{t.barcode_type}}:{{t.barcode_data}}</td>
                   <td><a href='{{t.get_absolute_url}}'>{{t.name}}</td>
-                  <td><a href='{% url 'appomatic_clib.views.search.search' %}?query={{t.designer}}'>{{t.designer}}</a></td>
+                  <td><a href='{% url 'appomatic_clib.views.search.search' %}?text={{t.designer}}'>{{t.designer}}</a></td>
                   <td>{{t.render_as.tags|safe}}</td>
                 </tr>
               {% endfor %}
@@ -195,7 +195,7 @@
 
             <form action="{% url 'appomatic_clib.views.search.search' %}" class="form form-inline" role="form">
               <div class="input-group">
-                <input type="text" name="query" placeholder="Search" class="form-control">
+                <input type="text" name="text" placeholder="Search" class="form-control">
                 <span class="input-group-btn">
                   <button class="btn btn-default" type="submit"><i class='glyphicon glyphicon-search'></i>&nbsp;</button>
                 </span>
@@ -216,7 +216,7 @@
         <p>You can search our database for titles by name</p>
         <form action="{% url 'appomatic_clib.views.search.search' %}" class="form form-inline" role="form">
           <div class="input-group">
-            <input type="text" name="query" placeholder="Search" class="form-control">
+            <input type="text" name="text" placeholder="Search" class="form-control">
             <span class="input-group-btn">
               <button class="btn btn-default" type="submit"><i class='glyphicon glyphicon-search'></i>&nbsp;</button>
             </span>

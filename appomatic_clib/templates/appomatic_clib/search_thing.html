@@ -8,7 +8,7 @@
     {% if info_objects %}
       <div class="clearfix">
         {% for info in info_objects %}
-          {{info.render_as.label|safe}}
+          {{info.render_as.info|safe}}
         {% endfor %}
       </div>
     {% endif %}
