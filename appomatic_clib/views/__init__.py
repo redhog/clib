@@ -13,28 +13,11 @@ import qrcode
 import qrcode.image.svg
 import StringIO
 
-def start_url(request):
-    return 'http://' + django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse('appomatic_clib.views.scan.scan_start', kwargs={"user":sign_login(request)})
-
-def login_user(request, user):
-    "Log in a user without requiring credentials"
-    from django.contrib.auth import load_backend, login
-    if not hasattr(user, 'backend'):
-        for backend in settings.AUTHENTICATION_BACKENDS:
-            if user == load_backend(backend).get_user(user.pk):
-                user.backend = backend
-                break
-    if hasattr(user, 'backend'):
-        return login(request, user)
-
 def sign_login(request):
     return request.user.username + ":" + hashlib.sha1(settings.CLIB_SECRET + request.user.username).hexdigest()
 
-def relogin(str):
-    username, hash = str.split(":")
-    if hash != hashlib.sha1(settings.CLIB_SECRET + username).hexdigest():
-        raise Exception("Bad user id signature")
-    return django.contrib.auth.models.User.objects.get(username=username)
+def start_url(request):
+    return 'http://' + django.contrib.sites.models.Site.objects.get_current().domain + django.core.urlresolvers.reverse('appomatic_clib.views.scan.scan_start', kwargs={"user":sign_login(request)})
 
 def index(request):
     return django.shortcuts.render(
