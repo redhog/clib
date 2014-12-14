@@ -104,7 +104,6 @@ def search(request):
             "query_string": request.path + "?" + query_string,
             "query": query,
             "tags": appomatic_renderable.models.Tag.objects.all(),
-            "shelfs": request.user.shelfs.all(),
             "sort_icons": sort_icons,
             "results": results,
             "info_objects": info_objects,
