@@ -13,10 +13,17 @@ import qrcode
 import qrcode.image.svg
 import StringIO
 
-def get_tag_by_path(path):
+def get_tag_by_path(path, create = False):
     tag_model = None
     for item in path.split('/'):
-        tag_model = appomatic_renderable.models.Tag.objects.filter(parent=tag_model, name=item)[0]
+        existing = appomatic_renderable.models.Tag.objects.filter(parent=tag_model, name=item)
+        if existing:
+            tag_model = existing[0]
+        else:
+            if not create:
+                raise Exception("Unknown tag")
+            tag_model = appomatic_renderable.models.Tag(parent=tag_model, name=item)
+            tag_model.save()
     return tag_model
 
 @django.views.decorators.csrf.csrf_exempt
@@ -96,6 +103,23 @@ def search(request):
         else:
             sort_icons[col] = "<i class='fa fa-arrow-down'></i> "
         break
+
+    if request.user.is_staff:
+        if query.get('action', None) == 'add-tag':
+            if query.get('action_tag_name', None):
+                tag = get_tag_by_path(query['action_tag_name'], True)
+            else:
+                tag = get_tag_by_path(query['action_tag'])
+            for thing_type in results:
+                thing_type.tags.add(tag)
+
+        if query.get('action', None) == 'remove-tag':
+            tag = get_tag_by_path(query['action_tag'])
+            for thing_type in results:
+                thing_type.tags.remove(tag)
+
+        if query.get('action', None) == 'del-tag':
+            get_tag_by_path(query['action_tag']).delete()
 
     return django.shortcuts.render(
         request,

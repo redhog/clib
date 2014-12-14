@@ -45,6 +45,46 @@
       </div>
     </p>
 
+    {% if request.user.is_staff %}
+      <p>
+        <a href="javascript: void(0);" data-toggle="collapse" data-target="#update" aria-expanded="true" aria-controls="update">
+         Update things
+        </a>
+
+        <div id="update" class="collapse">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-6">
+
+                <div class="form-group">
+                  <label for="action_tag">Tag:</label>
+                  <div class="input-group">
+                    <span class="input-group-btn" style="width: 10em;">
+                      <input type="text" class="form-control" name="action_tag_name" placeholder="New tag name" value="">
+                    </span>
+                    <select class="form-control" name="action_tag">
+                      {% for t in tags %}
+                        <option value="{{t.path}}">{{t.path}} ({{t.things.count}})</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+
+                <div class="btn-group" role="group">
+                  <button type="submit" class="btn btn-success" name="action" value="add-tag">Add tag</button>
+                  <button type="submit" class="btn btn-warning" name="action" value="remove-tag">Remove tag</button>
+                </div>
+
+                <button type="submit" class="btn btn-danger" name="action" value="del-tag">Delete tag</button>
+              </div>
+              <div class="col-md-6">
+              </div>
+            </div>
+          </div>
+        </div>
+      </p>
+    {% endif %}
+
     {% if results.count %}
       {% paginate results as res %}
       <div class="panel panel-default">
