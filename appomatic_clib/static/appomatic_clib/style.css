@@ -14,6 +14,10 @@ body, span, div, table, tr, tbody, tfoot, td, hr {
   print-color-adjust: exact !important;
 }
 
+footer iframe {
+  border: none;
+}
+
 .inline {
   display: inline-block;
 }
