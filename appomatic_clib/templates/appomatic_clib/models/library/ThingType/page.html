@@ -4,6 +4,7 @@
 
 {% block media %}
   {{obj.render_as.oembedlink__html|safe}}
+  {{obj.render_as.opengraph__html|safe}}
   {{block.super}}
 {% endblock %}
 

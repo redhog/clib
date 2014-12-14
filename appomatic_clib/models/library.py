@@ -117,6 +117,20 @@ class ThingType(base.Object):
         res['author_name'] = self.designer
         return res
 
+    def opengraph(self, request, context):
+        return {
+            "og": {
+                "type": "book",
+                "title": self.name,
+                "url": self.get_absolute_url(),
+                "book": {
+                    "author": [{"first_name": self.designer}],
+                    "isbn": self.barcode_data,
+                    "tag": ", ".join(t.path for t in self.tags.all()),
+                    },
+                "description": self.description
+                }
+            }
 
 class ThingTypeForm(django.forms.ModelForm):
     class Meta:
@@ -267,6 +281,21 @@ class Thing(base.Object):
         res['title'] = self.type.name
         res['author_name'] = self.type.designer
         return res
+
+    def opengraph(self, request, context):
+        return {
+            "og": {
+                "type": "book",
+                "title": self.type.name,
+                "url": self.get_absolute_url(),
+                "book": {
+                    "author": [{"first_name": self.type.designer}],
+                    "isbn": self.type.barcode_data,
+                    "tag": ", ".join(t.path for t in self.type.tags.all()),
+                    },
+                "description": self.type.description
+                }
+            }
 
 @property
 def path(self):
