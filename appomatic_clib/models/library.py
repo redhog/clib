@@ -126,9 +126,9 @@ class ThingType(base.Object):
                 "description": self.description
                 },
             "book": {
-                "author": [{"first_name": self.designer}],
+                "author": [{"profile:first_name": self.designer}],
                 "isbn": self.barcode_data,
-                "tag": ", ".join(t.path for t in self.tags.all()),
+                "tag": [t.path for t in self.tags.all()],
                 }
             }
 
@@ -291,9 +291,9 @@ class Thing(base.Object):
                 "description": self.type.description
                 },
             "book": {
-                "author": [{"first_name": self.type.designer}],
+                "author": [{"profile:first_name": self.type.designer}],
                 "isbn": self.type.barcode_data,
-                "tag": ", ".join(t.path for t in self.type.tags.all()),
+                "tag": [t.path for t in self.type.tags.all()]
                 }
             }
 
