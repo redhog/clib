@@ -147,7 +147,7 @@
             <div class="panel-heading">Search for things by tag:</div>
               <div class="list-group">
               {% for tag in tags %}
-                <a href="{{tag.get_absolute_url}}" class="list-group-item">{{tag.name}}</a>
+                <a href="{{tag.get_absolute_url}}" class="list-group-item">{{tag.name}} <span class="badge">{{tag.things.count}}</span></a>
               {% endfor %}
             </div>
           </div>
