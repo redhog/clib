@@ -1,5 +1,10 @@
 {% extends "appomatic_clib/base.html" %}
 
+{% block media %}
+  {{obj.render_as.oembedlink__html|safe}}
+  {{block.super}}
+{% endblock %}
+
 {% block content %}
   <div class="container">
     <div class="row">
