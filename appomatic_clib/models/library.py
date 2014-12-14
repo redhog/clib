@@ -126,7 +126,6 @@ class ThingType(base.Object):
                 "description": self.description
                 },
             "book": {
-                "author": self.designer,
                 "isbn": self.barcode_data,
                 "tag": [t.path for t in self.tags.all()],
                 }
@@ -291,7 +290,6 @@ class Thing(base.Object):
                 "description": self.type.description
                 },
             "book": {
-                "author": self.type.designer,
                 "isbn": self.type.barcode_data,
                 "tag": [t.path for t in self.type.tags.all()]
                 }
