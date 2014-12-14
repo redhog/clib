@@ -123,12 +123,12 @@ class ThingType(base.Object):
                 "type": "book",
                 "title": self.name,
                 "url": self.get_absolute_url(),
-                "book": {
-                    "author": [{"profile:first_name": self.designer}],
-                    "isbn": self.barcode_data,
-                    "tag": ", ".join(t.path for t in self.tags.all()),
-                    },
                 "description": self.description
+                },
+            "book": {
+                "author": [{"first_name": self.designer}],
+                "isbn": self.barcode_data,
+                "tag": ", ".join(t.path for t in self.tags.all()),
                 }
             }
 
@@ -288,12 +288,12 @@ class Thing(base.Object):
                 "type": "book",
                 "title": self.type.name,
                 "url": self.get_absolute_url(),
-                "book": {
-                    "author": [{"profile:first_name": self.type.designer}],
-                    "isbn": self.type.barcode_data,
-                    "tag": ", ".join(t.path for t in self.type.tags.all()),
-                    },
                 "description": self.type.description
+                },
+            "book": {
+                "author": [{"first_name": self.type.designer}],
+                "isbn": self.type.barcode_data,
+                "tag": ", ".join(t.path for t in self.type.tags.all()),
                 }
             }
 
