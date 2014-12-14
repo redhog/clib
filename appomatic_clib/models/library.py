@@ -111,6 +111,13 @@ class ThingType(base.Object):
         form = ThingTypeForm(instance=self)
         return {"form": form}
 
+    def oembed(self, request, context):
+        res = base.Object.oembed(self, request, context)
+        res['title'] = self.name
+        res['author_name'] = self.designer
+        return res
+
+
 class ThingTypeForm(django.forms.ModelForm):
     class Meta:
         app_label = 'appomatic_clib'
@@ -254,6 +261,12 @@ class Thing(base.Object):
         self.save()
         raise fcdjangoutils.responseutils.EarlyResponseException(
             django.shortcuts.redirect(self))
+
+    def oembed(self, request, context):
+        res = base.Object.oembed(self, request, context)
+        res['title'] = self.type.name
+        res['author_name'] = self.type.designer
+        return res
 
 @property
 def path(self):

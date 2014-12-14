@@ -1,0 +1,16 @@
+{% block content %}
+  <h1>{{obj.name}} by {{obj.designer}}</h1>
+  <p>
+    {{obj.render_as.tags|safe}}
+  </p>
+  <p>{{obj.description}}</p>
+
+  <table class="table table-bordered small-table">
+    <tr><th>Id:</th><td>{{obj.id}}</td></tr>
+    <tr><th>Name:</th><td>{{obj.name}}</td></tr>
+    <tr><th>Producer:</th><td>{{obj.producer}}</td></tr>
+    <tr><th>Designer:</th><td>{{obj.designer}}</td></tr>
+    <tr><th>Deposit required:</th><td>{{obj.price}}</td></tr>
+    <tr><th>{{obj.barcode_type}}</th><td>{{obj.barcode_data}}</td></tr>
+  </table>
+{% endblock %}
