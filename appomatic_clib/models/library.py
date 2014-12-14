@@ -7,6 +7,7 @@ import fcdjangoutils.middleware
 import appomatic_renderable.models
 import fcdjangoutils.fields
 from django.conf import settings
+import urllib
 from . import base
 from . import transactions
 from . import events
@@ -260,3 +261,7 @@ def path(self):
         item.name
         for item in self.get_ancestors(include_self=True))
 appomatic_renderable.models.Tag.path = path
+
+def tag_get_absolute_url(self):
+    return django.core.urlresolvers.reverse('appomatic_clib.views.search.search') + "?tags=" + urllib.quote_plus(self.path)
+appomatic_renderable.models.Tag.get_absolute_url = tag_get_absolute_url
