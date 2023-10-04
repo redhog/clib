@@ -1,5 +1,5 @@
 Django==1.6.5
-Pillow==2.5.2
+Pillow==10.0.1
 appomatic==0.0.30
 appomatic-admin==0.0.30
 appomatic-appadmin==0.0.30
